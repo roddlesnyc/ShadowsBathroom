@@ -126,6 +126,7 @@ const BATHS = {
       { id:"handshower", name:"Handshower + slidebar - Kohler Purist K-22178-BN", shape:"rect", x:27, y:18.5, w:2, h:3, color:"#b4b0a6", product:"Kohler Purist four-function handshower kit, 28 in slidebar, 60 in hose, Vibrant Brushed Nickel (K-22178-BN)" },
       { id:"sink", name:"Sink - Concretti Phoenix vessel, white", shape:"rect", x:74.5, y:25.75, w:14.5, h:14.5, rx:1.5, color:"#ffffff", product:"Concretti Designs Phoenix square concrete vessel sink, white, 14.5 x 14.5 x 5 in" },
       { id:"faucet", name:"Faucet - Kohler Purist K-T14413-3-BN (wall mount)", shape:"rect", x:83.25, y:32, w:6.75, h:2, rx:1, color:"#b4b0a6", wall:1, product:"Kohler Purist wall-mount faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)" },
+      { id:"mirror", name:"Mirror - Ivy Bronx backlit LED (40 W x 30 H)", shape:"rect", x:88.5, y:4.5, w:1.5, h:40, color:"#cfe3ee", mirror:{ w:40, h:30, d:1.5, bottom:48, cz:24.5 }, product:"Ivy Bronx rectangular backlit LED bathroom mirror, anti-fog, 3 color temperatures, 40 x 30 in (Wayfair W116695986)" },
       { id:"towelwarmer", name:"Towel warmer (angled wall)", shape:"path", d:"M73.21 58.63 L84.99 50.17 L83.09 47.53 L71.31 55.99 Z", mount:{ cx:79.1, cy:54.4, ux:-0.8125, uz:0.5833, w:14.5, h:35.375, d:3.25, bottom:36, controller:{ x:9.1, y:14.6875, z:1.6 } }, color:"#b4b0a6", product:"Elemento Bath Wall-Mounted Vertical Heated Towel Rack with Digital Display, Brushed Nickel (EB-TW3621BN), 14.5 x 35 3/8 x 3 1/4 in" },
     ],
   },
@@ -180,6 +181,7 @@ const BATHS = {
       { id:"vanitywood", name:"Vanity drawer fronts (walnut)", shape:"none", color:"#5c4033", product:"Walnut wood panel drawer fronts (2)" },
       { id:"sink", name:"Sink - Concretti Phoenix vessel, white", shape:"rect", x:78.5, y:25.75, w:14.5, h:14.5, rx:1.5, color:"#ffffff", product:"Concretti Designs Phoenix square concrete vessel sink, white, 14.5 x 14.5 x 5 in" },
       { id:"faucet", name:"Faucet - Kohler Purist K-T14413-3-BN (wall mount)", shape:"rect", x:87.25, y:32, w:6.75, h:2, rx:1, color:"#b4b0a6", wall:1, product:"Kohler Purist wall-mount faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)" },
+      { id:"mirror", name:"Mirror - Ivy Bronx backlit LED (40 W x 30 H)", shape:"rect", x:92.5, y:5.0, w:1.5, h:40, color:"#cfe3ee", mirror:{ w:40, h:30, d:1.5, bottom:48, cz:25.0 }, product:"Ivy Bronx rectangular backlit LED bathroom mirror, anti-fog, 3 color temperatures, 40 x 30 in (Wayfair W116695986)" },
       { id:"towelwarmer", name:"Towel warmer", shape:"rect", x:37.8, y:0, w:10, h:3.25, mount:{ cx:42.8, cy:0, ux:1, uz:0, w:10, h:35.375, d:3.25, bottom:30, controller:{ x:0, y:20.7, z:1.6 } }, color:"#b4b0a6", product:"Elemento Bath Wall-Mounted Vertical Heated Towel Rack with Digital Display, Brushed Nickel (EB-TW3621BN), 14.5 x 35 3/8 x 3 1/4 in" },
     ],
   },
@@ -239,6 +241,12 @@ const SEED_ORDERS = ["upstairs", "master"].map(bath => ({
   key: "nuheat-signature-thermostat-master", bath: "master",
   order: { item: "Nuheat Signature WiFi floor heating thermostat (built-in GFCI, floor sensor)", vendor: "Nuheat", model: "Signature Thermostat", price: 360.49, notes: "List price USA per nuheat.com. 15 A max load, 120/240 V. Confirm exact part number with Nuheat or dealer." },
 }, {
+  key: "ivy-bronx-mirror-upstairs", bath: "upstairs",
+  order: { item: "Ivy Bronx rectangular backlit LED bathroom mirror, anti-fog, 3 color temperatures, 40 x 30 in (W116695986)", vendor: "Wayfair (Ivy Bronx)", model: "W116695986", price: 489.99, notes: "ESTIMATE - price and depth (about 1.5 in) are from a web search of similar Ivy Bronx 40x30 mirrors; confirm on the Wayfair page for the exact listing. Centered on the vanity-side wall, bottom about 48 in above floor. Needs hardwired power behind it." },
+}, {
+  key: "ivy-bronx-mirror-master", bath: "master",
+  order: { item: "Ivy Bronx rectangular backlit LED bathroom mirror, anti-fog, 3 color temperatures, 40 x 30 in (W116695986)", vendor: "Wayfair (Ivy Bronx)", model: "W116695986", price: 489.99, notes: "ESTIMATE - price and depth (about 1.5 in) are from a web search of similar Ivy Bronx 40x30 mirrors; confirm on the Wayfair page for the exact listing. Centered on the vanity-side wall, bottom about 48 in above floor. Needs hardwired power behind it." },
+}, {
   key: "fluted-shower-glass-upstairs", bath: "upstairs",
   order: { item: "Fluted (reeded) frameless fixed shower glass panel, 3/8 in tempered, with brushed nickel channel", vendor: "Custom glass fabricator", model: "Fluted fixed panel (custom)", price: 700, notes: "ESTIMATE - get a local glass quote. Roughly 18 in wide x 90 in tall, sized after tile is set." },
 }, {
@@ -296,11 +304,15 @@ function load() {
     const c = s.baths.master.custom && s.baths.master.custom.faucet;
     if (c) delete c.color;
   }
-  if (!s.seeded.includes("nuheat-mats-v5")) {
-    s.seeded.push("nuheat-mats-v5");
+  if (!s.seeded.includes("nuheat-mats-v6")) {
+    s.seeded.push("nuheat-mats-v6");
     for (const bath of ["upstairs", "master"]) {
       delete s.baths[bath].custom.heatmat1;
       delete s.baths[bath].custom.heatmat2;
+    }
+    for (const bath of ["upstairs", "master"]) {
+      delete s.baths[bath].custom.mirror;
+      s.baths[bath].orders = s.baths[bath].orders.filter(o => o.id !== `seed-kohler-verdera-mirror-${bath}-${bath}`);
     }
     const mo = s.baths.master.orders.find(o => o.id === "seed-nuheat-mat-master-master");
     if (mo) Object.assign(mo, { item:"Nuheat Custom Mat, L-shaped (about 9 sq ft), 120 V, 12 W/sq ft", model:"Custom Mat (quote)", price:450, notes:"ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Top leg 24 x 19 in, bottom 34 x 26 in. Confirm clearances at the toilet and vanity." });

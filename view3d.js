@@ -300,6 +300,22 @@ const View3D = (() => {
     box(f.dir ? fxx - .5 : fxx - 4.5, fz - .6, 5, 1.2, topY + 8, 1.2, fm, "faucet");
     }
 
+    if (has("mirror")) {
+      const e = E("mirror"), mi = e.mirror, f2 = E("faucet"), wx = f2.x + f2.w, cz = mi.cz;
+      box(wx - mi.d, cz - mi.w / 2, mi.d, mi.w, mi.bottom, mi.h, std("#2b2b2b", { roughness: .5 }), "mirror");
+      const face = box(wx - mi.d - .05, cz - mi.w / 2 + .75, .05, mi.w - 1.5, mi.bottom + .75, mi.h - 1.5, new THREE.MeshStandardMaterial({ color: "#ffffff", emissive: "#fff3d6", emissiveIntensity: .85, metalness: .1, roughness: .1 }), "mirror");
+      face.castShadow = false;
+      // backlit glow on the wall around the mirror
+      [[1, .55], [3, .3], [5.5, .14]].forEach(([g, op], i) => {
+        const h = new THREE.Mesh(new THREE.BoxGeometry(.02, mi.h + g * 2, mi.w + g * 2), new THREE.MeshBasicMaterial({ color: "#fff1cf", transparent: true, opacity: op, depthWrite: false }));
+        h.position.set(wx - .03 - i * .005, mi.bottom + mi.h / 2, cz);
+        scene.add(h);
+      });
+      const glow = new THREE.PointLight("#ffe9c2", .9, 90);
+      glow.position.set(wx - 12, mi.bottom + mi.h / 2, cz);
+      scene.add(glow);
+    }
+
     // toilet (tank at the back wall on the +x side, bowl facing -x)
     const t = E("toilet"), [bx, bz, bw, bd] = t.box, tm = std(t.color, { roughness: .2 });
     const tankD = Math.min(8, bw * .45);
