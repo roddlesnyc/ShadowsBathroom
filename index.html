@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shadows – Bathroom Remodel Planner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --bg:#f4f5f7; --card:#fff; --ink:#1f2933; --muted:#6b7280; --accent:#2f6f5e; --line:#d8dce1; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); }
+  header { background:var(--accent); color:#fff; padding:12px 20px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  header h1 { font-size:18px; margin:0; flex:1; }
+  header button, .btn { background:#fff; color:var(--accent); border:0; border-radius:6px; padding:6px 12px; cursor:pointer; font-weight:600; }
+  .btn.dark { background:var(--accent); color:#fff; }
+  .btn.small { padding:3px 8px; font-size:12px; }
+  nav { display:flex; gap:4px; padding:12px 20px 0; flex-wrap:wrap; }
+  nav button { border:1px solid var(--line); border-bottom:0; background:#e9ecef; padding:8px 16px; border-radius:8px 8px 0 0; cursor:pointer; font-weight:600; color:var(--muted); }
+  nav button.active { background:var(--card); color:var(--ink); }
+  nav .sep { flex:1; }
+  main { background:var(--card); margin:0 20px 20px; border:1px solid var(--line); border-radius:0 8px 8px 8px; padding:16px; }
+  .layout { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:16px; }
+  @media (max-width:900px){ .layout{grid-template-columns:1fr;} }
+  #plan { width:100%; background:#fafafa; border:1px solid var(--line); border-radius:6px; }
+  #plan [data-el] { cursor:pointer; }
+  #plan [data-el]:hover { stroke:#e11d48; stroke-width:.6; }
+  #plan .sel { stroke:#e11d48; stroke-width:.9; stroke-dasharray:2 1; }
+  .panel { border:1px solid var(--line); border-radius:6px; padding:12px; }
+  .panel h3 { margin:0 0 8px; font-size:15px; }
+  .elist { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .elist button { border:1px solid var(--line); background:#fff; border-radius:14px; padding:3px 10px; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:6px; }
+  .elist button.active { border-color:#e11d48; background:#fff1f3; }
+  .dot { width:12px; height:12px; border-radius:50%; border:1px solid #0003; display:inline-block; }
+  label { display:block; font-size:12px; color:var(--muted); margin:8px 0 2px; }
+  input[type=text], input[type=number], input[type=date], select, textarea { width:100%; padding:5px 7px; border:1px solid var(--line); border-radius:5px; font:inherit; background:#fff; }
+  input[type=color] { width:100%; height:34px; padding:0; border:1px solid var(--line); border-radius:5px; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .hint { color:var(--muted); font-size:12px; margin-top:8px; }
+  .totals { display:flex; gap:12px; flex-wrap:wrap; margin:0 0 12px; }
+  .total { background:var(--bg); border-radius:8px; padding:8px 14px; min-width:150px; }
+  .total b { display:block; font-size:20px; }
+  .total span { color:var(--muted); font-size:12px; }
+  .tablewrap { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; min-width:1100px; }
+  th, td { border-bottom:1px solid var(--line); padding:4px; text-align:left; vertical-align:middle; }
+  th { font-size:12px; color:var(--muted); white-space:nowrap; }
+  td input, td select { padding:4px 5px; font-size:13px; }
+  td.num input { text-align:right; }
+  .st-Planned { background:#e5e7eb; } .st-Ordered { background:#fde68a; } .st-Shipped { background:#bfdbfe; }
+  .st-Delivered { background:#bbf7d0; } .st-Installed { background:#86efac; } .st-Returned { background:#fecaca; }
+  .st-Cancelled { background:#fecaca; }
+  .lt { text-decoration:line-through; opacity:.55; }
+  .hidden { display:none; }
+  .toolbar { display:flex; gap:6px; margin-bottom:8px; align-items:center; }
+  .toolbar .sep { flex:1; }
+  .toolbar .btn:not(.dark) { border:1px solid var(--line); }
+  #v3d { width:100%; height:min(560px,52vh); position:sticky; top:0; z-index:5; border:1px solid var(--line); border-radius:6px; overflow:hidden; background:#eef0f3; }
+  #v3d canvas { display:block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Shadows – Bathroom Remodel Planner</h1>
+  <button id="exportBtn">Export backup</button>
+  <button id="importBtn">Import backup</button>
+  <input type="file" id="importFile" accept="application/json" class="hidden">
+</header>
+<nav id="nav"></nav>
+<main id="main"></main>
+
+<script src="lib/three.min.js"></script>
+<script src="lib/OrbitControls.js"></script>
+<script src="view3d.js"></script>
+<script>
+/* ---------- Floor plan definitions (all units: inches) ---------- */
+/* Dimensions come from the 2D plans; positions of fixtures were estimated from the screenshots. */
+const BATHS = {
+  upstairs: {
+    name: "Upstairs Bathroom",
+    desc: "7'6\" x 5'3\" with angled corner",
+    view: [-16, -16, 124, 100],
+    outline: "M0 0 H90 V49 L70.5 63 H0 Z",
+    walls: [],
+    dims: [
+      { x1:0, y1:-6, x2:90, y2:-6, text:"7' 6\"" },
+      { x1:-6, y1:0, x2:-6, y2:63, text:"5' 3\"", vertical:true },
+      { x1:0, y1:75, x2:71, y2:75, text:"5' 11\"" },
+      { x1:101, y1:0, x2:101, y2:50, text:"4' 2\"", vertical:true },
+    ],
+    openings: [
+      { x:24, y:-4, w:39, h:4, color:"#cfe3ec", label:"Window" },
+      { x:24.5, y:63, w:46, h:4, color:"#ececec", label:"Door" },
+    ],
+    walls3d: [
+      { x:-4, y:-4, w:28, h:4, s:"w-back" }, { x:63, y:-4, w:31, h:4, s:"w-back" }, { x:-4, y:0, w:4, h:67, s:"w-left" },
+      { x:90, y:0, w:4, h:49, s:"w-right" }, { x:0, y:63, w:24.5, h:4, s:"w-door" }, { x:0, y:15.5, w:36, h:2.5, s:["w-part-s","w-part-n"] },
+    ],
+    diagWalls: [{ x1:90, y1:49, x2:70.5, y2:63, s:"w-angle" }],
+    surfaces: [
+      { id:"floor", label:"Floor (incl. shower)", group:"Floor", poly:[[0,0],[90,0],[90,49],[70.5,63],[0,63]] },
+      { id:"ceiling", label:"Ceiling", group:"Ceiling", poly:[[0,0],[90,0],[90,49],[70.5,63],[0,63]] },
+      { id:"w-back", label:"Back wall (window)", group:"Walls", len:90, h:96, cut:[["Window",39,36]] },
+      { id:"w-right", label:"Right wall (vanity side)", group:"Walls", len:49, h:96 },
+      { id:"w-angle", label:"Angled wall", group:"Walls", len:24, h:96 },
+      { id:"w-door", label:"Door wall (door opening)", group:"Walls", len:70.5, h:96, cut:[["Door",46,80]] },
+      { id:"w-left", label:"Left wall (shower side)", group:"Walls", len:63, h:96 },
+      { id:"w-part-s", label:"Shower partition, shower side", group:"Walls", len:36, h:96 },
+      { id:"w-part-n", label:"Shower partition, nook side", group:"Walls", len:36, h:96 },
+    ],
+    showerWalls: ["top", "left", "bottom"],
+    doorFloor: "floor",
+    elements: [
+      { id:"floor", name:"Floor tile", shape:"path", d:"M0 0 H90 V49 L70.5 63 H0 Z", tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
+      { id:"walls", name:"Wall tile", shape:"none", tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
+      { id:"ceiling", name:"Ceiling tile", shape:"none", tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
+      { id:"nook", name:"Nook floor", shape:"rect", x:0, y:0, w:25, h:15.5, color:"#c4a574" },
+      { id:"nookshelves", name:"Nook shelves (walnut, 5)", shape:"none", color:"#5c4033", product:"Walnut shelves (5), about 24 W x 15.5 D x 1.25 thick, in the nook behind the shower" },
+      { id:"showerdoor", name:"Shower glass (fluted, fixed panel)", shape:"none", color:"#e6efe9", product:"Fluted (reeded) frameless fixed glass panel, 3/8 in tempered, brushed nickel floor channel, beside a tiled pillar" },
+      { id:"shower", name:"Shower (36x45)", shape:"rect", x:0, y:18, w:36, h:45, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
+      { id:"showerhead", name:"Shower trim, head & lever - Kohler Purist K-TS14422-4-BN", shape:"rect", x:15, y:18.5, w:6, h:3, color:"#b4b0a6", product:"Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)" },
+      { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:55, rx:1.6, ry:2.2, color:"#b4b0a6" },
+      { id:"toilet", name:"Toilet", shape:"path", box:[61.75, 2.75, 28.25, 15], d:"M90 2.75 H76 A14.25 7.5 0 0 0 76 17.75 H90 Z", color:"#f3f4f6", product:"Kohler Veil two-piece elongated toilet, skirted trapway, 1.28 gpf, K-28161-0 (white), 28-1/4 x 15 x 31 in" },
+      { id:"vanity", name:"Floating vanity (24 W x 18 D, tiled)", shape:"rect", x:72, y:21, w:18, h:24, floating:true, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
+      { id:"vanityshelf", name:"Tile shelf over toilet (6 D x 2 thick)", shape:"rect", x:84, y:0, w:6, h:21, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
+      { id:"vanitywood", name:"Vanity drawer fronts (walnut)", shape:"none", color:"#5c4033", product:"Walnut wood panel drawer fronts (2)" },
+      { id:"handshower", name:"Handshower + slidebar - Kohler Purist K-22178-BN", shape:"rect", x:27, y:18.5, w:2, h:3, color:"#b4b0a6", product:"Kohler Purist four-function handshower kit, 28 in slidebar, 60 in hose, Vibrant Brushed Nickel (K-22178-BN)" },
+      { id:"sink", name:"Sink - Concretti Phoenix vessel, white", shape:"rect", x:74.5, y:25.75, w:14.5, h:14.5, rx:1.5, color:"#ffffff", product:"Concretti Designs Phoenix square concrete vessel sink, white, 14.5 x 14.5 x 5 in" },
+      { id:"faucet", name:"Faucet - Kohler Purist K-T14413-3-BN (wall mount)", shape:"rect", x:83.25, y:32, w:6.75, h:2, rx:1, color:"#b4b0a6", wall:1, product:"Kohler Purist wall-mount faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)" },
+      { id:"towelwarmer", name:"Towel warmer (angled wall)", shape:"path", d:"M73.21 58.63 L84.99 50.17 L83.09 47.53 L71.31 55.99 Z", mount:{ cx:79.1, cy:54.4, ux:-0.8125, uz:0.5833, w:14.5, h:35.375, d:3.25, bottom:36, controller:{ x:9.1, y:14.6875, z:1.6 } }, color:"#b4b0a6", product:"Elemento Bath Wall-Mounted Vertical Heated Towel Rack with Digital Display, Brushed Nickel (EB-TW3621BN), 14.5 x 35 3/8 x 3 1/4 in" },
+    ],
+  },
+  master: {
+    name: "Master Bathroom (new)",
+    desc: "7'10\" x 4'3\" with 36x48 shower",
+    view: [-18, -20, 132, 98],
+    outline: "M0 0 H94 V50 H0 Z",
+    walls: [
+      { x:-4, y:-4, w:102, h:4 }, { x:-4, y:0, w:4, h:54 },
+      { x:94, y:0, w:4, h:54, s:"w-right" }, { x:0, y:50, w:36, h:4, s:"w-door-s" }, { x:73, y:50, w:25, h:4, s:"w-door-t" },
+    ],
+    dims: [
+      { x1:0, y1:-9, x2:94, y2:-9, text:"7' 10\"" },
+      { x1:-8, y1:0, x2:-8, y2:50, text:"4' 3\"", vertical:true },
+    ],
+    openings: [
+      { x:49.6, y:-4, w:39, h:4, color:"#cfe3ec", label:"Window" },
+      { x:36, y:50, w:37, h:4, color:"#ececec", label:"Door" },
+    ],
+    walls3d: [
+      { x:-4, y:-4, w:53.6, h:4, s:"w-back" }, { x:88.6, y:-4, w:9.4, h:4, s:"w-back" },
+      { x:-4, y:0, w:4, h:54, s:"w-left" }, { x:94, y:0, w:4, h:54 },
+      { x:0, y:50, w:36, h:4 }, { x:73, y:50, w:25, h:4 },
+    ],
+    diagWalls: [],
+    surfaces: [
+      { id:"floor", label:"Bathroom floor (incl. shower)", group:"Floor", poly:[[0,0],[94,0],[94,50],[0,50]] },
+      { id:"ceiling", label:"Ceiling", group:"Ceiling", poly:[[0,0],[94,0],[94,50],[0,50]] },
+      { id:"w-back", label:"Back wall (window)", group:"Walls", len:94, h:96, cut:[["Window",39,36]] },
+      { id:"w-left", label:"Left wall (shower end)", group:"Walls", len:50, h:96 },
+      { id:"w-right", label:"Right wall (toilet side)", group:"Walls", len:50, h:96 },
+      { id:"w-door-s", label:"Door wall, shower end", group:"Walls", len:36, h:96 },
+      { id:"w-door-t", label:"Door wall, toilet end", group:"Walls", len:21, h:96 },
+      { id:"w-header", label:"Door header (above door)", group:"Walls", len:37, h:16 },
+    ],
+    showerWalls: ["top", "left", "bottom"],
+    doorFloor: "floor",
+    elements: [
+      { id:"floor", name:"Bathroom floor tile", shape:"rect", x:0, y:0, w:94, h:50, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"walls", name:"Wall tile", shape:"none", tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"ceiling", name:"Ceiling tile", shape:"none", tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"showerdoor", name:"Shower glass (fluted, fixed panel)", shape:"none", color:"#e6efe9", product:"Fluted (reeded) frameless fixed glass panel, 3/8 in tempered, brushed nickel floor channel, beside a tiled pillar" },
+      { id:"shower", name:"Shower 36x48", shape:"rect", x:0, y:0, w:36, h:48, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"showerhead", name:"Shower trim, head & lever - Kohler Purist K-TS14422-4-BN", shape:"rect", x:15, y:0.5, w:6, h:3, color:"#b4b0a6", product:"Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)" },
+      { id:"handshower", name:"Handshower + slidebar - Kohler Purist K-22178-BN", shape:"rect", x:27, y:0.5, w:2, h:3, color:"#b4b0a6", product:"Kohler Purist four-function handshower kit, 28 in slidebar, 60 in hose, Vibrant Brushed Nickel (K-22178-BN)" },
+      { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:32, rx:1.6, ry:2.2, color:"#b4b0a6" },
+      { id:"toilet", name:"Toilet", shape:"path", box:[65.75, 2.75, 28.25, 15], d:"M94 2.75 H80 A14.25 7.5 0 0 0 80 17.75 H94 Z", color:"#f3f4f6", product:"Kohler Veil two-piece elongated toilet, skirted trapway, 1.28 gpf, K-28161-0 (white), 28-1/4 x 15 x 31 in" },
+      { id:"vanity", name:"Floating vanity (24 W x 18 D, tiled)", shape:"rect", x:76, y:21, w:18, h:24, floating:true, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"vanityshelf", name:"Tile shelf over toilet (6 D x 2 thick)", shape:"rect", x:88, y:0, w:6, h:21, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"vanitywood", name:"Vanity drawer fronts (walnut)", shape:"none", color:"#5c4033", product:"Walnut wood panel drawer fronts (2)" },
+      { id:"sink", name:"Sink - Concretti Phoenix vessel, white", shape:"rect", x:78.5, y:25.75, w:14.5, h:14.5, rx:1.5, color:"#ffffff", product:"Concretti Designs Phoenix square concrete vessel sink, white, 14.5 x 14.5 x 5 in" },
+      { id:"faucet", name:"Faucet - Kohler Purist K-T14413-3-BN (wall mount)", shape:"rect", x:87.25, y:32, w:6.75, h:2, rx:1, color:"#b4b0a6", wall:1, product:"Kohler Purist wall-mount faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)" },
+      { id:"towelwarmer", name:"Towel warmer", shape:"rect", x:35.1, y:0, w:14.5, h:3.25, mount:{ cx:42.35, cy:0, ux:1, uz:0, w:14.5, h:35.375, d:3.25, bottom:30, controller:{ x:-9.1, y:14.6875, z:1.6 } }, color:"#b4b0a6", product:"Elemento Bath Wall-Mounted Vertical Heated Towel Rack with Digital Display, Brushed Nickel (EB-TW3621BN), 14.5 x 35 3/8 x 3 1/4 in" },
+    ],
+  },
+};
+const STATUSES = ["Planned","Ordered","Shipped","Delivered","Installed","Returned","Cancelled"];
+
+/* ---------- State ---------- */
+const SEED_ORDERS = ["upstairs", "master"].map(bath => ({
+  key: "kohler-purewash-e750-" + bath, bath,
+  order: { item: "Kohler PureWash E750 elongated bidet toilet seat with remote control (K-4108-0)", vendor: "Kohler", model: "K-4108-0", price: 1199.97, notes: "Price is the Kohler.com listing found via web search - please confirm. Pairs with Veil toilet K-28161-0." },
+})).concat([{
+  key: "concretti-phoenix-sink-master", bath: "master",
+  order: { item: "Concretti Designs Phoenix square concrete vessel sink, White (14.5 x 14.5 x 5 in)", vendor: "Concretti Designs", model: "Phoenix (white)", price: 439.99, notes: "Price and size from web search (about $440-450, made to order, 4-6 wk lead time) - please confirm. Faucet and drain sold separately." },
+}, {
+  key: "kohler-purist-ts14422-master", bath: "master",
+  order: { item: "Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)", vendor: "Kohler", model: "K-TS14422-4-BN", price: 818.1, notes: "Trim only - needs a Rite-Temp pressure-balancing rough-in valve (sold separately). Enter price. Specs from web search." },
+}, {
+  key: "kohler-purist-22178-master", bath: "master",
+  order: { item: "Kohler Purist four-function handshower kit with 28 in slidebar, Vibrant Brushed Nickel (K-22178-BN)", vendor: "Kohler", model: "K-22178-BN", price: 596.62, notes: "Needs a supply elbow / wall connection for the hose (sold separately, confirm). Enter price. Specs from web search." },
+}, {
+  key: "kohler-purist-t14413-bn-master", bath: "master",
+  order: { item: "Kohler Purist wall-mount sink faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)", vendor: "Kohler", model: "K-T14413-3-BN", price: 736.35, notes: "Trim only - the rough-in valve (e.g. K-T14414-K-NA or similar, confirm) is sold separately and must be added. Enter price. Specs from web search." },
+}, {
+  key: "concretti-phoenix-sink-upstairs", bath: "upstairs",
+  order: { item: "Concretti Designs Phoenix square concrete vessel sink, White (14.5 x 14.5 x 5 in)", vendor: "Concretti Designs", model: "Phoenix (white)", price: 439.99, notes: "Price and size from web search (about $440-450, made to order, 4-6 wk lead time) - please confirm. Faucet and drain sold separately." },
+}, {
+  key: "kohler-purist-t14413-upstairs", bath: "upstairs",
+  order: { item: "Kohler Purist wall-mount sink faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)", vendor: "Kohler", model: "K-T14413-3-BN", price: 736.35, notes: "Trim only - the rough-in valve is sold separately and must be added. Enter price. Specs from web search." },
+}, {
+  key: "kohler-purist-ts14422-upstairs", bath: "upstairs",
+  order: { item: "Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)", vendor: "Kohler", model: "K-TS14422-4-BN", price: 818.1, notes: "Trim only - needs a Rite-Temp pressure-balancing rough-in valve (sold separately). Enter price. Specs from web search." },
+}, {
+  key: "kohler-purist-22178-upstairs", bath: "upstairs",
+  order: { item: "Kohler Purist four-function handshower kit with 28 in slidebar, Vibrant Brushed Nickel (K-22178-BN)", vendor: "Kohler", model: "K-22178-BN", price: 596.62, notes: "Needs a supply elbow / wall connection for the hose (sold separately, confirm). Enter price. Specs from web search." },
+}, {
+  key: "kohler-veil-toilet-upstairs", bath: "upstairs",
+  order: { item: "Kohler Veil two-piece elongated toilet, skirted trapway, 1.28 gpf, white (K-28161-0)", vendor: "Kohler", model: "K-28161-0", price: 699.79, notes: "Price from Kohler.com list; retailers vary." },
+}, {
+  key: "kohler-veil-toilet-master", bath: "master",
+  order: { item: "Kohler Veil two-piece elongated toilet, skirted trapway, 1.28 gpf, white (K-28161-0)", vendor: "Kohler", model: "K-28161-0", price: 699.79, notes: "Price from Kohler.com list; retailers vary." },
+}, {
+  key: "elemento-towel-warmer-upstairs", bath: "upstairs",
+  order: { item: "Elemento Bath wall-mounted vertical heated towel rack with digital display, Brushed Nickel (EB-TW3621BN)", vendor: "Elemento Bath", model: "EB-TW3621BN", price: 615, notes: "Brushed Nickel finish. SKU: EB-TW3621BN. Spec: 14 1/2 in wide x 35 3/8 in high x 3 1/4 in deep; two rods spaced 13 37/64 in center-to-center. Price per elementobath.com for a similar wall-mount model; confirm." },
+}, {
+  key: "elemento-towel-warmer-master", bath: "master",
+  order: { item: "Elemento Bath wall-mounted vertical heated towel rack with digital display, Brushed Nickel (EB-TW3621BN)", vendor: "Elemento Bath", model: "EB-TW3621BN", price: 615, notes: "Brushed Nickel finish. SKU: EB-TW3621BN. Spec: 14 1/2 in wide x 35 3/8 in high x 3 1/4 in deep; two rods spaced 13 37/64 in center-to-center. Price per elementobath.com for a similar wall-mount model; confirm." },
+}, {
+  key: "fluted-shower-glass-upstairs", bath: "upstairs",
+  order: { item: "Fluted (reeded) frameless fixed shower glass panel, 3/8 in tempered, with brushed nickel channel", vendor: "Custom glass fabricator", model: "Fluted fixed panel (custom)", price: 700, notes: "ESTIMATE - get a local glass quote. Roughly 18 in wide x 90 in tall, sized after tile is set." },
+}, {
+  key: "fluted-shower-glass-master", bath: "master",
+  order: { item: "Fluted (reeded) frameless fixed shower glass panel, 3/8 in tempered, with brushed nickel channel", vendor: "Custom glass fabricator", model: "Fluted fixed panel (custom)", price: 700, notes: "ESTIMATE - get a local glass quote. Roughly 18 in wide x 90 in tall, sized after tile is set." },
+}]);
+const KEY = "shadows-bathroom-v1";
+let state = load();
+
+let ui = { tab:"upstairs", view:"design", mode:"3d", sel:{ upstairs:"floor", master:"floor" } };
+
+function load() {
+  let s; try { s = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  s = s || {};
+  s.baths = s.baths || {};
+  for (const k in BATHS) {
+    const b = s.baths[k] = s.baths[k] || {};
+    b.custom = b.custom || {};
+    b.orders = b.orders || [];
+    b.calc = Object.assign({ off:{}, waste:10, sheetSqft:1, sheetPrice:0 }, b.calc || {});
+  }
+  s.seeded = s.seeded || [];
+  if (!s.seeded.includes("upstairs-match-master")) {
+    s.seeded.push("upstairs-match-master");
+    const c = s.baths.upstairs.custom;
+    for (const id of ["toilet", "vanity", "sink", "faucet", "showerhead", "drain"]) delete c[id];
+  }
+  if (!s.seeded.includes("walnut-fronts")) {
+    s.seeded.push("walnut-fronts");
+    const w = s.baths.master.custom && s.baths.master.custom.vanitywood;
+    if (w) { delete w.color; delete w.product; }
+  }
+  if (!s.seeded.includes("bn-migration")) {
+    s.seeded.push("bn-migration");
+    const m = s.baths.master;
+    m.orders = m.orders.filter(o => !(o.id || "").includes("kohler-purist-t14413-master"));
+    for (const id of ["faucet", "showerhead", "drain"]) if (m.custom && m.custom[id]) { delete m.custom[id].color; delete m.custom[id].product; }
+  }
+  if (!s.seeded.includes("prices-1")) {
+    s.seeded.push("prices-1");
+    const P = { "K-28161-0": 699.79, "K-T14413-3-BN": 736.35, "K-TS14422-4-BN": 818.10, "K-22178-BN": 596.62, "EB-EWA3621 / EB-TW3621MB": 615 };
+    for (const k of ["upstairs", "master"]) {
+      const b = s.baths[k];
+      for (const o of b.orders) {
+        if (+o.price) continue;
+        const m = o.model || (String(o.item).match(/\(([^()]*)\)\s*$/) || [])[1];
+        if (P[m] != null) o.price = P[m];
+        if (o.id === "seed-tile-" + k) o.price = 31.74;
+      }
+      b.calc.sheetSqft = 2; b.calc.sheetPrice = 31.74;
+    }
+  }
+  if (!s.seeded.includes("faucet-nickel-color")) {
+    s.seeded.push("faucet-nickel-color");
+    const c = s.baths.master.custom && s.baths.master.custom.faucet;
+    if (c) delete c.color;
+  }
+  for (const sd of SEED_ORDERS) {
+    if (s.seeded.includes(sd.key)) continue;
+    s.seeded.push(sd.key);
+    s.baths[sd.bath].orders.push(Object.assign({ id: "seed-" + sd.key + "-" + sd.bath, qty: 1, status: "Planned", ordered: "", eta: "", delivered: "", ref: "" }, sd.order));
+  }
+  if (!s.seeded.includes("elemento-towel-warmer-brushed-nickel")) {
+    s.seeded.push("elemento-towel-warmer-brushed-nickel");
+    for (const bath of ["upstairs", "master"]) {
+      const custom = s.baths[bath].custom.towelwarmer;
+      if (custom) Object.assign(custom, { color:"#b4b0a6", product:BATHS[bath].elements.find(e => e.id === "towelwarmer").product });
+      const order = s.baths[bath].orders.find(o => o.id === `seed-elemento-towel-warmer-${bath}-${bath}`);
+      if (order) Object.assign(order, {
+        item:"Elemento Bath wall-mounted vertical heated towel rack with digital display, Brushed Nickel (EB-TW3621BN)",
+        model:"EB-TW3621BN",
+        notes:"Brushed Nickel finish. SKU: EB-TW3621BN. Spec: 14 1/2 in wide x 35 3/8 in high x 3 1/4 in deep; two rods spaced 13 37/64 in center-to-center. Price per elementobath.com for a similar wall-mount model; confirm."
+      });
+    }
+    localStorage.setItem(KEY, JSON.stringify(s));
+  }
+  return s;
+}
+
+const save = () => localStorage.setItem(KEY, JSON.stringify(state));
+const el = (bath, id) => {
+  const base = BATHS[bath].elements.find(e => e.id === id);
+  return Object.assign({}, base, state.baths[bath].custom[id] || {});
+};
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+const money = n => n.toLocaleString("en-US", { style:"currency", currency:"USD" });
+const uid = () => Math.random().toString(36).slice(2, 9);
+
+/* ---------- Rendering ---------- */
+function renderNav() {
+  const tabs = Object.keys(BATHS).map(k => `<button data-tab="${k}" class="${ui.tab===k?"active":""}">${BATHS[k].name}</button>`);
+  tabs.push(`<button data-tab="summary" class="${ui.tab==="summary"?"active":""}">Summary</button>`);
+  $("#nav").innerHTML = tabs.join("");
+}
+
+function render() {
+  renderNav();
+  if (ui.tab === "summary") return renderSummary();
+  const b = BATHS[ui.tab];
+  $("#main").innerHTML = `
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+      <strong>${b.name}</strong><span style="color:var(--muted)">${b.desc}</span><span style="flex:1"></span>
+      <button class="btn ${ui.view==="design"?"dark":""}" data-view="design">Design</button>
+      <button class="btn ${ui.view==="orders"?"dark":""}" data-view="orders">Orders</button>
+    </div>
+    <div id="body"></div>`;
+  ui.view === "design" ? renderDesign() : renderOrders();
+}
+
+/* Design view */
+function tileDefs(bath) {
+  return BATHS[bath].elements.filter(e => e.tile).map(base => {
+    const e = el(bath, base.id), t = +e.tileSize || 2, g = Math.min(+e.grout_w || 0.25, t / 2);
+    const inner = e.image
+      ? `<image href="${e.image}" width="${t}" height="${t}" preserveAspectRatio="xMidYMid slice"/>
+         <rect width="${t}" height="${t}" fill="none" stroke="${e.grout}" stroke-width="${g}"/>`
+      : `<rect width="${t}" height="${t}" fill="${e.color}"/>
+         <rect width="${t}" height="${t}" fill="none" stroke="${e.grout}" stroke-width="${g}"/>`;
+    return `<pattern id="pat-${bath}-${e.id}" patternUnits="userSpaceOnUse" width="${t}" height="${t}">${inner}</pattern>`;
+  }).join("");
+}
+
+function shapeSvg(bath, base) {
+  const e = el(bath, base.id);
+  const fill = e.tile ? `url(#pat-${bath}-${e.id})` : e.color;
+  const cls = ui.sel[bath] === e.id ? "sel" : "";
+  const a = `data-el="${e.id}" class="${cls}" fill="${fill}" stroke="#0004" stroke-width=".3"`;
+  if (base.id === "towelwarmer" && e.mount?.controller) {
+    const t = e.mount, c = t.controller;
+    const cx = t.cx + t.ux * c.x - t.uz * c.z, cy = t.cy + t.uz * c.x + t.ux * c.z;
+    const body = e.shape === "rect"
+      ? `<rect ${a} x="${e.x}" y="${e.y}" width="${e.w}" height="${e.h}"/>`
+      : `<path ${a} d="${e.d}"/>`;
+    return `<g>${body}
+      <circle data-el="${e.id}" class="${cls}" cx="${cx}" cy="${cy}" r="1.4" fill="#171717" stroke="#777" stroke-width=".3"><title>Separate digital controller</title></circle>
+      <rect x="${cx - .35}" y="${cy - .75}" width=".7" height=".18" rx=".04" fill="#ddd" pointer-events="none"/>
+      <circle cx="${cx - .45}" cy="${cy + .25}" r=".12" fill="#bbb" pointer-events="none"/>
+      <circle cx="${cx}" cy="${cy + .25}" r=".12" fill="#bbb" pointer-events="none"/>
+      <circle cx="${cx + .45}" cy="${cy + .25}" r=".12" fill="#bbb" pointer-events="none"/>
+    </g>`;
+  }
+  if (e.shape === "rect") return `<rect ${a} x="${e.x}" y="${e.y}" width="${e.w}" height="${e.h}" rx="${e.rx||0}"/>`;
+  if (e.shape === "ellipse") return `<ellipse ${a} cx="${e.cx}" cy="${e.cy}" rx="${e.rx}" ry="${e.ry}"/>`;
+  return `<path ${a} d="${e.d}"/>`;
+}
+
+function dimSvg(d) {
+  const mx = (d.x1 + d.x2) / 2, my = (d.y1 + d.y2) / 2;
+  const txt = d.vertical
+    ? `<text transform="translate(${mx - 1.5} ${my}) rotate(-90)" text-anchor="middle" font-size="4" fill="#555">${d.text}</text>`
+    : `<text x="${mx}" y="${my - 1.5}" text-anchor="middle" font-size="4" fill="#555">${d.text}</text>`;
+  return `<line x1="${d.x1}" y1="${d.y1}" x2="${d.x2}" y2="${d.y2}" stroke="#888" stroke-width=".3"/>${txt}`;
+}
+
+function planSvg(bath) {
+  const b = BATHS[bath];
+  const rooms = b.elements.filter(e => e.shape !== "none").map(e => shapeSvg(bath, e)).join("");
+  // Floors are drawn first so the fixtures (listed later) sit on top; walls go above floors.
+  return `<svg id="plan" viewBox="${b.view.join(" ")}" xmlns="http://www.w3.org/2000/svg">
+    <defs>${tileDefs(bath)}</defs>
+    <path d="${b.outline}" fill="none" stroke="#3b3b3b" stroke-width="8" stroke-linejoin="miter"/>
+    ${rooms}
+    ${b.walls.map(w => `<rect x="${w.x}" y="${w.y}" width="${w.w}" height="${w.h}" fill="#3b3b3b"/>`).join("")}
+    ${b.openings.map(o => `<rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="${o.color}" stroke="#777" stroke-width=".3"><title>${o.label}</title></rect>`).join("")}
+    ${b.dims.map(dimSvg).join("")}
+  </svg>`;
+}
+
+function renderDesign() {
+  const bath = ui.tab, b = BATHS[bath], sel = el(bath, ui.sel[bath]);
+  const list = b.elements.map(e => {
+    const c = el(bath, e.id);
+    return `<button data-pick="${e.id}" class="${ui.sel[bath]===e.id?"active":""}"><span class="dot" style="background:${c.color}"></span>${c.name}</button>`;
+  }).join("");
+  $("#body").innerHTML = `<div class="layout">
+    <div>
+      <div class="toolbar">
+        <button class="btn small ${ui.mode==="3d"?"dark":""}" data-mode="3d">3D view</button>
+        <button class="btn small ${ui.mode==="2d"?"dark":""}" data-mode="2d">2D plan</button>
+        ${ui.mode === "3d" ? `<span class="sep"></span>
+        <button class="btn small" data-cam="corner">Corner</button>
+        <button class="btn small" data-cam="top">Top</button>
+        <button class="btn small" data-cam="door">From door</button>` : ""}
+      </div>
+      ${ui.mode === "3d" ? `<div id="v3d"></div>` : planSvg(bath)}
+      <div id="tilecalc">${calcHtml(bath)}</div>
+      <div class="hint">${ui.mode === "3d"
+        ? "Drag to rotate, scroll to zoom, right-drag to pan. Click any item to select it. Walls nearest the camera fade out."
+        : "Plan view, drawn to scale from your 2D plans."} Fixture positions and sizes are estimates – tell me if anything is off.</div>
+    </div>
+    <div class="panel">
+      <h3>Items</h3><div class="elist">${list}</div>
+      <h3>${esc(sel.name)}</h3>
+      <label>Color</label><input type="color" id="fColor" value="${sel.color}">
+      <label>Product / model</label><input type="text" id="fProduct" value="${esc(sel.product)}" placeholder="e.g. Kohler Memoirs toilet, white">
+      ${sel.tile ? `
+        <div class="row2">
+          <div><label>Tile size (in)</label><input type="number" id="fTile" min="0.5" step="0.25" value="${sel.tileSize}"></div>
+          <div><label>Grout width (in)</label><input type="number" id="fGW" min="0" step="0.0625" value="${sel.grout_w ?? 0.25}"></div>
+        </div>
+        <label>Grout color</label><input type="color" id="fGrout" value="${sel.grout}">
+        <label>Tile photo (optional)</label><input type="file" id="fImg" accept="image/*">
+        ${sel.image ? `<button class="btn small" id="fImgClear" style="margin-top:6px">Remove photo</button>` : ""}` : ""}
+      <div style="margin-top:12px"><button class="btn small" id="fReset">Reset this item</button></div>
+      <div class="hint">Click an item on the plan or in the list above to edit it.</div>
+    </div></div>`;
+  if (ui.mode === "3d") View3D.setOff(state.baths[bath].calc.off), View3D.mount($("#v3d"), bath, ui.sel[bath], id => { ui.sel[bath] = id; renderDesign(); });
+}
+
+/* Tile square footage calculator */
+function surfArea(sf) {
+  if (sf.poly) {
+    const p = sf.poly; let a = 0;
+    p.forEach((q, i) => { const n = p[(i + 1) % p.length]; a += q[0] * n[1] - n[0] * q[1]; });
+    return { gross: Math.abs(a) / 2 / 144, cut: 0 };
+  }
+  return { gross: sf.len * sf.h / 144, cut: (sf.cut || []).reduce((x, c) => x + c[1] * c[2], 0) / 144 };
+}
+function calcTotals(bath) {
+  const c = state.baths[bath].calc, g = {};
+  let net = 0;
+  BATHS[bath].surfaces.forEach(sf => {
+    if (c.off[sf.id]) return;
+    const a = surfArea(sf), n = a.gross - a.cut;
+    g[sf.group] = (g[sf.group] || 0) + n; net += n;
+  });
+  const need = net * (1 + (+c.waste || 0) / 100);
+  const sheets = Math.ceil(need / (+c.sheetSqft || 1) - 1e-9);
+  return { g, net, need, sheets, cost: sheets * (+c.sheetPrice || 0) };
+}
+const sq = n => n.toFixed(1);
+function calcHtml(bath) {
+  const c = state.baths[bath].calc, t = calcTotals(bath);
+  const rows = BATHS[bath].surfaces.map(sf => {
+    const a = surfArea(sf), off = !!c.off[sf.id];
+    const size = sf.poly ? "" : `${sf.len}" x ${sf.h}"` + (sf.cut ? sf.cut.map(x => ` &minus; ${x[0]} ${x[1]}x${x[2]}`).join("") : "");
+    return `<tr class="${off ? "lt" : ""}"><td style="width:30px"><input type="checkbox" data-calc-off="${sf.id}" ${off ? "" : "checked"}></td><td>${sf.label}</td><td style="color:var(--muted)">${size}</td><td style="text-align:right">${sq(a.gross - a.cut)}</td></tr>`;
+  }).join("");
+  const grp = Object.keys(t.g).map(k => `${k}: <b>${sq(t.g[k])}</b>`).join(" &nbsp;|&nbsp; ");
+  return `<div class="panel" style="margin-top:14px"><h3 style="margin-top:0">Tile square footage</h3>
+    <table style="min-width:0"><thead><tr><th style="width:30px"></th><th>Surface</th><th>Size</th><th style="text-align:right">Sq ft</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="hint">Untick a surface (exterior wall, pocket door wall, etc.) to remove it from the total. Wall height is 8'; openings are subtracted.</div>
+    <div class="totals" style="margin-top:10px">
+      <div class="total"><b>${sq(t.net)} sq ft</b><span>Net tile area</span></div>
+      <div class="total"><b>${sq(t.need)} sq ft</b><span>With ${+c.waste || 0}% waste</span></div>
+      <div class="total"><b>${t.sheets}</b><span>Sheets to buy</span></div>
+      <div class="total"><b>${money(t.cost)}</b><span>Estimated cost</span></div>
+    </div>
+    <div class="hint">${grp}</div>
+    <div class="row2" style="margin-top:8px">
+      <div><label>Waste %</label><input type="number" min="0" step="1" data-calc="waste" value="${c.waste}"></div>
+      <div><label>Sq ft per sheet</label><input type="number" min="0.1" step="0.01" data-calc="sheetSqft" value="${c.sheetSqft}"></div>
+    </div>
+    <div class="row2"><div><label>Price per sheet ($)</label><input type="number" min="0" step="0.01" data-calc="sheetPrice" value="${c.sheetPrice}"></div>
+      <div><label>&nbsp;</label><button class="btn small" id="calcToOrders">Add tile to Orders</button></div></div>
+  </div>`;
+}
+(function seedTiles() {
+  const tiles = { upstairs: ["Daltile Keystones Nautical Blue mosaic, matte, 1x1", "D621"], master: ["Daltile Keystones Brownberry mosaic, matte, 1x1", "D118STJ11MT"] };
+  let dirty = false;
+  for (const k in tiles) {
+    if (state.seeded.includes("tile-" + k)) continue;
+    state.seeded.push("tile-" + k); dirty = true;
+    const c = state.baths[k].calc; c.sheetSqft = 2; c.sheetPrice = 31.74;
+    const tt = calcTotals(k);
+    state.baths[k].orders.unshift({ id: "seed-tile-" + k, item: tiles[k][0] + " (" + tiles[k][1] + ")", vendor: "Daltile", model: tiles[k][1], qty: tt.sheets, price: 31.74, status: "Planned", ordered: "", eta: "", delivered: "", ref: "", notes: "Quantity from the tile calculator (sheets, " + c.waste + "% waste). Sheet = 12x24 in (2 sq ft). $31.74/sheet from ~$15.87/sq ft online; Brownberry price assumed same - confirm." });
+  }
+  if (!state.seeded.includes("tile-qty-1")) {
+    state.seeded.push("tile-qty-1"); dirty = true;
+    for (const k in tiles) {
+      const o = state.baths[k].orders.find(x => x.id === "seed-tile-" + k);
+      if (o) o.qty = calcTotals(k).sheets;
+    }
+  }
+  if (dirty) save();
+})();
+function refreshCalc() { const n = $("#tilecalc"); if (n) n.innerHTML = calcHtml(ui.tab); }
+
+function updateCustom(patch) {
+  const bath = ui.tab, id = ui.sel[bath], c = state.baths[bath].custom;
+  c[id] = Object.assign(c[id] || {}, patch);
+  save();
+}
+
+/* Orders view */
+const lineTotal = o => (+o.qty || 0) * (+o.price || 0);
+const counted = o => o.status !== "Cancelled" && o.status !== "Returned";
+
+function bathTotals(bath) {
+  const orders = state.baths[bath].orders.filter(counted);
+  const sum = f => orders.filter(f).reduce((a, o) => a + lineTotal(o), 0);
+  return {
+    total: sum(() => true),
+    committed: sum(o => o.status !== "Planned"),
+    delivered: sum(o => o.status === "Delivered" || o.status === "Installed"),
+    planned: sum(o => o.status === "Planned"),
+  };
+}
+
+function totalsHtml(bath) {
+  const t = bathTotals(bath);
+  return `<div class="totals">
+    <div class="total"><b>${money(t.total)}</b><span>Total (excl. construction)</span></div>
+    <div class="total"><b>${money(t.committed)}</b><span>Ordered or later</span></div>
+    <div class="total"><b>${money(t.delivered)}</b><span>Delivered / installed</span></div>
+    <div class="total"><b>${money(t.planned)}</b><span>Planned, not yet ordered</span></div>
+  </div>`;
+}
+
+function modelOf(o) {
+  if (o.model) return o.model;
+  const m = String(o.item || "").match(/\(([^()]*)\)\s*$/);
+  return m ? m[1] : "";
+}
+
+function orderRow(o) {
+  const f = (k, type = "text", extra = "") => `<input type="${type}" data-f="${k}" value="${esc(o[k])}" ${extra}>`;
+  return `<tr data-id="${o.id}" class="${counted(o) ? "" : "lt"}">
+    <td style="min-width:170px">${f("item")}</td>
+    <td style="min-width:110px">${f("vendor")}</td>
+    <td style="min-width:110px"><input type="text" data-f="model" value="${esc(modelOf(o))}"></td>
+    <td class="num" style="width:60px">${f("qty","number",'min="0" step="1"')}</td>
+    <td class="num" style="width:100px">${f("price","number",'min="0" step="0.01"')}</td>
+    <td class="num" data-line style="white-space:nowrap">${money(lineTotal(o))}</td>
+    <td><select data-f="status" class="st-${o.status}">${STATUSES.map(s => `<option ${s===o.status?"selected":""}>${s}</option>`).join("")}</select></td>
+    <td>${f("ordered","date")}</td>
+    <td>${f("eta","date")}</td>
+    <td>${f("delivered","date")}</td>
+    <td style="min-width:120px">${f("ref")}</td>
+    <td style="min-width:140px">${f("notes")}</td>
+    <td><button class="btn small" data-del="${o.id}" title="Delete">✕</button></td>
+  </tr>`;
+}
+
+function renderOrders() {
+  const bath = ui.tab, orders = state.baths[bath].orders;
+  $("#body").innerHTML = `
+    <div id="totals">${totalsHtml(bath)}</div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Item</th><th>Manufacturer</th><th>Model #</th><th>Qty</th><th>Unit price</th><th>Line total</th><th>Status</th>
+      <th>Ordered</th><th>Expected</th><th>Delivered</th><th>Order # / tracking</th><th>Notes</th><th></th></tr></thead>
+      <tbody>${orders.map(orderRow).join("") || `<tr><td colspan="13" style="color:var(--muted);padding:16px">No items yet. Add your first one below.</td></tr>`}</tbody>
+    </table></div>
+    <div style="margin-top:12px;display:flex;gap:8px">
+      <button class="btn dark" id="addOrder">+ Add item</button>
+      <button class="btn" id="csvBtn" style="border:1px solid var(--line)">Download CSV</button>
+    </div>`;
+}
+
+function renderSummary() {
+  const rows = Object.keys(BATHS).map(k => {
+    const t = bathTotals(k), n = state.baths[k].orders.length;
+    return `<tr><td>${BATHS[k].name}</td><td>${n}</td><td>${money(t.total)}</td><td>${money(t.committed)}</td><td>${money(t.delivered)}</td><td>${money(t.planned)}</td></tr>`;
+  });
+  const all = Object.keys(BATHS).map(bathTotals);
+  const s = k => money(all.reduce((a, t) => a + t[k], 0));
+  $("#main").innerHTML = `<h3 style="margin-top:0">Summary (excluding construction costs)</h3>
+    <div class="tablewrap"><table style="min-width:600px">
+      <thead><tr><th>Bathroom</th><th>Items</th><th>Total</th><th>Ordered or later</th><th>Delivered/installed</th><th>Planned</th></tr></thead>
+      <tbody>${rows.join("")}<tr style="font-weight:700"><td>Both bathrooms</td><td>${Object.keys(BATHS).reduce((a,k)=>a+state.baths[k].orders.length,0)}</td><td>${s("total")}</td><td>${s("committed")}</td><td>${s("delivered")}</td><td>${s("planned")}</td></tr></tbody>
+    </table></div>
+    <div class="hint">Cancelled and returned items are excluded from totals.</div>
+    ${Object.keys(BATHS).map(k => {
+      const os = state.baths[k].orders;
+      return `<h3>${BATHS[k].name} - all items</h3><div class="tablewrap"><table style="min-width:800px">
+        <thead><tr><th>#</th><th>Item</th><th>Manufacturer</th><th>Model # / name</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Line total</th><th>Status</th></tr></thead>
+        <tbody>${os.map((o, i) => `<tr class="${counted(o) ? "" : "lt"}"><td>${i + 1}</td><td>${esc(o.item)}</td><td>${esc(o.vendor)}</td><td>${esc(modelOf(o))}</td><td class="num">${esc(o.qty)}</td><td class="num">${money(+o.price || 0)}</td><td class="num">${money(lineTotal(o))}</td><td>${esc(o.status)}</td></tr>`).join("") || `<tr><td colspan="8" style="color:var(--muted)">No items yet.</td></tr>`}
+        <tr style="font-weight:700"><td></td><td colspan="5">Total (excl. construction)</td><td class="num">${money(bathTotals(k).total)}</td><td></td></tr></tbody>
+      </table></div>`;
+    }).join("")}`;
+}
+
+/* ---------- Events ---------- */
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-mode],[data-cam],[data-tab],[data-view],[data-pick],[data-el],[data-del],#addOrder,#calcToOrders,#csvBtn,#fReset,#fImgClear");
+  if (!t) return;
+  if (t.dataset.mode) { ui.mode = t.dataset.mode; return renderDesign(); }
+  if (t.dataset.cam) return View3D.preset(t.dataset.cam);
+  if (t.dataset.tab) { ui.tab = t.dataset.tab; return render(); }
+  if (t.dataset.view) { ui.view = t.dataset.view; return render(); }
+  if (t.dataset.pick || (t.dataset.el && t.closest("#plan"))) { ui.sel[ui.tab] = t.dataset.pick || t.dataset.el; return renderDesign(); }
+  if (t.dataset.del) {
+    const arr = state.baths[ui.tab].orders;
+    arr.splice(arr.findIndex(o => o.id === t.dataset.del), 1);
+    save(); return renderOrders();
+  }
+  if (t.id === "addOrder") {
+    state.baths[ui.tab].orders.push({ id:uid(), item:"", vendor:"", qty:1, price:0, status:"Planned", ordered:"", eta:"", delivered:"", ref:"", notes:"" });
+    save(); return renderOrders();
+  }
+  if (t.id === "calcToOrders") {
+    const c = state.baths[ui.tab].calc, tt = calcTotals(ui.tab);
+    const tile = el(ui.tab, "floor").product || "Tile";
+    state.baths[ui.tab].orders.push({ id:uid(), item:`${tile} (${sq(tt.need)} sq ft incl. ${c.waste}% waste)`, vendor:"Daltile", qty:tt.sheets, price:+c.sheetPrice || 0, status:"Planned", ordered:"", eta:"", delivered:"", ref:"", notes:"Quantity from the tile calculator." });
+    save(); ui.view = "orders"; return render();
+  }
+  if (t.id === "csvBtn") return downloadCsv();
+  if (t.id === "fReset") { delete state.baths[ui.tab].custom[ui.sel[ui.tab]]; save(); return renderDesign(); }
+  if (t.id === "fImgClear") { updateCustom({ image:"" }); return renderDesign(); }
+});
+
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.calc) {
+    state.baths[ui.tab].calc[t.dataset.calc] = t.value === "" ? 0 : +t.value;
+    save();
+    const t2 = calcTotals(ui.tab), n = $("#tilecalc");
+    const bs = n.querySelectorAll(".totals .total b");
+    [sq(t2.net) + " sq ft", sq(t2.need) + " sq ft", t2.sheets, money(t2.cost)].forEach((v, i) => bs[i].textContent = v);
+    n.querySelectorAll(".totals .total span")[1].textContent = `With ${+state.baths[ui.tab].calc.waste || 0}% waste`;
+    return;
+  }
+  if (ui.view === "design" && ui.tab !== "summary") {
+    const map = { fColor:["color"], fProduct:["product"], fGrout:["grout"], fTile:["tileSize", Number], fGW:["grout_w", Number] };
+    if (map[t.id]) {
+      updateCustom({ [map[t.id][0]]: map[t.id][1] ? map[t.id][1](t.value) : t.value });
+      const focusId = t.id, pos = t.selectionStart;
+      renderDesign();
+      const n = document.getElementById(focusId);
+      if (n && n.type !== "color") { n.focus(); try { n.setSelectionRange(pos, pos); } catch (_) {} }
+      return;
+    }
+  }
+  const tr = t.closest("tr[data-id]");
+  if (tr && t.dataset.f) {
+    const o = state.baths[ui.tab].orders.find(o => o.id === tr.dataset.id);
+    o[t.dataset.f] = t.value;
+    if (t.dataset.f === "status") {
+      const today = new Date().toISOString().slice(0, 10);
+      if (t.value === "Ordered" && !o.ordered) o.ordered = today;
+      if ((t.value === "Delivered" || t.value === "Installed") && !o.delivered) o.delivered = today;
+      save();
+      return renderOrders();
+    }
+    save();
+    tr.querySelector("[data-line]").textContent = money(lineTotal(o));
+    $("#totals").innerHTML = totalsHtml(ui.tab);
+  }
+});
+
+document.addEventListener("change", e => {
+  if (e.target.dataset.calcOff) {
+    const off = state.baths[ui.tab].calc.off, id = e.target.dataset.calcOff;
+    if (e.target.checked) delete off[id]; else off[id] = true;
+    save(); View3D.setOff(off); return refreshCalc();
+  }
+  if (e.target.id === "fImg" && e.target.files[0]) {
+    const img = new Image(), url = URL.createObjectURL(e.target.files[0]);
+    img.onload = () => {
+      // Downscale so localStorage stays small.
+      const c = document.createElement("canvas"), s = Math.min(1, 256 / Math.max(img.width, img.height));
+      c.width = img.width * s; c.height = img.height * s;
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      updateCustom({ image:c.toDataURL("image/jpeg", .85) });
+      URL.revokeObjectURL(url); renderDesign();
+    };
+    img.src = url;
+  }
+});
+
+function download(name, text, type) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type }));
+  a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function downloadCsv() {
+  const cols = ["item","vendor","model","qty","price","status","ordered","eta","delivered","ref","notes"];
+  const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = [[...cols, "line_total"].join(",")].concat(state.baths[ui.tab].orders.map(o => [...cols.map(c => q(c === "model" ? modelOf(o) : o[c])), lineTotal(o)].join(",")));
+  download(`${ui.tab}-orders.csv`, lines.join("\n"), "text/csv");
+}
+$("#exportBtn").onclick = () => download("shadows-bathroom-backup.json", JSON.stringify(state, null, 2), "application/json");
+$("#importBtn").onclick = () => $("#importFile").click();
+$("#importFile").onchange = async e => {
+  try { state = Object.assign(load(), JSON.parse(await e.target.files[0].text())); save(); render(); }
+  catch (err) { alert("Could not read that file."); }
+};
+
+render();
+</script>
+</body>
+</html>
