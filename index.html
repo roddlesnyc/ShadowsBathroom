@@ -454,6 +454,7 @@ function renderDesign() {
         <button class="btn small" data-cam="door">From door</button>` : ""}
       </div>
       ${ui.mode === "3d" ? `<div id="v3d"></div>` : planSvg(bath)}
+      <div id="wallstyle">${wallStyleHtml(bath)}</div>
       <div id="tilecalc">${calcHtml(bath)}</div>
       <div class="hint">${ui.mode === "3d"
         ? "Drag to rotate, scroll to zoom, right-drag to pan. Click any item to select it. Walls nearest the camera fade out."
@@ -475,7 +476,32 @@ function renderDesign() {
       <div style="margin-top:12px"><button class="btn small" id="fReset">Reset this item</button></div>
       <div class="hint">Click an item on the plan or in the list above to edit it.</div>
     </div></div>`;
-  if (ui.mode === "3d") View3D.setOff(state.baths[bath].calc.off), View3D.mount($("#v3d"), bath, ui.sel[bath], id => { ui.sel[bath] = id; renderDesign(); });
+  if (ui.mode === "3d") View3D.setOff(state.baths[bath].calc.off), View3D.setWallOv(state.baths[bath].wallOv), View3D.mount($("#v3d"), bath, ui.sel[bath], id => { ui.sel[bath] = id; renderDesign(); });
+}
+
+/* Wall tile size and grout: all walls at once, or wall by wall */
+function wallStyleHtml(bath) {
+  const w = el(bath, "walls"), ov = state.baths[bath].wallOv || {};
+  const rows = BATHS[bath].surfaces.filter(sf => sf.group === "Walls" && !sf.hidden).map(sf => {
+    const o = ov[sf.id] || {}, size = o.tileSize ?? w.tileSize, gw = o.grout_w ?? w.grout_w ?? 0.25, gc = o.grout ?? w.grout;
+    return `<tr class="${ov[sf.id] ? "" : "lt"}" data-wall="${sf.id}"><td>${sf.label}</td>
+      <td><input type="number" min="0.5" step="0.25" data-wf="tileSize" value="${size}" style="width:70px"></td>
+      <td><input type="number" min="0" step="0.0625" data-wf="grout_w" value="${gw}" style="width:70px"></td>
+      <td><input type="color" data-wf="grout" value="${gc}"></td>
+      <td>${ov[sf.id] ? `<button class="btn small" data-wall-reset="${sf.id}">Reset</button>` : `<span style="color:var(--muted)">default</span>`}</td></tr>`;
+  }).join("");
+  return `<div class="panel" style="margin-top:14px"><h3 style="margin-top:0">Wall tile size &amp; grout</h3>
+    <div class="row2">
+      <div><label>All tiled areas: tile size (in)</label><input type="number" min="0.5" step="0.25" id="awSize" value="${w.tileSize}"></div>
+      <div><label>Grout width (in)</label><input type="number" min="0" step="0.0625" id="awGW" value="${w.grout_w ?? 0.25}"></div>
+    </div>
+    <div class="row2">
+      <div><label>Grout color</label><input type="color" id="awGrout" value="${w.grout}"></div>
+      <div><label>&nbsp;</label><button class="btn small dark" id="awApply">Apply to all tiled areas</button></div>
+    </div>
+    <table style="min-width:0;margin-top:10px"><thead><tr><th>Wall</th><th>Tile (in)</th><th>Grout (in)</th><th>Grout color</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="hint">Change a value on a wall to style just that wall. Grayed rows follow the wall tile setting. "Apply to all tiled areas" sets walls, floor, ceiling, shower, vanity and shelf, and clears the per-wall changes.</div>
+  </div>`;
 }
 
 /* Tile square footage calculator */
@@ -709,7 +735,26 @@ document.addEventListener("input", e => {
   }
 });
 
+document.addEventListener("click", e => {
+  const bath = ui.tab, b = state.baths[bath];
+  if (e.target.id === "awApply") {
+    const g = id => document.getElementById(id);
+    const st = { tileSize: +g("awSize").value || 1, grout_w: +g("awGW").value, grout: g("awGrout").value };
+    BATHS[bath].elements.filter(x => x.tile).forEach(x => { b.custom[x.id] = Object.assign(b.custom[x.id] || {}, st); });
+    b.wallOv = {}; save(); renderDesign();
+  } else if (e.target.dataset.wallReset) {
+    delete (b.wallOv || {})[e.target.dataset.wallReset]; save(); renderDesign();
+  }
+});
+
 document.addEventListener("change", e => {
+  const wf = e.target.dataset.wf, tr = e.target.closest("tr[data-wall]");
+  if (wf && tr) {
+    const b = state.baths[ui.tab]; b.wallOv = b.wallOv || {};
+    const o = b.wallOv[tr.dataset.wall] = b.wallOv[tr.dataset.wall] || {};
+    o[wf] = wf === "grout" ? e.target.value : +e.target.value;
+    save(); return renderDesign();
+  }
   if (e.target.dataset.calcOff) {
     const off = state.baths[ui.tab].calc.off, id = e.target.dataset.calcOff;
     if (e.target.checked) delete off[id]; else off[id] = true;
