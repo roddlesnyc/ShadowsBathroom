@@ -101,7 +101,7 @@ const BATHS = {
       { id:"w-back", label:"Back wall (window)", group:"Walls", len:90, h:96, cut:[["Window",39,36]] },
       { id:"w-right", label:"Right wall (vanity side)", group:"Walls", len:49, h:96 },
       { id:"w-angle", label:"Angled wall", group:"Walls", len:24, h:96 },
-      { id:"w-door", label:"Door wall (door opening)", group:"Walls", len:70.5, h:96, cut:[["Door",46,80]] },
+      { id:"w-door", hidden:true, label:"Door wall (door opening)", group:"Walls", len:70.5, h:96, cut:[["Door",46,80]] },
       { id:"w-left", label:"Left wall (shower side)", group:"Walls", len:63, h:96 },
       { id:"w-part-s", label:"Shower partition, shower side", group:"Walls", len:36, h:96 },
       { id:"w-part-n", label:"Shower partition, nook side", group:"Walls", len:36, h:96 },
@@ -161,7 +161,7 @@ const BATHS = {
       { id:"w-right", label:"Right wall (toilet side)", group:"Walls", len:50, h:96 },
       { id:"w-door-s", label:"Door wall, shower end", group:"Walls", len:36, h:96 },
       { id:"w-door-t", label:"Door wall, toilet end", group:"Walls", len:21, h:96 },
-      { id:"w-header", label:"Door header (above door)", group:"Walls", len:37, h:16 },
+      { id:"w-header", hidden:true, label:"Door header (above door)", group:"Walls", len:37, h:16 },
     ],
     showerWalls: ["top", "left", "bottom"],
     doorFloor: "floor",
@@ -491,7 +491,7 @@ function calcTotals(bath) {
   const c = state.baths[bath].calc, g = {};
   let net = 0;
   BATHS[bath].surfaces.forEach(sf => {
-    if (c.off[sf.id]) return;
+    if (sf.hidden || c.off[sf.id]) return;
     const a = surfArea(sf), n = a.gross - a.cut;
     g[sf.group] = (g[sf.group] || 0) + n; net += n;
   });
@@ -502,7 +502,7 @@ function calcTotals(bath) {
 const sq = n => n.toFixed(1);
 function calcHtml(bath) {
   const c = state.baths[bath].calc, t = calcTotals(bath);
-  const rows = BATHS[bath].surfaces.map(sf => {
+  const rows = BATHS[bath].surfaces.filter(sf => !sf.hidden).map(sf => {
     const a = surfArea(sf), off = !!c.off[sf.id];
     const size = sf.poly ? "" : `${sf.len}" x ${sf.h}"` + (sf.cut ? sf.cut.map(x => ` &minus; ${x[0]} ${x[1]}x${x[2]}`).join("") : "");
     return `<tr class="${off ? "lt" : ""}"><td style="width:30px"><input type="checkbox" data-calc-off="${sf.id}" ${off ? "" : "checked"}></td><td>${sf.label}</td><td style="color:var(--muted)">${size}</td><td style="text-align:right">${sq(a.gross - a.cut)}</td></tr>`;

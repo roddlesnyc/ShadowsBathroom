@@ -137,7 +137,8 @@ const View3D = (() => {
     bounds = { x0, z0, x1, z1, cx: (x0 + x1) / 2, cz: (z0 + z1) / 2, r: Math.max(x1 - x0, z1 - z0) };
 
     // walls
-    b.walls3d.forEach(w => wall(w.x, w.y, w.w, w.h, 0, WALL_H, w.paint, w.s));
+    const hid = id => b.surfaces.some(q => q.id === id && q.hidden);
+    b.walls3d.forEach(w => { if (!hid(w.s)) wall(w.x, w.y, w.w, w.h, 0, WALL_H, w.paint, w.s); });
     b.diagWalls.forEach(d => {
       const dx = d.x2 - d.x1, dz = d.y2 - d.y1, L = Math.hypot(dx, dz), nx = dz / L, nz = -dx / L;
       const sgn = (nx * (bounds.cx - (d.x1 + d.x2) / 2) + nz * (bounds.cz - (d.y1 + d.y2) / 2)) > 0 ? -1 : 1;
@@ -158,7 +159,8 @@ const View3D = (() => {
         box(o.x, o.y + o.h / 2 - .8, o.w, 1.6, 35, 1.5, fr); box(o.x, o.y + o.h / 2 - .8, o.w, 1.6, 71, 1.5, fr);
         box(o.x, o.y + o.h / 2 - .8, 1.5, 1.6, 36, 36, fr); box(o.x + o.w - 1.5, o.y + o.h / 2 - .8, 1.5, 1.6, 36, 36, fr);
       } else {
-        wall(o.x, o.y, o.w, o.h, 80, WALL_H - 80, false, b.surfaces.some(q => q.id === "w-header") ? "w-header" : "w-door");
+        const hs = b.surfaces.some(q => q.id === "w-header") ? "w-header" : "w-door";
+        if (!hid(hs)) wall(o.x, o.y, o.w, o.h, 80, WALL_H - 80, false, hs);
         const f = has(b.doorFloor) ? E(b.doorFloor) : E("floor");
         flatRect(o.x, o.y, o.w, o.h, .05, f, null);
       }
