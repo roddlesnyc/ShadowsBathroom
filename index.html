@@ -113,6 +113,7 @@ const BATHS = {
       { id:"walls", name:"Wall tile", shape:"none", tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
       { id:"ceiling", name:"Ceiling tile", shape:"none", tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
       { id:"nook", name:"Nook floor", shape:"rect", x:0, y:0, w:25, h:15.5, color:"#c4a574" },
+      { id:"heatmat1", name:"Heated floor mat (custom L, ~11 sq ft)", shape:"path", d:"M38 2 H59 V19 H68 V61 H38 Z", lbl:{x:53,y:40,t:"~11 sq ft"}, heat:true, color:"#f59e0b", product:"Nuheat Custom Mat, L-shaped, 120 V, 12 W/sq ft" },
       { id:"nookshelves", name:"Nook shelves (walnut, 5)", shape:"none", color:"#5c4033", product:"Walnut shelves (5), about 24 W x 15.5 D x 1.25 thick, in the nook behind the shower" },
       { id:"showerdoor", name:"Shower glass (fluted, fixed panel)", shape:"none", color:"#e6efe9", product:"Fluted (reeded) frameless fixed glass panel, 3/8 in tempered, brushed nickel floor channel, beside a tiled pillar" },
       { id:"shower", name:"Shower (36x45)", shape:"rect", x:0, y:18, w:36, h:45, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
@@ -165,6 +166,7 @@ const BATHS = {
     doorFloor: "floor",
     elements: [
       { id:"floor", name:"Bathroom floor tile", shape:"rect", x:0, y:0, w:94, h:50, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"heatmat1", name:"Heated floor mat (custom L, ~9 sq ft)", shape:"path", d:"M38 2 H62 V21 H72 V47 H38 Z", lbl:{x:55,y:36,t:"~9 sq ft"}, heat:true, color:"#f59e0b", product:"Nuheat Custom Mat, L-shaped, 120 V, 12 W/sq ft" },
       { id:"walls", name:"Wall tile", shape:"none", tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"ceiling", name:"Ceiling tile", shape:"none", tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"showerdoor", name:"Shower glass (fluted, fixed panel)", shape:"none", color:"#e6efe9", product:"Fluted (reeded) frameless fixed glass panel, 3/8 in tempered, brushed nickel floor channel, beside a tiled pillar" },
@@ -225,6 +227,18 @@ const SEED_ORDERS = ["upstairs", "master"].map(bath => ({
   key: "elemento-towel-warmer-master", bath: "master",
   order: { item: "Elemento Bath wall-mounted vertical heated towel rack with digital display, Brushed Nickel (EB-TW3621BN)", vendor: "Elemento Bath", model: "EB-TW3621BN", price: 615, notes: "Brushed Nickel finish. SKU: EB-TW3621BN. Spec: 14 1/2 in wide x 35 3/8 in high x 3 1/4 in deep; two rods spaced 13 37/64 in center-to-center. Price per elementobath.com for a similar wall-mount model; confirm." },
 }, {
+  key: "nuheat-mat-upstairs", bath: "upstairs",
+  order: { item: "Nuheat Custom Mat, L-shaped (about 11 sq ft), 120 V, 12 W/sq ft", vendor: "Nuheat", model: "Custom Mat (quote)", price: 500, notes: "ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Leg sizes: top 21 x 17 in, bottom 30 x 42 in. Confirm clearances at the toilet and vanity." },
+}, {
+  key: "nuheat-signature-thermostat-upstairs", bath: "upstairs",
+  order: { item: "Nuheat Signature WiFi floor heating thermostat (built-in GFCI, floor sensor)", vendor: "Nuheat", model: "Signature Thermostat", price: 360.49, notes: "List price USA per nuheat.com. 15 A max load, 120/240 V. Confirm exact part number with Nuheat or dealer." },
+}, {
+  key: "nuheat-mat-master", bath: "master",
+  order: { item: "Nuheat Custom Mat, L-shaped (about 9 sq ft), 120 V, 12 W/sq ft", vendor: "Nuheat", model: "Custom Mat (quote)", price: 450, notes: "ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Top leg 24 x 19 in, bottom 34 x 26 in. Confirm clearances at the toilet and vanity." },
+}, {
+  key: "nuheat-signature-thermostat-master", bath: "master",
+  order: { item: "Nuheat Signature WiFi floor heating thermostat (built-in GFCI, floor sensor)", vendor: "Nuheat", model: "Signature Thermostat", price: 360.49, notes: "List price USA per nuheat.com. 15 A max load, 120/240 V. Confirm exact part number with Nuheat or dealer." },
+}, {
   key: "fluted-shower-glass-upstairs", bath: "upstairs",
   order: { item: "Fluted (reeded) frameless fixed shower glass panel, 3/8 in tempered, with brushed nickel channel", vendor: "Custom glass fabricator", model: "Fluted fixed panel (custom)", price: 700, notes: "ESTIMATE - get a local glass quote. Roughly 18 in wide x 90 in tall, sized after tile is set." },
 }, {
@@ -281,6 +295,17 @@ function load() {
     s.seeded.push("faucet-nickel-color");
     const c = s.baths.master.custom && s.baths.master.custom.faucet;
     if (c) delete c.color;
+  }
+  if (!s.seeded.includes("nuheat-mats-v5")) {
+    s.seeded.push("nuheat-mats-v5");
+    for (const bath of ["upstairs", "master"]) {
+      delete s.baths[bath].custom.heatmat1;
+      delete s.baths[bath].custom.heatmat2;
+    }
+    const mo = s.baths.master.orders.find(o => o.id === "seed-nuheat-mat-master-master");
+    if (mo) Object.assign(mo, { item:"Nuheat Custom Mat, L-shaped (about 9 sq ft), 120 V, 12 W/sq ft", model:"Custom Mat (quote)", price:450, notes:"ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Top leg 24 x 19 in, bottom 34 x 26 in. Confirm clearances at the toilet and vanity." });
+    const uo = s.baths.upstairs.orders.find(o => o.id === "seed-nuheat-mat-upstairs-upstairs");
+    if (uo) Object.assign(uo, { item:"Nuheat Custom Mat, L-shaped (about 11 sq ft), 120 V, 12 W/sq ft", model:"Custom Mat (quote)", price:500, notes:"ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Leg sizes: top 21 x 17 in, bottom 30 x 42 in. Confirm clearances at the toilet and vanity." });
   }
   for (const sd of SEED_ORDERS) {
     if (s.seeded.includes(sd.key)) continue;
@@ -369,6 +394,10 @@ function shapeSvg(bath, base) {
       <circle cx="${cx + .45}" cy="${cy + .25}" r=".12" fill="#bbb" pointer-events="none"/>
     </g>`;
   }
+  if (e.heat && e.d) return `<path ${a} d="${e.d}" fill-opacity=".55" stroke="#b45309" stroke-dasharray="1.5 1"/>
+    <text x="${e.lbl.x}" y="${e.lbl.y - 2}" text-anchor="middle" font-size="3.2" fill="#78350f" pointer-events="none">Heated mat<tspan x="${e.lbl.x}" dy="4">${e.lbl.t}</tspan></text>`;
+  if (e.heat) return `<rect ${a} x="${e.x}" y="${e.y}" width="${e.w}" height="${e.h}" fill-opacity=".55" stroke="#b45309" stroke-dasharray="1.5 1"/>
+    <text x="${e.x + e.w / 2}" y="${e.y + e.h / 2 - 2}" text-anchor="middle" font-size="3.2" fill="#78350f" pointer-events="none">Heated mat<tspan x="${e.x + e.w / 2}" dy="4">${e.w}"×${e.h}"</tspan></text>`;
   if (e.shape === "rect") return `<rect ${a} x="${e.x}" y="${e.y}" width="${e.w}" height="${e.h}" rx="${e.rx||0}"/>`;
   if (e.shape === "ellipse") return `<ellipse ${a} cx="${e.cx}" cy="${e.cy}" rx="${e.rx}" ry="${e.ry}"/>`;
   return `<path ${a} d="${e.d}"/>`;
