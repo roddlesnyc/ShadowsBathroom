@@ -216,10 +216,10 @@ const View3D = (() => {
       const head = cyl(4.5, 4.5, .8, cx, 0, wz, m, "showerhead", 32); head.position.set(cx, 79, wz + 9); head.rotation.x = .35;
     }
     if (has("towelwarmer") && E("towelwarmer").mount) {
-      const e = E("towelwarmer"), t = e.mount, m = std(e.color, { metalness: .6, roughness: .35 });
+      const e = E("towelwarmer"), t = e.mount, m = std(e.color, { metalness: .15, roughness: .45 });
       const g = new THREE.Group();
       const part = (geo, x, y, z, material = m) => { const p = new THREE.Mesh(geo, material); p.position.set(x, y, z); p.castShadow = true; p.userData.id = "towelwarmer"; g.add(p); picks.push(p); };
-      const sp = 13 + 37 / 64, rz = t.d - .4, mountY = t.h / 2 - 3;
+      const sp = t.w - .92, rz = t.d - .4, mountY = t.h / 2 - 3;
       const support = std(shade(e.color, .82), { metalness: .65, roughness: .35 });
       [-sp / 2, sp / 2].forEach(x => {
         part(new THREE.CylinderGeometry(.375, .375, t.h, 16), x, 0, rz);
