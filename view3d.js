@@ -3,7 +3,7 @@
 const View3D = (() => {
   const WALL_H = 96;
   let renderer, scene, camera, controls, host, bathKey, raf = 0, onPick, selId;
-  let offSet = {}, ceiling = null, picks = [], wallMeshes = [], samples = [], bounds = null, size = [0, 0];
+  let wallOv = {}, offSet = {}, ceiling = null, picks = [], wallMeshes = [], samples = [], bounds = null, size = [0, 0];
   const raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
 
   const shade = (hex, f) => {
@@ -112,11 +112,19 @@ const View3D = (() => {
     Object.assign(sun.shadow.camera, { left: -150, right: 150, top: 150, bottom: -150, near: 10, far: 500 });
     scene.add(sun);
 
-    const wE = E("walls"), wTex = wE.tile ? tileTexture(wE) : null, wSpan = wTex ? wTex.userData.span : 1;
-    const wallMat = () => wTex ? std(0xffffff, { map: wTex, roughness: .35, transparent: true }) : std(wE.color, { roughness: .9, transparent: true });
+    const wE = E("walls"), texCache = {};
+    // per-wall tile size / grout overrides fall back to the "all walls" settings
+    const wallTex = surf => {
+      if (!wE.tile) return null;
+      const ov = [].concat(surf || []).map(i => wallOv[i]).find(Boolean) || {};
+      const e = Object.assign({}, wE, ov), k = [e.tileSize, e.grout_w, e.grout].join("|");
+      return texCache[k] || (texCache[k] = tileTexture(e));
+    };
+    const wallMat = tex => tex ? std(0xffffff, { map: tex, roughness: .35, transparent: true }) : std(wE.color, { roughness: .9, transparent: true });
     // BoxGeometry faces: +x, -x, +y, -y, +z, -z (4 vertices each)
-    const tileBoxUV = (geo, w, h, d) => {
-      if (!wTex) return;
+    const tileBoxUV = (geo, w, h, d, tex) => {
+      if (!tex) return;
+      const wSpan = tex.userData.span;
       const dims = [[d, h], [d, h], [w, d], [w, d], [w, h], [w, h]], uv = geo.attributes.uv;
       for (let f = 0; f < 6; f++) for (let i = 0; i < 4; i++) {
         const k = f * 4 + i; uv.setXY(k, uv.getX(k) * dims[f][0] / wSpan, uv.getY(k) * dims[f][1] / wSpan);
@@ -124,8 +132,9 @@ const View3D = (() => {
     };
     const bedC = has("bedwalls") ? E("bedwalls").color : "#e9e4da";
     const wall = (x, z, w, d, y0, h, paintOnly, surf) => {
-      const m = box(x, z, w, d, y0, h, paintOnly ? std(bedC, { roughness: .9, transparent: true }) : wallMat());
-      if (!paintOnly) tileBoxUV(m.geometry, w, h, d);
+      const tex = paintOnly ? null : wallTex(surf);
+      const m = box(x, z, w, d, y0, h, paintOnly ? std(bedC, { roughness: .9, transparent: true }) : wallMat(tex));
+      if (!paintOnly) tileBoxUV(m.geometry, w, h, d, tex);
       m.userData.c = new THREE.Vector3(x + w / 2, 0, z + d / 2); m.userData.surf = surf; wallMeshes.push(m); return m;
     };
 
@@ -142,8 +151,8 @@ const View3D = (() => {
     b.diagWalls.forEach(d => {
       const dx = d.x2 - d.x1, dz = d.y2 - d.y1, L = Math.hypot(dx, dz), nx = dz / L, nz = -dx / L;
       const sgn = (nx * (bounds.cx - (d.x1 + d.x2) / 2) + nz * (bounds.cz - (d.y1 + d.y2) / 2)) > 0 ? -1 : 1;
-      const geo = new THREE.BoxGeometry(L, WALL_H, 4); tileBoxUV(geo, L, WALL_H, 4);
-      const m = new THREE.Mesh(geo, wallMat());
+      const geo = new THREE.BoxGeometry(L, WALL_H, 4), tex = wallTex(d.s); tileBoxUV(geo, L, WALL_H, 4, tex);
+      const m = new THREE.Mesh(geo, wallMat(tex));
       m.position.set((d.x1 + d.x2) / 2 + sgn * nx * 2, WALL_H / 2, (d.y1 + d.y2) / 2 + sgn * nz * 2);
       m.rotation.y = -Math.atan2(dz, dx);
       add(m); m.userData.c = m.position.clone(); m.userData.surf = d.s; wallMeshes.push(m);
@@ -429,5 +438,6 @@ const View3D = (() => {
   }
 
   function setOff(o) { offSet = o || {}; }
-  return { mount, preset, setOff };
+  function setWallOv(o) { wallOv = o || {}; }
+  return { mount, preset, setOff, setWallOv };
 })();

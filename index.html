@@ -476,7 +476,7 @@ function renderDesign() {
       <div style="margin-top:12px"><button class="btn small" id="fReset">Reset this item</button></div>
       <div class="hint">Click an item on the plan or in the list above to edit it.</div>
     </div></div>`;
-  if (ui.mode === "3d") View3D.setOff(state.baths[bath].calc.off), View3D.setWallOv(state.baths[bath].wallOv), View3D.mount($("#v3d"), bath, ui.sel[bath], id => { ui.sel[bath] = id; renderDesign(); });
+  if (ui.mode === "3d") View3D.setOff(state.baths[bath].calc.off), View3D.setWallOv && View3D.setWallOv(state.baths[bath].wallOv), View3D.mount($("#v3d"), bath, ui.sel[bath], id => { ui.sel[bath] = id; renderDesign(); });
 }
 
 /* Wall tile size and grout: all walls at once, or wall by wall */
