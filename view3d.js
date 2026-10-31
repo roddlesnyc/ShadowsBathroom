@@ -270,7 +270,9 @@ const View3D = (() => {
       topY = 34;
       tbox(v, v.x, v.y, v.w, v.h, 20, 14, "vanity");
       const sh = E("vanityshelf");
-      tbox(sh, sh.x, sh.y, sh.w, sh.h, 32, 2, "vanityshelf");
+      // up-and-over: a 2" tiled upright rises from the vanity top at its toilet-side edge, then the 2" shelf runs over the toilet to the back wall (underside 40", top 42")
+      tbox(sh, sh.x, v.y, sh.w, 2, 34, 8, "vanityshelf");
+      tbox(sh, sh.x, sh.y, sh.w, v.y + 2 - sh.y, 40, 2, "vanityshelf");
       const wood = std(E("vanitywood").color, { roughness: .6 });
       box(v.x - .5, v.y + 1.5, .5, v.h - 3, 20.75, 5.1, wood, "vanitywood");
       box(v.x - .5, v.y + 1.5, .5, v.h - 3, 26.15, 5.1, wood, "vanitywood");
