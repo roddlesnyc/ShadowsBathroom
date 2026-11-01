@@ -115,11 +115,12 @@ const BATHS = {
       { id:"nook", name:"Nook floor", shape:"rect", x:0, y:0, w:25, h:15.5, color:"#c4a574" },
       { id:"heatmat1", name:"Heated floor mat (custom L, ~11 sq ft)", shape:"path", d:"M38 2 H59 V19 H68 V61 H38 Z", lbl:{x:53,y:40,t:"~11 sq ft"}, heat:true, color:"#f59e0b", product:"Nuheat Custom Mat, L-shaped, 120 V, 12 W/sq ft" },
       { id:"nookshelves", name:"Nook shelves (walnut, 5)", shape:"none", color:"#5c4033", product:"Walnut shelves (5), about 24 W x 15.5 D x 1.25 thick, in the nook behind the shower" },
-      { id:"showerdoor", name:"Shower glass (fluted, fixed panel)", shape:"none", color:"#e6efe9", product:"Fluted (reeded) frameless fixed glass panel, 3/8 in tempered, brushed nickel floor channel, beside a tiled pillar" },
       { id:"shower", name:"Shower (36x45)", shape:"rect", x:0, y:18, w:36, h:45, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
+      { id:"showerdoor", name:"Sliding shower door (custom bypass)", shape:"rect", x:35.5, y:18, w:0.5, h:45, color:"#cfe3e9", product:"Custom sliding glass shower door, full-height bypass panels across shower opening" },
+      { id:"showerlight", name:"Shower high-hat light (centered)", shape:"ellipse", cx:18, cy:40.5, rx:3, ry:3, color:"#fde68a", product:"Recessed high-hat (can) light, 6 in LED, wet-location / shower rated, centered in shower ceiling" },
       { id:"showerhead", name:"Shower trim, head & lever - Kohler Purist K-TS14422-4-BN", shape:"rect", x:15, y:18.5, w:6, h:3, color:"#b4b0a6", product:"Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)" },
       { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:55, rx:1.6, ry:2.2, color:"#b4b0a6" },
-      { id:"toilet", name:"Toilet", shape:"path", box:[61.75, 2.75, 28.25, 15], d:"M90 2.75 H76 A14.25 7.5 0 0 0 76 17.75 H90 Z", color:"#f3f4f6", product:"Kohler Veil two-piece elongated toilet, skirted trapway, 1.28 gpf, K-28161-0 (white), 28-1/4 x 15 x 31 in" },
+      { id:"toilet", name:"TOTO Aquia IV WASHLET+ S7 (Cotton White)", shape:"path", box:[60.5, 2.75, 29.5, 17.625], d:"M90 2.75 H80 C70 2.75 60.5 5.5 60.5 11.56 S70 20.375 80 20.375 H90 Z", color:"#f3f4f6", product:"TOTO Aquia IV WASHLET+ S7 One-Piece Toilet, Cotton White (#01), dual flush 0.9/1.28 GPF, 29-1/2 x 17-5/8 x 28-1/8 in (MW6464726CEMFGNA#01)" },
       { id:"vanity", name:"Floating vanity (24 W x 18 D, tiled)", shape:"rect", x:72, y:21, w:18, h:24, floating:true, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
       { id:"vanityshelf", name:"Tile shelf over toilet (6 D x 2 thick)", shape:"rect", x:84, y:0, w:6, h:21, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:1, grout_w:0.125, product:"Daltile Keystones Nautical Blue mosaic, matte, 1x1 (D621)" },
       { id:"vanitywood", name:"Vanity drawer fronts (walnut)", shape:"none", color:"#5c4033", product:"Walnut wood panel drawer fronts (2)" },
@@ -127,7 +128,7 @@ const BATHS = {
       { id:"sink", name:"Sink - Concretti Phoenix vessel, white", shape:"rect", x:74.5, y:25.75, w:14.5, h:14.5, rx:1.5, color:"#ffffff", product:"Concretti Designs Phoenix square concrete vessel sink, white, 14.5 x 14.5 x 5 in" },
       { id:"faucet", name:"Faucet - Kohler Purist K-T14413-3-BN (wall mount)", shape:"rect", x:83.25, y:32, w:6.75, h:2, rx:1, color:"#b4b0a6", wall:1, product:"Kohler Purist wall-mount faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)" },
       { id:"mirror", name:"Mirror - Ivy Bronx backlit LED (40 W x 30 H)", shape:"rect", x:88.5, y:4.5, w:1.5, h:40, color:"#cfe3ee", mirror:{ w:40, h:30, d:1.5, bottom:48, cz:24.5 }, product:"Ivy Bronx rectangular backlit LED bathroom mirror, anti-fog, 3 color temperatures, 40 x 30 in (Wayfair W116695986)" },
-      { id:"towelwarmer", name:"Towel warmer (angled wall)", shape:"path", d:"M73.21 58.63 L84.99 50.17 L83.09 47.53 L71.31 55.99 Z", mount:{ cx:79.1, cy:54.4, ux:-0.8125, uz:0.5833, w:14.5, h:35.375, d:3.25, bottom:36, controller:{ x:9.1, y:14.6875, z:1.6 } }, color:"#b4b0a6", product:"Elemento Bath Wall-Mounted Vertical Heated Towel Rack with Digital Display, Brushed Nickel (EB-TW3621BN), 14.5 x 35 3/8 x 3 1/4 in" },
+      { id:"towelwarmer", name:"Towel warmer - Amba Modello i20 square, 4 vertical bars", shape:"path", d:"M78.07 53.60 L78.68 53.17 L80.13 55.20 L79.52 55.63 Z", mount:{ cx:79.1, cy:54.4, ux:-0.8125, uz:0.5833, w:0.75, h:20, d:2.5, bottom:36, singleBar:true, bars:4, spacing:3 }, color:"#b4b0a6", product:"4 x Amba Modello i20 square heated towel bar, vertical installation, Brushed Stainless Steel" },
     ],
   },
   master: {
@@ -170,29 +171,33 @@ const BATHS = {
       { id:"heatmat1", name:"Heated floor mat (custom L, ~9 sq ft)", shape:"path", d:"M38 2 H62 V21 H72 V47 H38 Z", lbl:{x:55,y:36,t:"~9 sq ft"}, heat:true, color:"#f59e0b", product:"Nuheat Custom Mat, L-shaped, 120 V, 12 W/sq ft" },
       { id:"walls", name:"Wall tile", shape:"none", tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"ceiling", name:"Ceiling tile", shape:"none", tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
-      { id:"showerdoor", name:"Shower glass (fluted, fixed panel)", shape:"none", color:"#e6efe9", product:"Fluted (reeded) frameless fixed glass panel, 3/8 in tempered, brushed nickel floor channel, beside a tiled pillar" },
       { id:"shower", name:"Shower 36x48", shape:"rect", x:0, y:0, w:36, h:48, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"showerdoor", name:"Sliding shower door (custom bypass)", shape:"rect", x:35.5, y:0, w:0.5, h:48, color:"#cfe3e9", product:"Custom sliding glass shower door, full-height bypass panels across shower opening" },
+      { id:"showerlight", name:"Shower high-hat light (centered)", shape:"ellipse", cx:18, cy:24, rx:3, ry:3, color:"#fde68a", product:"Recessed high-hat (can) light, 6 in LED, wet-location / shower rated, centered in shower ceiling" },
       { id:"showerhead", name:"Shower trim, head & lever - Kohler Purist K-TS14422-4-BN", shape:"rect", x:15, y:0.5, w:6, h:3, color:"#b4b0a6", product:"Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)" },
       { id:"handshower", name:"Handshower + slidebar - Kohler Purist K-22178-BN", shape:"rect", x:27, y:0.5, w:2, h:3, color:"#b4b0a6", product:"Kohler Purist four-function handshower kit, 28 in slidebar, 60 in hose, Vibrant Brushed Nickel (K-22178-BN)" },
       { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:32, rx:1.6, ry:2.2, color:"#b4b0a6" },
-      { id:"toilet", name:"Toilet", shape:"path", box:[65.75, 2.75, 28.25, 15], d:"M94 2.75 H80 A14.25 7.5 0 0 0 80 17.75 H94 Z", color:"#f3f4f6", product:"Kohler Veil two-piece elongated toilet, skirted trapway, 1.28 gpf, K-28161-0 (white), 28-1/4 x 15 x 31 in" },
+      { id:"toilet", name:"TOTO Aquia IV WASHLET+ S7 (Cotton White)", shape:"path", box:[64.5, 2.75, 29.5, 17.625], d:"M94 2.75 H84 C74 2.75 64.5 5.5 64.5 11.56 S74 20.375 84 20.375 H94 Z", color:"#f3f4f6", product:"TOTO Aquia IV WASHLET+ S7 One-Piece Toilet, Cotton White (#01), dual flush 0.9/1.28 GPF, 29-1/2 x 17-5/8 x 28-1/8 in (MW6464726CEMFGNA#01)" },
       { id:"vanity", name:"Floating vanity (24 W x 18 D, tiled)", shape:"rect", x:76, y:21, w:18, h:24, floating:true, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"vanityshelf", name:"Tile shelf over toilet (6 D x 2 thick)", shape:"rect", x:88, y:0, w:6, h:21, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"vanitywood", name:"Vanity drawer fronts (walnut)", shape:"none", color:"#5c4033", product:"Walnut wood panel drawer fronts (2)" },
       { id:"sink", name:"Sink - Concretti Phoenix vessel, white", shape:"rect", x:78.5, y:25.75, w:14.5, h:14.5, rx:1.5, color:"#ffffff", product:"Concretti Designs Phoenix square concrete vessel sink, white, 14.5 x 14.5 x 5 in" },
       { id:"faucet", name:"Faucet - Kohler Purist K-T14413-3-BN (wall mount)", shape:"rect", x:87.25, y:32, w:6.75, h:2, rx:1, color:"#b4b0a6", wall:1, product:"Kohler Purist wall-mount faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)" },
       { id:"mirror", name:"Mirror - Ivy Bronx backlit LED (40 W x 30 H)", shape:"rect", x:92.5, y:5.0, w:1.5, h:40, color:"#cfe3ee", mirror:{ w:40, h:30, d:1.5, bottom:48, cz:25.0 }, product:"Ivy Bronx rectangular backlit LED bathroom mirror, anti-fog, 3 color temperatures, 40 x 30 in (Wayfair W116695986)" },
-      { id:"towelwarmer", name:"Towel warmer", shape:"rect", x:37.8, y:0, w:10, h:3.25, mount:{ cx:42.8, cy:0, ux:1, uz:0, w:10, h:35.375, d:3.25, bottom:30, controller:{ x:0, y:20.7, z:1.6 } }, color:"#b4b0a6", product:"Elemento Bath Wall-Mounted Vertical Heated Towel Rack with Digital Display, Brushed Nickel (EB-TW3621BN), 14.5 x 35 3/8 x 3 1/4 in" },
+      { id:"towelwarmer", name:"Towel warmer - Amba Modello i20 square, 2 vertical bars", shape:"rect", x:42.425, y:0, w:0.75, h:2.5, mount:{ cx:42.8, cy:0, ux:1, uz:0, w:0.75, h:20, d:2.5, bottom:30, singleBar:true, bars:2, spacing:3 }, color:"#b4b0a6", product:"2 x Amba Modello i20 square heated towel bar, vertical installation, Brushed Stainless Steel" },
     ],
   },
 };
 const STATUSES = ["Planned","Ordered","Shipped","Delivered","Installed","Returned","Cancelled"];
 
 /* ---------- State ---------- */
-const SEED_ORDERS = ["upstairs", "master"].map(bath => ({
-  key: "kohler-purewash-e750-" + bath, bath,
-  order: { item: "Kohler PureWash E750 elongated bidet toilet seat with remote control (K-4108-0)", vendor: "Kohler", model: "K-4108-0", price: 1199.97, notes: "Price is the Kohler.com listing found via web search - please confirm. Pairs with Veil toilet K-28161-0." },
-})).concat([{
+const SEED_ORDERS = [{
+  key: "toto-aquia-iv-s7-upstairs", bath: "upstairs",
+  order: { item:"TOTO Aquia IV WASHLET+ S7 One-Piece Toilet, Cotton White (#01)", vendor:"TOTO", model:"MW6464726CEMFGNA#01", price:3415, notes:"Manufacturer list price $3,415. Includes integrated WASHLET S7; dual flush 0.9/1.28 GPF. Overall toilet dimensions 29-1/2 x 17-5/8 x 28-1/8 in. Confirm current dealer price, rough-in, and installation requirements." },
+}, {
+  key: "toto-aquia-iv-s7-master", bath: "master",
+  order: { item:"TOTO Aquia IV WASHLET+ S7 One-Piece Toilet, Cotton White (#01)", vendor:"TOTO", model:"MW6464726CEMFGNA#01", price:3415, notes:"Manufacturer list price $3,415. Includes integrated WASHLET S7; dual flush 0.9/1.28 GPF. Overall toilet dimensions 29-1/2 x 17-5/8 x 28-1/8 in. Confirm current dealer price, rough-in, and installation requirements." },
+}, {
   key: "concretti-phoenix-sink-master", bath: "master",
   order: { item: "Concretti Designs Phoenix square concrete vessel sink, White (14.5 x 14.5 x 5 in)", vendor: "Concretti Designs", model: "Phoenix (white)", price: 439.99, notes: "Price and size from web search (about $440-450, made to order, 4-6 wk lead time) - please confirm. Faucet and drain sold separately." },
 }, {
@@ -217,17 +222,35 @@ const SEED_ORDERS = ["upstairs", "master"].map(bath => ({
   key: "kohler-purist-22178-upstairs", bath: "upstairs",
   order: { item: "Kohler Purist four-function handshower kit with 28 in slidebar, Vibrant Brushed Nickel (K-22178-BN)", vendor: "Kohler", model: "K-22178-BN", price: 596.62, notes: "Needs a supply elbow / wall connection for the hose (sold separately, confirm). Enter price. Specs from web search." },
 }, {
-  key: "kohler-veil-toilet-upstairs", bath: "upstairs",
-  order: { item: "Kohler Veil two-piece elongated toilet, skirted trapway, 1.28 gpf, white (K-28161-0)", vendor: "Kohler", model: "K-28161-0", price: 699.79, notes: "Price from Kohler.com list; retailers vary." },
+  key: "amba-modello-i20-upstairs", bath: "upstairs",
+  order: { item: "Amba Modello i20 square heated towel bar, vertical, Brushed Stainless Steel", vendor: "Amba", model: "Modello i20 Square / Brushed Stainless Steel", qty:4, price: 330, notes: "Guide list-price estimate: US$330 shown for i20RO.P; confirm price for square brushed finish. Bar can be installed vertically." },
 }, {
-  key: "kohler-veil-toilet-master", bath: "master",
-  order: { item: "Kohler Veil two-piece elongated toilet, skirted trapway, 1.28 gpf, white (K-28161-0)", vendor: "Kohler", model: "K-28161-0", price: 699.79, notes: "Price from Kohler.com list; retailers vary." },
+  key: "amba-modello-i20-master", bath: "master",
+  order: { item: "Amba Modello i20 square heated towel bar, vertical, Brushed Stainless Steel", vendor: "Amba", model: "Modello i20 Square / Brushed Stainless Steel", qty:2, price: 330, notes: "Guide list-price estimate: US$330 shown for i20RO.P; confirm price for square brushed finish. Bar can be installed vertically." },
 }, {
-  key: "elemento-towel-warmer-upstairs", bath: "upstairs",
-  order: { item: "Elemento Bath wall-mounted vertical heated towel rack with digital display, Brushed Nickel (EB-TW3621BN)", vendor: "Elemento Bath", model: "EB-TW3621BN", price: 615, notes: "Brushed Nickel finish. SKU: EB-TW3621BN. Spec: 14 1/2 in wide x 35 3/8 in high x 3 1/4 in deep; two rods spaced 13 37/64 in center-to-center. Price per elementobath.com for a similar wall-mount model; confirm." },
+  key: "amba-tdhcr-upstairs", bath: "upstairs",
+  order: { item: "Amba ATW-TDHCR remotely-wired touch digital controller", vendor: "Amba", model: "ATW-TDHCR", price: 370, notes: "US$370 list price shown in the 2024.10 Modello i guide; electrician to confirm compatibility and installation." },
 }, {
-  key: "elemento-towel-warmer-master", bath: "master",
-  order: { item: "Elemento Bath wall-mounted vertical heated towel rack with digital display, Brushed Nickel (EB-TW3621BN)", vendor: "Elemento Bath", model: "EB-TW3621BN", price: 615, notes: "Brushed Nickel finish. SKU: EB-TW3621BN. Spec: 14 1/2 in wide x 35 3/8 in high x 3 1/4 in deep; two rods spaced 13 37/64 in center-to-center. Price per elementobath.com for a similar wall-mount model; confirm." },
+  key: "amba-tdhcr-master", bath: "master",
+  order: { item: "Amba ATW-TDHCR remotely-wired touch digital controller", vendor: "Amba", model: "ATW-TDHCR", price: 370, notes: "US$370 list price shown in the 2024.10 Modello i guide; electrician to confirm compatibility and installation." },
+}, {
+  key: "amba-cwb-upstairs", bath: "upstairs",
+  order: { item: "Amba ATW-CWB concealed wall box for Modello i towel bar", vendor: "Amba", model: "ATW-CWB", qty:4, price: 100, notes: "One concealed wall box required per bar with the remotely-wired controller. US$100 list price shown in the 2024.10 guide." },
+}, {
+  key: "amba-cwb-master", bath: "master",
+  order: { item: "Amba ATW-CWB concealed wall box for Modello i towel bar", vendor: "Amba", model: "ATW-CWB", qty:2, price: 100, notes: "One concealed wall box required per bar with the remotely-wired controller. US$100 list price shown in the 2024.10 guide." },
+}, {
+  key: "sliding-shower-door-upstairs", bath: "upstairs",
+  order: { item: "Custom sliding glass shower door, bypass panels", vendor: "Custom glass fabricator", model: "Sliding shower door (custom)", price: 0, notes: "QUOTE REQUIRED - replace the glass-and-pillar section with a sliding bypass door across the shower opening. Verify finished opening, height, clearances, tempered-glass requirements, and hardware after tile is set." },
+}, {
+  key: "sliding-shower-door-master", bath: "master",
+  order: { item: "Custom sliding glass shower door, bypass panels", vendor: "Custom glass fabricator", model: "Sliding shower door (custom)", price: 0, notes: "QUOTE REQUIRED - replace the glass-and-pillar section with a sliding bypass door across the shower opening. Verify finished opening, height, clearances, tempered-glass requirements, and hardware after tile is set." },
+}, {
+  key: "shower-light-upstairs", bath: "upstairs",
+  order: { item: "Recessed 6 in LED high-hat light, shower (wet-location rated)", vendor: "TBD", model: "6 in wet-rated LED recessed", price: 0, notes: "SELECT FIXTURE - one recessed 6 in LED high-hat, wet-location (shower) rated with a sealed trim, centered in the shower ceiling. Confirm it is IC/damp-wet rated for a tiled ceiling and add a dimmer-compatible driver. Price is a placeholder." },
+}, {
+  key: "shower-light-master", bath: "master",
+  order: { item: "Recessed 6 in LED high-hat light, shower (wet-location rated)", vendor: "TBD", model: "6 in wet-rated LED recessed", price: 0, notes: "SELECT FIXTURE - one recessed 6 in LED high-hat, wet-location (shower) rated with a sealed trim, centered in the shower ceiling. Confirm it is IC/damp-wet rated for a tiled ceiling and add a dimmer-compatible driver. Price is a placeholder." },
 }, {
   key: "nuheat-mat-upstairs", bath: "upstairs",
   order: { item: "Nuheat Custom Mat, L-shaped (about 11 sq ft), 120 V, 12 W/sq ft", vendor: "Nuheat", model: "Custom Mat (quote)", price: 500, notes: "ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Leg sizes: top 21 x 17 in, bottom 30 x 42 in. Confirm clearances at the toilet and vanity." },
@@ -246,13 +269,7 @@ const SEED_ORDERS = ["upstairs", "master"].map(bath => ({
 }, {
   key: "ivy-bronx-mirror-master", bath: "master",
   order: { item: "Ivy Bronx rectangular backlit LED bathroom mirror, anti-fog, 3 color temperatures, 40 x 30 in (W116695986)", vendor: "Wayfair (Ivy Bronx)", model: "W116695986", price: 489.99, notes: "ESTIMATE - price and depth (about 1.5 in) are from a web search of similar Ivy Bronx 40x30 mirrors; confirm on the Wayfair page for the exact listing. Centered on the vanity-side wall, bottom about 48 in above floor. Needs hardwired power behind it." },
-}, {
-  key: "fluted-shower-glass-upstairs", bath: "upstairs",
-  order: { item: "Fluted (reeded) frameless fixed shower glass panel, 3/8 in tempered, with brushed nickel channel", vendor: "Custom glass fabricator", model: "Fluted fixed panel (custom)", price: 700, notes: "ESTIMATE - get a local glass quote. Roughly 18 in wide x 90 in tall, sized after tile is set." },
-}, {
-  key: "fluted-shower-glass-master", bath: "master",
-  order: { item: "Fluted (reeded) frameless fixed shower glass panel, 3/8 in tempered, with brushed nickel channel", vendor: "Custom glass fabricator", model: "Fluted fixed panel (custom)", price: 700, notes: "ESTIMATE - get a local glass quote. Roughly 18 in wide x 90 in tall, sized after tile is set." },
-}]);
+}];
 const KEY = "shadows-bathroom-v1";
 let state = load();
 
@@ -324,21 +341,126 @@ function load() {
     s.seeded.push(sd.key);
     s.baths[sd.bath].orders.push(Object.assign({ id: "seed-" + sd.key + "-" + sd.bath, qty: 1, status: "Planned", ordered: "", eta: "", delivered: "", ref: "" }, sd.order));
   }
-  if (!s.seeded.includes("elemento-towel-warmer-brushed-nickel")) {
-    s.seeded.push("elemento-towel-warmer-brushed-nickel");
-    for (const bath of ["upstairs", "master"]) {
-      const custom = s.baths[bath].custom.towelwarmer;
-      if (custom) Object.assign(custom, { color:"#b4b0a6", product:BATHS[bath].elements.find(e => e.id === "towelwarmer").product });
-      const order = s.baths[bath].orders.find(o => o.id === `seed-elemento-towel-warmer-${bath}-${bath}`);
-      if (order) Object.assign(order, {
-        item:"Elemento Bath wall-mounted vertical heated towel rack with digital display, Brushed Nickel (EB-TW3621BN)",
-        model:"EB-TW3621BN",
-        notes:"Brushed Nickel finish. SKU: EB-TW3621BN. Spec: 14 1/2 in wide x 35 3/8 in high x 3 1/4 in deep; two rods spaced 13 37/64 in center-to-center. Price per elementobath.com for a similar wall-mount model; confirm."
-      });
-    }
+  if (!s.seeded.includes("elemento-towel-warmer-removed-for-amba")) {
+    removeLegacyElementoTowelWarmer(s);
+    s.seeded.push("elemento-towel-warmer-removed-for-amba");
+    localStorage.setItem(KEY, JSON.stringify(s));
+  }
+  ensureTowelWarmerOrders(s);
+  removeFlutedShowerGlass(s);
+  ensureSlidingShowerDoorOrders(s);
+  ensureShowerLightOrders(s);
+  ensureTotoToiletOrders(s);
+  if (!s.seeded.includes("fluted-shower-glass-removed")) {
+    s.seeded.push("fluted-shower-glass-removed");
     localStorage.setItem(KEY, JSON.stringify(s));
   }
   return s;
+}
+
+function ensureTotoToiletOrders(s) {
+  const seeds = SEED_ORDERS.filter(x => x.key.startsWith("toto-aquia-iv-s7-"));
+  for (const sd of seeds) {
+    delete s.baths[sd.bath].custom.toilet;
+    let orders = s.baths[sd.bath].orders;
+    const targetId = "seed-" + sd.key + "-" + sd.bath;
+    let order = orders.find(o => o.id === targetId || o.model === "K-28161-0");
+    orders = orders.filter(o =>
+      o.model !== "K-4108-0" &&
+      !(o.id || "").startsWith("seed-kohler-purewash-e750-") &&
+      !(o.id || "").startsWith("seed-kohler-veil-toilet-") &&
+      (o.model !== "K-28161-0" || o === order)
+    );
+    s.baths[sd.bath].orders = orders;
+    if (order) {
+      Object.assign(order, sd.order, { id:targetId, qty:1 });
+    } else {
+      order = Object.assign({ id:targetId, qty:1, status:"Planned", ordered:"", eta:"", delivered:"", ref:"" }, sd.order);
+      orders.push(order);
+    }
+    if (!s.seeded.includes(sd.key)) s.seeded.push(sd.key);
+  }
+  if (!s.seeded.includes("toto-aquia-iv-s7-replacement-v1")) s.seeded.push("toto-aquia-iv-s7-replacement-v1");
+  localStorage.setItem(KEY, JSON.stringify(s));
+}
+
+function removeLegacyElementoTowelWarmer(s) {
+  for (const bath of ["upstairs", "master"]) {
+    delete s.baths[bath].custom.towelwarmer;
+    s.baths[bath].orders = s.baths[bath].orders.filter(o =>
+      o.model !== "EB-TW3621BN" &&
+      !(o.id || "").startsWith("seed-elemento-towel-warmer-") &&
+      !String(o.item || "").includes("EB-TW3621BN")
+    );
+  }
+}
+
+function removeFlutedShowerGlass(s) {
+  for (const bath of ["upstairs", "master"]) {
+    delete s.baths[bath].custom.showerdoor;
+    s.baths[bath].orders = s.baths[bath].orders.filter(o =>
+      o.model !== "Fluted fixed panel (custom)" &&
+      !(o.id || "").startsWith("seed-fluted-shower-glass-") &&
+      !String(o.item || "").toLowerCase().includes("fluted") &&
+      !String(o.item || "").toLowerCase().includes("fixed shower glass panel")
+    );
+  }
+}
+
+function ensureShowerLightOrders(s) {
+  let changed = false;
+  for (const sd of SEED_ORDERS.filter(x => x.key.startsWith("shower-light-"))) {
+    const id = "seed-" + sd.key + "-" + sd.bath;
+    if (!s.seeded.includes(sd.key)) {
+      s.seeded.push(sd.key);
+      if (!s.baths[sd.bath].orders.some(o => o.id === id)) s.baths[sd.bath].orders.push(Object.assign({ id, qty:1, status:"Planned", ordered:"", eta:"", delivered:"", ref:"" }, sd.order));
+      changed = true;
+    }
+  }
+  if (changed) localStorage.setItem(KEY, JSON.stringify(s));
+}
+
+function ensureSlidingShowerDoorOrders(s) {
+  let changed = false;
+  if (!s.seeded.includes("sliding-shower-door-orders-v1")) {
+    s.seeded.push("sliding-shower-door-orders-v1");
+    changed = true;
+  }
+  for (const sd of SEED_ORDERS.filter(x => x.key.startsWith("sliding-shower-door-"))) {
+    const id = "seed-" + sd.key + "-" + sd.bath;
+    if (!s.baths[sd.bath].orders.some(o => o.id === id)) {
+      s.baths[sd.bath].orders.push(Object.assign({ id, qty:1, status:"Planned", ordered:"", eta:"", delivered:"", ref:"" }, sd.order));
+      changed = true;
+    }
+    if (!s.seeded.includes(sd.key)) {
+      s.seeded.push(sd.key);
+      changed = true;
+    }
+  }
+  if (changed) localStorage.setItem(KEY, JSON.stringify(s));
+}
+
+function ensureTowelWarmerOrders(s) {
+  let changed = false;
+  for (const sd of SEED_ORDERS.filter(x => x.key.startsWith("amba-"))) {
+    const id = "seed-" + sd.key + "-" + sd.bath;
+    let order = s.baths[sd.bath].orders.find(o => o.id === id);
+    if (!s.seeded.includes(sd.key)) {
+      s.seeded.push(sd.key);
+      order = Object.assign({ id, qty:1, status:"Planned", ordered:"", eta:"", delivered:"", ref:"" }, sd.order);
+      s.baths[sd.bath].orders.push(order);
+      changed = true;
+    }
+    if (order && !s.seeded.includes("amba-bar-counts-v1")) {
+      order.qty = sd.order.qty || 1;
+      changed = true;
+    }
+  }
+  if (!s.seeded.includes("amba-bar-counts-v1")) {
+    s.seeded.push("amba-bar-counts-v1");
+    changed = true;
+  }
+  if (changed) localStorage.setItem(KEY, JSON.stringify(s));
 }
 
 const save = () => localStorage.setItem(KEY, JSON.stringify(state));
@@ -392,6 +514,14 @@ function shapeSvg(bath, base) {
   const fill = e.tile ? `url(#pat-${bath}-${e.id})` : e.color;
   const cls = ui.sel[bath] === e.id ? "sel" : "";
   const a = `data-el="${e.id}" class="${cls}" fill="${fill}" stroke="#0004" stroke-width=".3"`;
+  if (base.id === "towelwarmer" && e.mount?.singleBar) {
+    const t = e.mount, angle = Math.atan2(t.uz, t.ux) * 180 / Math.PI;
+    const bars = Array.from({ length:t.bars || 1 }, (_, i) => {
+      const offset = (i - ((t.bars || 1) - 1) / 2) * (t.spacing || 3);
+      return `<rect ${a} x="${offset - .375}" y="${-t.d / 2}" width=".75" height="${t.d}" rx=".12"/>`;
+    }).join("");
+    return `<g transform="translate(${t.cx} ${t.cy}) rotate(${angle})">${bars}</g>`;
+  }
   if (base.id === "towelwarmer" && e.mount?.controller) {
     const t = e.mount, c = t.controller;
     const cx = t.cx + t.ux * c.x - t.uz * c.z, cy = t.cy + t.uz * c.x + t.ux * c.z;
@@ -463,43 +593,97 @@ function renderDesign() {
     <div class="panel">
       <h3>Items</h3><div class="elist">${list}</div>
       <h3>${esc(sel.name)}</h3>
+      ${sel.tile ? `<div class="hint">Tile color, size and grout are set in "Wall tile size, grout &amp; color" under the plan.</div>` : `
       <label>Color</label><input type="color" id="fColor" value="${sel.color}">
-      <label>Product / model</label><input type="text" id="fProduct" value="${esc(sel.product)}" placeholder="e.g. Kohler Memoirs toilet, white">
-      ${sel.tile ? `
-        <div class="row2">
-          <div><label>Tile size (in)</label><input type="number" id="fTile" min="0.5" step="0.25" value="${sel.tileSize}"></div>
-          <div><label>Grout width (in)</label><input type="number" id="fGW" min="0" step="0.0625" value="${sel.grout_w ?? 0.25}"></div>
-        </div>
-        <label>Grout color</label><input type="color" id="fGrout" value="${sel.grout}">
-        <label>Tile photo (optional)</label><input type="file" id="fImg" accept="image/*">
-        ${sel.image ? `<button class="btn small" id="fImgClear" style="margin-top:6px">Remove photo</button>` : ""}` : ""}
-      <div style="margin-top:12px"><button class="btn small" id="fReset">Reset this item</button></div>
-      <div class="hint">Click an item on the plan or in the list above to edit it.</div>
+      <label>Product / model</label><input type="text" id="fProduct" value="${esc(sel.product)}" placeholder="e.g. Kohler Memoirs toilet, white">`}
+      ${sel.tile ? "" : `<div style="margin-top:12px"><button class="btn small" id="fReset">Reset this item</button></div>
+      <div class="hint">Click an item on the plan or in the list above to edit it.</div>`}
     </div></div>`;
   if (ui.mode === "3d") View3D.setOff(state.baths[bath].calc.off), View3D.setWallOv && View3D.setWallOv(state.baths[bath].wallOv), View3D.mount($("#v3d"), bath, ui.sel[bath], id => { ui.sel[bath] = id; renderDesign(); });
 }
+
+/* Daltile Keystones codes -> [name, approximate swatch color] */
+const DALTILE = {
+  D014: ["Desert Gray", "#b7b5a8"],
+  D017: ["Red", "#b84c4a"],
+  D023: ["Galaxy", "#1c5b81"],
+  D037: ["Pepper White", "#dfdccb"],
+  D044: ["Deep Purple", "#7b7886"],
+  D050: ["Mottled Medium Brown", "#a7977e"],
+  D109: ["Architect Gray", "#aca08c"],
+  D116: ["Emerald", "#58826c"],
+  D117: ["Moonshine", "#d2ccbe"],
+  D118: ["Brownberry", "#704b45"],
+  D132: ["Uptown Taupe", "#ac9f90"],
+  D138: ["Golden Granite", "#e3dccd"],
+  D142: ["Luminary Gold", "#e5c594"],
+  D144: ["Artisan Brown", "#7f6e5d"],
+  D148: ["Spa", "#b2cac4"],
+  D152: ["Mint Ice", "#d3d5be"],
+  D159: ["Ocean Blue", "#509ca8"],
+  D160: ["Cornsilk", "#f3dea9"],
+  D161: ["Urban Putty", "#cabfaa"],
+  D166: ["Elemental Tan", "#9b8c77"],
+  D169: ["Waterfall", "#98b3be"],
+  D175: ["Elemental Tan Speckle", "#b9a38b"],
+  D181: ["Mustard", "#e8b465"],
+  D189: ["Navy", "#254a5d"],
+  D192: ["Aegean", "#779c8f"],
+  D195: ["Oak Moss", "#566457"],
+  D197: ["Aqua Glow", "#73b0b2"],
+  D201: ["Urban Putty Speckle", "#d1c4ae"],
+  D202: ["Uptown Taupe Speckle", "#a9a298"],
+  D204: ["Artisan Brown Speckle", "#756959"],
+  D209: ["Navy Speckle", "#466986"],
+  D317: ["Biscuit", "#efe8d6"],
+  D325: ["Marble", "#d9d1c2"],
+  D335: ["Almond", "#e2dbc7"],
+  D372: ["Sea Speckle", "#4b8795"],
+  D452: ["Cypress", "#9fa58e"],
+  D617: ["Arctic White", "#eeebe0"],
+  D619: ["Lime Sherbet", "#a7ca79"],
+  D620: ["Sunshine", "#fae36b"],
+  D621: ["Nautical Blue", "#266793"],
+  D622: ["Clementine", "#ed8c4a"],
+  DK04: ["Beach Blend", "#d5ccba"],
+  DK22: ["Almond Blend", "#beb5a1"],
+  DK23: ["Olive Blend", "#9fb594"],
+  DK24: ["Berry Blend", "#7b8e93"],
+  DK25: ["Macaron Blend", "#93acb1"],
+  DK26: ["Maple Blend", "#9d8b80"],
+  DK27: ["Rye Blend", "#76816f"]
+};
 
 /* Wall tile size and grout: all walls at once, or wall by wall */
 function wallStyleHtml(bath) {
   const w = el(bath, "walls"), ov = state.baths[bath].wallOv || {};
   const rows = BATHS[bath].surfaces.filter(sf => sf.group === "Walls" && !sf.hidden).map(sf => {
-    const o = ov[sf.id] || {}, size = o.tileSize ?? w.tileSize, gw = o.grout_w ?? w.grout_w ?? 0.25, gc = o.grout ?? w.grout;
+    const o = ov[sf.id] || {}, size = o.tileSize ?? w.tileSize, gw = o.grout_w ?? w.grout_w ?? 0.25, gc = o.grout ?? w.grout, tc = o.color ?? w.color;
     return `<tr class="${ov[sf.id] ? "" : "lt"}" data-wall="${sf.id}"><td>${sf.label}</td>
       <td><input type="number" min="0.5" step="0.25" data-wf="tileSize" value="${size}" style="width:70px"></td>
       <td><input type="number" min="0" step="0.0625" data-wf="grout_w" value="${gw}" style="width:70px"></td>
       <td><input type="color" data-wf="grout" value="${gc}"></td>
+      <td><input type="color" data-wf="color" value="${tc}"></td>
       <td>${ov[sf.id] ? `<button class="btn small" data-wall-reset="${sf.id}">Reset</button>` : `<span style="color:var(--muted)">default</span>`}</td></tr>`;
   }).join("");
-  return `<div class="panel" style="margin-top:14px"><h3 style="margin-top:0">Wall tile size &amp; grout</h3>
+  return `<div class="panel" style="margin-top:14px"><h3 style="margin-top:0">Wall tile size, grout &amp; color</h3>
     <div class="row2">
       <div><label>All tiled areas: tile size (in)</label><input type="number" min="0.5" step="0.25" id="awSize" value="${w.tileSize}"></div>
       <div><label>Grout width (in)</label><input type="number" min="0" step="0.0625" id="awGW" value="${w.grout_w ?? 0.25}"></div>
     </div>
     <div class="row2">
       <div><label>Grout color</label><input type="color" id="awGrout" value="${w.grout}"></div>
+      <div><label>Tile color</label><input type="color" id="awColor" value="${w.color}"></div>
+    </div>
+    <div class="row2">
       <div><label>&nbsp;</label><button class="btn small dark" id="awApply">Apply to all tiled areas</button></div>
     </div>
-    <table style="min-width:0;margin-top:10px"><thead><tr><th>Wall</th><th>Tile (in)</th><th>Grout (in)</th><th>Grout color</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="row2">
+      <div><label>Daltile Keystones color</label><select id="awCode"><option value="">Select a color...</option>${Object.entries(DALTILE).sort((x, y) => x[1][0].localeCompare(y[1][0])).map(([c, v]) => `<option value="${c}">${v[0]} (${c})</option>`).join("")}</select></div>
+      <div><label>&nbsp;</label><button class="btn small dark" id="awCodeApply">Apply color to all tiled areas</button></div>
+    </div>
+    <div class="hint">Pick a Daltile Keystones color (matte, 1x1 / 2x2 straight joint), then apply. Swatches are sampled from Daltile product photos.</div>
+    <table style="min-width:0;margin-top:10px"><thead><tr><th>Wall</th><th>Tile (in)</th><th>Grout (in)</th><th>Grout color</th><th>Tile color</th><th></th></tr></thead><tbody>${rows}</tbody></table>
     <div class="hint">Change a value on a wall to style just that wall. Grayed rows follow the wall tile setting. "Apply to all tiled areas" sets walls, floor, ceiling, shower, vanity and shelf, and clears the per-wall changes.</div>
   </div>`;
 }
@@ -739,9 +923,17 @@ document.addEventListener("click", e => {
   const bath = ui.tab, b = state.baths[bath];
   if (e.target.id === "awApply") {
     const g = id => document.getElementById(id);
-    const st = { tileSize: +g("awSize").value || 1, grout_w: +g("awGW").value, grout: g("awGrout").value };
+    const st = { tileSize: +g("awSize").value || 1, grout_w: +g("awGW").value, grout: g("awGrout").value, color: g("awColor").value };
     BATHS[bath].elements.filter(x => x.tile).forEach(x => { b.custom[x.id] = Object.assign(b.custom[x.id] || {}, st); });
     b.wallOv = {}; save(); renderDesign();
+  } else if (e.target.id === "awCodeApply") {
+    const code = document.getElementById("awCode").value;
+    if (!DALTILE[code]) return alert("Select a Daltile color first.");
+    const [name, color] = DALTILE[code];
+    const st = { color, product: `Daltile Keystones ${name} mosaic, matte, 1x1 (${code})` };
+    BATHS[bath].elements.filter(x => x.tile).forEach(x => { b.custom[x.id] = Object.assign(b.custom[x.id] || {}, st); });
+    Object.values(b.wallOv || {}).forEach(o => delete o.color);
+    save(); renderDesign();
   } else if (e.target.dataset.wallReset) {
     delete (b.wallOv || {})[e.target.dataset.wallReset]; save(); renderDesign();
   }
@@ -752,7 +944,7 @@ document.addEventListener("change", e => {
   if (wf && tr) {
     const b = state.baths[ui.tab]; b.wallOv = b.wallOv || {};
     const o = b.wallOv[tr.dataset.wall] = b.wallOv[tr.dataset.wall] || {};
-    o[wf] = wf === "grout" ? e.target.value : +e.target.value;
+    o[wf] = (wf === "grout" || wf === "color") ? e.target.value : +e.target.value;
     save(); return renderDesign();
   }
   if (e.target.dataset.calcOff) {
@@ -789,7 +981,17 @@ function downloadCsv() {
 $("#exportBtn").onclick = () => download("shadows-bathroom-backup.json", JSON.stringify(state, null, 2), "application/json");
 $("#importBtn").onclick = () => $("#importFile").click();
 $("#importFile").onchange = async e => {
-  try { state = Object.assign(load(), JSON.parse(await e.target.files[0].text())); save(); render(); }
+  try {
+    state = Object.assign(load(), JSON.parse(await e.target.files[0].text()));
+    removeLegacyElementoTowelWarmer(state);
+    removeFlutedShowerGlass(state);
+    ensureTowelWarmerOrders(state);
+    ensureSlidingShowerDoorOrders(state);
+    ensureShowerLightOrders(state);
+    ensureTotoToiletOrders(state);
+    save();
+    render();
+  }
   catch (err) { alert("Could not read that file."); }
 };
 

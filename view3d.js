@@ -3,7 +3,7 @@
 const View3D = (() => {
   const WALL_H = 96;
   let renderer, scene, camera, controls, host, bathKey, raf = 0, onPick, selId;
-  let wallOv = {}, offSet = {}, ceiling = null, picks = [], wallMeshes = [], samples = [], bounds = null, size = [0, 0];
+  let presetName = null, wallOv = {}, offSet = {}, ceiling = null, picks = [], wallMeshes = [], samples = [], bounds = null, size = [0, 0];
   const raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
 
   const shade = (hex, f) => {
@@ -117,7 +117,7 @@ const View3D = (() => {
     const wallTex = surf => {
       if (!wE.tile) return null;
       const ov = [].concat(surf || []).map(i => wallOv[i]).find(Boolean) || {};
-      const e = Object.assign({}, wE, ov), k = [e.tileSize, e.grout_w, e.grout].join("|");
+      const e = Object.assign({}, wE, ov), k = [e.tileSize, e.grout_w, e.grout, e.color].join("|");
       return texCache[k] || (texCache[k] = tileTexture(e));
     };
     const wallMat = tex => tex ? std(0xffffff, { map: tex, roughness: .35, transparent: true }) : std(wE.color, { roughness: .9, transparent: true });
@@ -196,20 +196,30 @@ const View3D = (() => {
       if (side === "left") vPanel(sd, WALL_H, sx + .15, WALL_H / 2, sz + sd / 2, Math.PI / 2, sh);
     });
     box(sx + sw - 2, sz, 2, sd, 0, 3, std(shade(sh.color, 1.05)), "shower");
-    // fluted glass fixed panel set beside a tiled pillar (open end is the entry)
-    const gl = sd * .45, gx = sx + sw, pw = 3, top = WALL_H - 4;
-    const glass = new THREE.MeshStandardMaterial({ color: 0xe6efe9, transparent: true, opacity: .4, roughness: .15, depthWrite: false });
-    const rib = new THREE.MeshStandardMaterial({ color: 0xf4f8f4, transparent: true, opacity: .45, roughness: .1, depthWrite: false });
-    box(gx - .5, sz, .5, gl, 3, top - 3, glass, "showerdoor");
-    for (let z = sz + .35; z < sz + gl - .2; z += .7) cyl(.33, .33, top - 3, gx + .1, 3, z, rib, "showerdoor", 8);
-    const bn = std(0xb4b0a6, { metalness: .55, roughness: .4 });
-    box(gx - .8, sz, 1.2, gl, 2.4, .6, bn, "showerdoor");
-    const px = gx - pw, pz = sz + gl;
-    box(px, pz, pw, pw, 0, WALL_H, std(sh.color), "shower");
-    vPanel(pw, WALL_H, px + pw / 2, WALL_H / 2, pz + pw + .05, 0, sh);
-    vPanel(pw, WALL_H, px - .05, WALL_H / 2, pz + pw / 2, -Math.PI / 2, sh);
-    vPanel(pw, WALL_H, px + pw + .05, WALL_H / 2, pz + pw / 2, Math.PI / 2, sh);
-    box(px, sz, pw, gl, top, WALL_H - top, std(sh.color), "shower");
+    if (has("showerdoor")) {
+      const gx = sx + sw, mid = sz + sd / 2, doorHeight = 72;
+      const glass = new THREE.MeshStandardMaterial({ color:0xcfe3e9, transparent:true, opacity:.38, roughness:.15, depthWrite:false, side:THREE.DoubleSide });
+      const metal = std(0xb4b0a6, { metalness:.65, roughness:.35 });
+      box(gx - .08, sz, .12, sd / 2 + 1, 2, doorHeight - 2, glass, "showerdoor");
+      box(gx + .2, mid - 1, .12, sd / 2 + 1, 2, doorHeight - 2, glass, "showerdoor");
+      box(gx - .35, sz, .7, .35, .4, doorHeight, metal, "showerdoor");
+      box(gx - .35, sz + sd - .35, .7, .35, .4, doorHeight, metal, "showerdoor");
+      box(gx - .35, sz, .25, sd, doorHeight, .5, metal, "showerdoor");
+      box(gx + .05, sz, .25, sd, .4, .45, metal, "showerdoor");
+      box(gx + .05, sz, .25, sd, doorHeight - .4, .45, metal, "showerdoor");
+      box(gx - .12, mid - .25, .25, .5, 32, 7, metal, "showerdoor");
+      box(gx + .18, mid - .25, .25, .5, 32, 7, metal, "showerdoor");
+    }
+
+    // recessed high-hat light, centered in the shower ceiling
+    if (has("showerlight")) {
+      const e = E("showerlight"), lm = std(0xf4f1ea, { roughness: .5 });
+      const trim = cyl(3.2, 3.2, .5, e.cx, 0, e.cy, lm, "showerlight", 32); trim.position.set(e.cx, WALL_H - .25, e.cy);
+      const lens = cyl(2.5, 2.5, .2, e.cx, 0, e.cy, new THREE.MeshStandardMaterial({ color: 0xfff3c4, emissive: 0xffe29a, emissiveIntensity: .9 }), "showerlight", 32); lens.position.set(e.cx, WALL_H - .6, e.cy);
+      const lamp = new THREE.PointLight("#fff0cf", 1.1, 110);
+      lamp.position.set(e.cx, WALL_H - 6, e.cy);
+      scene.add(lamp);
+    }
 
     // shower valve, arm and head (mounted on the "top" wall)
     if (has("handshower")) {
@@ -230,15 +240,27 @@ const View3D = (() => {
       const e = E("towelwarmer"), t = e.mount, m = std(e.color, { metalness: .15, roughness: .45 });
       const g = new THREE.Group();
       const part = (geo, x, y, z, material = m) => { const p = new THREE.Mesh(geo, material); p.position.set(x, y, z); p.castShadow = true; p.userData.id = "towelwarmer"; g.add(p); picks.push(p); };
-      const sp = t.w - .92, rz = t.d - .4, mountY = t.h / 2 - 3;
       const support = std(shade(e.color, .82), { metalness: .65, roughness: .35 });
-      [-sp / 2, sp / 2].forEach(x => {
-        part(new THREE.CylinderGeometry(.375, .375, t.h, 16), x, 0, rz);
-        const disc = new THREE.CylinderGeometry(1.1, 1.1, .9, 24); disc.rotateX(Math.PI / 2);
-        part(disc, x, mountY, .75, support);
-        const stem = new THREE.CylinderGeometry(.28, .28, rz - .8, 16); stem.rotateX(Math.PI / 2);
-        part(stem, x, mountY, (rz + .8) / 2, support);
-      });
+      if (t.singleBar) {
+        const bars = t.bars || 1, spacing = t.spacing || 3;
+        for (let i = 0; i < bars; i++) {
+          const x = (i - (bars - 1) / 2) * spacing;
+          part(new THREE.BoxGeometry(.75, t.h, .75), x, 0, t.d - .375);
+          [-t.h / 2 + 1.5, t.h / 2 - 1.5].forEach(y => {
+            part(new THREE.BoxGeometry(1.25, .5, .5), x, y, .25, support);
+            part(new THREE.BoxGeometry(.5, .5, t.d - .5), x, y, (t.d - .5) / 2, support);
+          });
+        }
+      } else {
+        const sp = t.w - .92, rz = t.d - .4, mountY = t.h / 2 - 3;
+        [-sp / 2, sp / 2].forEach(x => {
+          part(new THREE.CylinderGeometry(.375, .375, t.h, 16), x, 0, rz);
+          const disc = new THREE.CylinderGeometry(1.1, 1.1, .9, 24); disc.rotateX(Math.PI / 2);
+          part(disc, x, mountY, .75, support);
+          const stem = new THREE.CylinderGeometry(.28, .28, rz - .8, 16); stem.rotateX(Math.PI / 2);
+          part(stem, x, mountY, (rz + .8) / 2, support);
+        });
+      }
       if (t.controller) {
         const c = t.controller, bezel = std(0x111111, { metalness: .25, roughness: .35 });
         const face = std(0x292929, { metalness: .15, roughness: .4 });
@@ -359,7 +381,7 @@ const View3D = (() => {
     if (!bounds) return;
     const { cx, cz } = bounds, r = Math.max(bounds.r, 125);
     controls.target.set(cx, 28, cz);
-    camera.fov = 38;
+    camera.fov = 38; presetName = name;
     if (name === "top") { camera.position.set(cx, r * 1.9, cz + .1); controls.target.set(cx, 0, cz); }
     else if (name === "door") {
       const d = BATHS[bathKey].openings.find(o => o.label === "Door");
@@ -396,7 +418,7 @@ const View3D = (() => {
     const w = host.clientWidth, h = host.clientHeight;
     if (w !== size[0] || h !== size[1]) { size = [w, h]; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
     controls.update(); fade();
-    if (ceiling) ceiling.visible = camera.position.y < WALL_H - 1;
+    if (ceiling) ceiling.visible = presetName ? presetName !== "top" : camera.position.y < WALL_H - 1;
     picks.forEach(m => m.material.emissive && m.material.emissive.setHex(m.userData.id === "floor" && offSet.floor ? 0xffffff : m.userData.id === selId && m.userData.id !== "floor" ? 0x3a1414 : 0));
     wallMeshes.forEach(m => {
       const ids = [].concat(m.userData.surf || []), off = ids.some(i => offSet[i]);
@@ -415,6 +437,7 @@ const View3D = (() => {
     scene = new THREE.Scene(); scene.background = new THREE.Color(0xeef0f3);
     camera = new THREE.PerspectiveCamera(38, 1, 1, 3000);
     controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.addEventListener("start", () => { presetName = null; });
     controls.enableDamping = true; controls.maxPolarAngle = Math.PI / 2 - .01; controls.minDistance = 15; controls.maxDistance = 600;
     let down = null;
     renderer.domElement.addEventListener("pointerdown", e => { down = [e.clientX, e.clientY]; });
