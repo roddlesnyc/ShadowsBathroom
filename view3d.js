@@ -245,7 +245,7 @@ const View3D = (() => {
         const bars = t.bars || 1, spacing = t.spacing || 3;
         for (let i = 0; i < bars; i++) {
           const x = (i - (bars - 1) / 2) * spacing;
-          part(new THREE.BoxGeometry(.75, t.h, .75), x, 0, t.d - .375);
+          part(new THREE.CylinderGeometry(.375, .375, t.h, 16), x, 0, t.d - .375);
           [-t.h / 2 + 1.5, t.h / 2 - 1.5].forEach(y => {
             part(new THREE.BoxGeometry(1.25, .5, .5), x, y, .25, support);
             part(new THREE.BoxGeometry(.5, .5, t.d - .5), x, y, (t.d - .5) / 2, support);
