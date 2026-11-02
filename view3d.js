@@ -236,6 +236,28 @@ const View3D = (() => {
       const arm = cyl(.5, .5, 9, cx, 0, wz, m, "showerhead"); arm.rotation.x = Math.PI / 2; arm.position.set(cx, 80, wz + 4.5);
       const head = cyl(4.5, 4.5, .8, cx, 0, wz, m, "showerhead", 32); head.position.set(cx, 79, wz + 9); head.rotation.x = .35;
     }
+    if (has("toiletpaper")) {
+      const e = E("toiletpaper"), cx = e.x + e.w / 2, m = std(e.color, { metalness: .65, roughness: .35 });
+      [-3.25, 3.25].forEach(dx => {
+        box(cx + dx - .3, .01, .6, .3, 25.25, 1.5, m, "toiletpaper");
+        box(cx + dx - .2, .2, .4, 2, 25.75, .45, m, "toiletpaper");
+      });
+      box(cx - 3.5, 2, 7, .5, 26.2, .5, m, "toiletpaper");
+    }
+    if (has("towelring")) {
+      const e = E("towelring"), t = e.mount, m = std(e.color, { metalness: .65, roughness: .35 });
+      const bracket = new THREE.Mesh(new THREE.CylinderGeometry(.45, .45, .5, 24), m);
+      bracket.rotation.x = Math.PI / 2;
+      bracket.position.set(t.centerX, t.centerY + 2.5, t.wallZ + .25);
+      add(bracket, "towelring");
+      const arm = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, 1.2, 16), m);
+      arm.rotation.x = Math.PI / 2;
+      arm.position.set(t.centerX, t.centerY + 2.5, t.wallZ + .9);
+      add(arm, "towelring");
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(3, .22, 10, 40), m);
+      ring.position.set(t.centerX, t.centerY, t.wallZ + 1.5);
+      add(ring, "towelring");
+    }
     if (has("towelwarmer") && E("towelwarmer").mount) {
       const e = E("towelwarmer"), t = e.mount, m = std(e.color, { metalness: .15, roughness: .45 });
       const g = new THREE.Group();

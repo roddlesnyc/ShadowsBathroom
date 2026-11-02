@@ -121,7 +121,9 @@ const BATHS = {
       { id:"showerhead", name:"Shower trim, head & lever - Kohler Purist K-TS14422-4-BN", shape:"rect", x:15, y:18.5, w:6, h:3, color:"#b4b0a6", product:"Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)" },
       { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:55, rx:1.6, ry:2.2, color:"#b4b0a6" },
       { id:"toilet", name:"TOTO Aquia IV WASHLET+ S7 (Cotton White)", shape:"path", box:[60.5, 2.75, 29.5, 17.625], d:"M90 2.75 H80 C70 2.75 60.5 5.5 60.5 11.56 S70 20.375 80 20.375 H90 Z", color:"#f3f4f6", product:"TOTO Aquia IV WASHLET+ S7 One-Piece Toilet, Cotton White (#01), dual flush 0.9/1.28 GPF, 29-1/2 x 17-5/8 x 28-1/8 in (MW6464726CEMFGNA#01)" },
+      { id:"toiletpaper", name:"Toilet paper holder - Kohler K-14377-BN", shape:"rect", x:67, y:0.25, w:8.5, h:2.25, color:"#b4b0a6", product:"Kohler Purist toilet paper holder, Vibrant Brushed Nickel (K-14377-BN), on the seated-right wall below the window, 26 in above floor" },
       { id:"vanity", name:"Floating vanity (24 W x 18 D, tiled)", shape:"rect", x:72, y:21, w:18, h:24, floating:true, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:2, grout_w:0.125, product:"Daltile Keystones Nautical Blue, matte, 2x2 (D621)" },
+      { id:"towelring", name:"Towel ring - Kohler K-14441-BN", shape:"ellipse", cx:81, cy:45, rx:1.2, ry:1.2, color:"#b4b0a6", mount:{ wallZ:45, centerX:81, centerY:28 }, product:"Kohler Purist towel ring, Vibrant Brushed Nickel (K-14441-BN), mounted on the exposed right-side face of the vanity" },
       { id:"vanityshelf", name:"Tile shelf over toilet (6 D x 2 thick)", shape:"rect", x:84, y:0, w:6, h:21, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:2, grout_w:0.125, product:"Daltile Keystones Nautical Blue, matte, 2x2 (D621)" },
       { id:"vanitywood", name:"Vanity drawer fronts (walnut)", shape:"none", color:"#5c4033", product:"Walnut wood panel drawer fronts (2)" },
       { id:"handshower", name:"Handshower + slidebar - Kohler Purist K-22178-BN", shape:"rect", x:27, y:18.5, w:2, h:3, color:"#b4b0a6", product:"Kohler Purist four-function handshower kit, 28 in slidebar, 60 in hose, Vibrant Brushed Nickel (K-22178-BN)" },
@@ -178,7 +180,9 @@ const BATHS = {
       { id:"handshower", name:"Handshower + slidebar - Kohler Purist K-22178-BN", shape:"rect", x:27, y:0.5, w:2, h:3, color:"#b4b0a6", product:"Kohler Purist four-function handshower kit, 28 in slidebar, 60 in hose, Vibrant Brushed Nickel (K-22178-BN)" },
       { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:32, rx:1.6, ry:2.2, color:"#b4b0a6" },
       { id:"toilet", name:"TOTO Aquia IV WASHLET+ S7 (Cotton White)", shape:"path", box:[64.5, 2.75, 29.5, 17.625], d:"M94 2.75 H84 C74 2.75 64.5 5.5 64.5 11.56 S74 20.375 84 20.375 H94 Z", color:"#f3f4f6", product:"TOTO Aquia IV WASHLET+ S7 One-Piece Toilet, Cotton White (#01), dual flush 0.9/1.28 GPF, 29-1/2 x 17-5/8 x 28-1/8 in (MW6464726CEMFGNA#01)" },
+      { id:"toiletpaper", name:"Toilet paper holder - Kohler K-14377-BN", shape:"rect", x:71, y:0.25, w:8.5, h:2.25, color:"#b4b0a6", product:"Kohler Purist toilet paper holder, Vibrant Brushed Nickel (K-14377-BN), on the seated-right wall below the window, 26 in above floor" },
       { id:"vanity", name:"Floating vanity (24 W x 18 D, tiled)", shape:"rect", x:76, y:21, w:18, h:24, floating:true, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"towelring", name:"Towel ring - Kohler K-14441-BN", shape:"ellipse", cx:85, cy:45, rx:1.2, ry:1.2, color:"#b4b0a6", mount:{ wallZ:45, centerX:85, centerY:28 }, product:"Kohler Purist towel ring, Vibrant Brushed Nickel (K-14441-BN), mounted on the exposed right-side face of the vanity" },
       { id:"vanityshelf", name:"Tile shelf over toilet (6 D x 2 thick)", shape:"rect", x:88, y:0, w:6, h:21, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"vanitywood", name:"Vanity drawer fronts (walnut)", shape:"none", color:"#5c4033", product:"Walnut wood panel drawer fronts (2)" },
       { id:"sink", name:"Sink - Concretti Phoenix vessel, white", shape:"rect", x:78.5, y:25.75, w:14.5, h:14.5, rx:1.5, color:"#ffffff", product:"Concretti Designs Phoenix square concrete vessel sink, white, 14.5 x 14.5 x 5 in" },
@@ -269,6 +273,18 @@ const SEED_ORDERS = [{
 }, {
   key: "ivy-bronx-mirror-master", bath: "master",
   order: { item: "Ivy Bronx rectangular backlit LED bathroom mirror, anti-fog, 3 color temperatures, 40 x 30 in (W116695986)", vendor: "Wayfair (Ivy Bronx)", model: "W116695986", price: 489.99, notes: "ESTIMATE - price and depth (about 1.5 in) are from a web search of similar Ivy Bronx 40x30 mirrors; confirm on the Wayfair page for the exact listing. Centered on the vanity-side wall, bottom about 48 in above floor. Needs hardwired power behind it." },
+}, {
+  key: "kohler-purist-toilet-paper-upstairs", bath: "upstairs",
+  order: { item: "Kohler Purist toilet paper holder, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14377-BN", price: 0, notes: "Mount on the wall to the toilet's right when seated, below the window, about 26 in above the floor. Confirm exact placement and clearance during installation." },
+}, {
+  key: "kohler-purist-toilet-paper-master", bath: "master",
+  order: { item: "Kohler Purist toilet paper holder, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14377-BN", price: 0, notes: "Mount on the wall to the toilet's right when seated, below the window, about 26 in above the floor. Confirm exact placement and clearance during installation." },
+}, {
+  key: "kohler-purist-towel-ring-upstairs", bath: "upstairs",
+  order: { item: "Kohler Purist towel ring, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14441-BN", price: 0, notes: "Mount on the exposed right-side face of the vanity. Confirm exact placement and clearance during installation." },
+}, {
+  key: "kohler-purist-towel-ring-master", bath: "master",
+  order: { item: "Kohler Purist towel ring, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14441-BN", price: 0, notes: "Mount on the exposed right-side face of the vanity. Confirm exact placement and clearance during installation." },
 }];
 const KEY = "shadows-bathroom-v1";
 let state = load();
@@ -373,6 +389,7 @@ function load() {
   ensureSlidingShowerDoorOrders(s);
   ensureShowerLightOrders(s);
   ensureTotoToiletOrders(s);
+  ensureTowelRingOrders(s);
   if (!s.seeded.includes("fluted-shower-glass-removed")) {
     s.seeded.push("fluted-shower-glass-removed");
     localStorage.setItem(KEY, JSON.stringify(s));
@@ -438,6 +455,46 @@ function ensureShowerLightOrders(s) {
       if (!s.baths[sd.bath].orders.some(o => o.id === id)) s.baths[sd.bath].orders.push(Object.assign({ id, qty:1, status:"Planned", ordered:"", eta:"", delivered:"", ref:"" }, sd.order));
       changed = true;
     }
+  }
+  if (changed) localStorage.setItem(KEY, JSON.stringify(s));
+}
+
+function ensureToiletPaperHolderOrders(s) {
+  let changed = false;
+  for (const sd of SEED_ORDERS.filter(x => x.key.startsWith("kohler-purist-toilet-paper-"))) {
+    const id = "seed-" + sd.key + "-" + sd.bath;
+    if (!s.seeded.includes(sd.key)) {
+      s.seeded.push(sd.key);
+      if (!s.baths[sd.bath].orders.some(o => o.id === id)) {
+        s.baths[sd.bath].orders.push(Object.assign({ id, qty:1, status:"Planned", ordered:"", eta:"", delivered:"", ref:"" }, sd.order));
+      }
+      changed = true;
+    }
+  }
+  if (changed) localStorage.setItem(KEY, JSON.stringify(s));
+}
+
+function ensureTowelRingOrders(s) {
+  let changed = false;
+  const seeds = SEED_ORDERS.filter(x => x.key.startsWith("kohler-purist-towel-ring-"));
+  for (const sd of seeds) {
+    const id = "seed-" + sd.key + "-" + sd.bath;
+    if (!s.seeded.includes(sd.key)) {
+      s.seeded.push(sd.key);
+      if (!s.baths[sd.bath].orders.some(o => o.id === id)) {
+        s.baths[sd.bath].orders.push(Object.assign({ id, qty:1, status:"Planned", ordered:"", eta:"", delivered:"", ref:"" }, sd.order));
+      }
+      changed = true;
+    }
+  }
+  const locationVersion = "kohler-purist-towel-ring-location-v2";
+  if (!s.seeded.includes(locationVersion)) {
+    for (const sd of seeds) {
+      const order = s.baths[sd.bath].orders.find(o => o.id === "seed-" + sd.key + "-" + sd.bath);
+      if (order) order.notes = sd.order.notes;
+    }
+    s.seeded.push(locationVersion);
+    changed = true;
   }
   if (changed) localStorage.setItem(KEY, JSON.stringify(s));
 }
@@ -1016,6 +1073,8 @@ $("#importFile").onchange = async e => {
     ensureTowelWarmerOrders(state);
     ensureSlidingShowerDoorOrders(state);
     ensureShowerLightOrders(state);
+    ensureToiletPaperHolderOrders(state);
+    ensureTowelRingOrders(state);
     ensureTotoToiletOrders(state);
     save();
     render();
