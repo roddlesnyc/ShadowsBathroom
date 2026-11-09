@@ -49,7 +49,8 @@ const View3D = (() => {
 
   function add(mesh, id) {
     scene.add(mesh); mesh.castShadow = mesh.receiveShadow = true;
-    if (id) { mesh.userData.id = id; picks.push(mesh); }
+    // remember the mesh's own glow (mirror face, light lens) so selection highlighting can restore it
+    if (id) { mesh.userData.id = id; mesh.userData.em = mesh.material.emissive ? mesh.material.emissive.getHex() : 0; picks.push(mesh); }
     return mesh;
   }
   function box(x, z, w, d, y0, h, mat, id) {
@@ -314,8 +315,6 @@ const View3D = (() => {
       topY = 34;
       tbox(v, v.x, v.y, v.w, v.h, 20, 14, "vanity");
       const sh = E("vanityshelf");
-      // up-and-over: a 2" tiled upright rises from the vanity top at its toilet-side edge, then the 2" shelf runs over the toilet to the back wall (underside 40", top 42")
-      tbox(sh, sh.x, v.y, sh.w, 2, 34, 8, "vanityshelf");
       tbox(sh, sh.x, sh.y, sh.w, v.y + 2 - sh.y, 40, 2, "vanityshelf");
       const wood = std(E("vanitywood").color, { roughness: .6 });
       box(v.x - .5, v.y + 1.5, .5, v.h - 3, 20.75, 5.1, wood, "vanitywood");
@@ -376,8 +375,9 @@ const View3D = (() => {
     // toilet (tank at the back wall on the +x side, bowl facing -x)
     const t = E("toilet"), [bx, bz, bw, bd] = t.box, tm = std(t.color, { roughness: .2 });
     const tankD = Math.min(8, bw * .45);
-    box(bx + bw - tankD, bz + bd * .1, tankD, bd * .8, 12, 19, tm, "toilet");
-    box(bx + bw - tankD - .3, bz + bd * .1 - .3, tankD + .3, bd * .8 + .6, 31, 1, std(shade(t.color, .96)), "toilet");
+    const toiletHeight = t.height || 32, tankBase = 12, lidHeight = 1;
+    box(bx + bw - tankD, bz + bd * .1, tankD, bd * .8, tankBase, toiletHeight - tankBase - lidHeight, tm, "toilet");
+    box(bx + bw - tankD - .3, bz + bd * .1 - .3, tankD + .3, bd * .8 + .6, toiletHeight - lidHeight, lidHeight, std(shade(t.color, .96)), "toilet");
     const bowlLen = bw - 1, bowlM = cyl(.5, .42, 15, 0, 0, 0, tm, "toilet", 40);
     bowlM.scale.set(bowlLen, 1, bd * .9); bowlM.position.set(bx + bowlLen / 2, 7.5, bz + bd / 2);
     const seat = cyl(.5, .5, 1.6, 0, 0, 0, std(shade(t.color, .97), { roughness: .3 }), "toilet", 40);
@@ -441,13 +441,18 @@ const View3D = (() => {
     if (w !== size[0] || h !== size[1]) { size = [w, h]; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
     controls.update(); fade();
     if (ceiling) ceiling.visible = presetName ? presetName !== "top" : camera.position.y < WALL_H - 1;
-    picks.forEach(m => m.material.emissive && m.material.emissive.setHex(m.userData.id === "floor" && offSet.floor ? 0xffffff : m.userData.id === selId && m.userData.id !== "floor" ? 0x3a1414 : 0));
+    picks.forEach(m => m.material.emissive && m.material.emissive.setHex(m.userData.id === "floor" && offSet.floor ? 0xffffff : m.userData.id === selId && m.userData.id !== "floor" ? 0x3a1414 : (m.userData.em || 0)));
     wallMeshes.forEach(m => {
       const ids = [].concat(m.userData.surf || []), off = ids.some(i => offSet[i]);
       m.material.color.setHex(off ? 0 : (m.userData.col == null ? (m.userData.col = m.material.color.getHex()) : m.userData.col));
       m.material.emissive.setHex(off ? 0xffffff : 0);
     });
-    if (ceiling) { ceiling.material.emissive.setHex(offSet.ceiling ? 0xffffff : 0); if (offSet.ceiling) ceiling.material.color.setHex(0); }
+    if (ceiling) {
+      const off = !!offSet.ceiling, cm = ceiling.material;
+      if (ceiling.userData.col == null) ceiling.userData.col = cm.color.getHex();
+      cm.color.setHex(off ? 0 : ceiling.userData.col);
+      cm.emissive.setHex(off ? 0xffffff : 0);
+    }
     renderer.render(scene, camera);
     raf = requestAnimationFrame(loop);
   }
