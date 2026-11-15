@@ -161,10 +161,28 @@ const View3D = (() => {
 
     // window and door openings
     b.openings.forEach(o => {
-      if (o.label === "Window") {
+      if (o.type === "awning" || o.label === "Window") {
         wall(o.x, o.y, o.w, o.h, 0, 36, false, "w-back"); wall(o.x, o.y, o.w, o.h, 72, WALL_H - 72, false, "w-back");
         const glass = new THREE.MeshStandardMaterial({ color: 0xbfe0f0, transparent: true, opacity: .35, roughness: .1 });
-        box(o.x, o.y + o.h / 2 - .3, o.w, .6, 36, 36, glass);
+        if (o.type === "awning" && o.open) {
+          const sash = new THREE.Group();
+          const addSashPart = (w, h, d, x, y, z, material) => {
+            const part = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+            part.position.set(x, y, z);
+            sash.add(part);
+          };
+          addSashPart(o.w - 3, 33, .4, 0, -18, 0, glass);
+          const sashFrame = std(0xffffff);
+          addSashPart(o.w, 1.5, 1.5, 0, -.75, 0, sashFrame);
+          addSashPart(o.w, 1.5, 1.5, 0, -35.25, 0, sashFrame);
+          addSashPart(1.5, 34, 1.5, -o.w / 2 + .75, -18, 0, sashFrame);
+          addSashPart(1.5, 34, 1.5, o.w / 2 - .75, -18, 0, sashFrame);
+          sash.position.set(o.x + o.w / 2, 72, o.y + o.h / 2);
+          sash.rotation.x = (o.openAngle || 30) * Math.PI / 180;
+          scene.add(sash);
+        } else {
+          box(o.x, o.y + o.h / 2 - .3, o.w, .6, 36, 36, glass);
+        }
         const fr = std(0xffffff);
         box(o.x, o.y + o.h / 2 - .8, o.w, 1.6, 35, 1.5, fr); box(o.x, o.y + o.h / 2 - .8, o.w, 1.6, 71, 1.5, fr);
         box(o.x, o.y + o.h / 2 - .8, 1.5, 1.6, 36, 36, fr); box(o.x + o.w - 1.5, o.y + o.h / 2 - .8, 1.5, 1.6, 36, 36, fr);
@@ -188,28 +206,31 @@ const View3D = (() => {
       [18, 34, 50, 66, 82].forEach(y => box(n.x, n.y, n.w - 1, n.h, y, 1.25, wm, "nookshelves"));
     }
 
+    // Master fixtures use the same local orientation as upstairs, reflected after construction.
+    const fixtureStart = scene.children.length;
     // shower
     const sh = E("shower"), sw = sh.w, sd = sh.h, sx = sh.x, sz = sh.y;
     flatRect(sx, sz, sw, sd, .4, sh, "shower");
     b.showerWalls.forEach(side => {
-      if (side === "top") vPanel(sw, WALL_H, sx + sw / 2, WALL_H / 2, sz + .15, 0, sh);
-      if (side === "bottom") vPanel(sw, WALL_H, sx + sw / 2, WALL_H / 2, sz + sd - .15, Math.PI, sh);
+      if (side === "top" && !b.flipFixtures) vPanel(sw, WALL_H, sx + sw / 2, WALL_H / 2, sz + .15, 0, sh);
+      if (side === "bottom") {
+        const panel = vPanel(sw, WALL_H, sx + sw / 2, WALL_H / 2, sz + sd - .15, Math.PI, sh);
+        if (b.showerFixturesOpposite) {
+          panel.material.transparent = true;
+          panel.userData.surf = "w-door-s";
+          wallMeshes.push(panel);
+        }
+      }
       if (side === "left") vPanel(sd, WALL_H, sx + .15, WALL_H / 2, sz + sd / 2, Math.PI / 2, sh);
     });
     box(sx + sw - 2, sz, 2, sd, 0, 3, std(shade(sh.color, 1.05)), "shower");
     if (has("showerdoor")) {
-      const gx = sx + sw, mid = sz + sd / 2, doorHeight = 72;
-      const glass = new THREE.MeshStandardMaterial({ color:0xcfe3e9, transparent:true, opacity:.38, roughness:.15, depthWrite:false, side:THREE.DoubleSide });
+      const e = E("showerdoor"), gx = sx + sw, doorHeight = 72;
+      const glass = new THREE.MeshStandardMaterial({ color:e.color, transparent:true, opacity:.38, roughness:.15, depthWrite:false, side:THREE.DoubleSide });
       const metal = std(0xb4b0a6, { metalness:.65, roughness:.35 });
-      box(gx - .08, sz, .12, sd / 2 + 1, 2, doorHeight - 2, glass, "showerdoor");
-      box(gx + .2, mid - 1, .12, sd / 2 + 1, 2, doorHeight - 2, glass, "showerdoor");
-      box(gx - .35, sz, .7, .35, .4, doorHeight, metal, "showerdoor");
-      box(gx - .35, sz + sd - .35, .7, .35, .4, doorHeight, metal, "showerdoor");
-      box(gx - .35, sz, .25, sd, doorHeight, .5, metal, "showerdoor");
-      box(gx + .05, sz, .25, sd, .4, .45, metal, "showerdoor");
-      box(gx + .05, sz, .25, sd, doorHeight - .4, .45, metal, "showerdoor");
-      box(gx - .12, mid - .25, .25, .5, 32, 7, metal, "showerdoor");
-      box(gx + .18, mid - .25, .25, .5, 32, 7, metal, "showerdoor");
+      box(gx - .2, e.y, .4, e.h, 2, doorHeight - 2, glass, "showerdoor");
+      box(gx - .3, e.y, .6, .3, .4, doorHeight, metal, "showerdoor");
+      box(gx - .3, e.y + e.h - .3, .6, .3, .4, doorHeight, metal, "showerdoor");
     }
 
     // recessed high-hat light, centered in the shower ceiling
@@ -222,7 +243,8 @@ const View3D = (() => {
       scene.add(lamp);
     }
 
-    // shower valve, arm and head (mounted on the "top" wall)
+    // Shower fixtures are constructed facing inward from the top wall.
+    const showerFixtureStart = scene.children.length;
     if (has("handshower")) {
       const e = E("handshower"), hx = e.x + e.w / 2, hz = e.y, m = std(e.color, { metalness: .55, roughness: .4 });
       box(hx - .6, hz, 1.2, .8, 40, 28, m, "handshower");
@@ -237,6 +259,12 @@ const View3D = (() => {
       const arm = cyl(.5, .5, 9, cx, 0, wz, m, "showerhead"); arm.rotation.x = Math.PI / 2; arm.position.set(cx, 80, wz + 4.5);
       const head = cyl(4.5, 4.5, .8, cx, 0, wz, m, "showerhead", 32); head.position.set(cx, 79, wz + 9); head.rotation.x = .35;
     }
+    if (b.showerFixturesOpposite) {
+      scene.children.slice(showerFixtureStart).forEach(o => {
+        o.position.z = 2 * sz + sd - o.position.z;
+        o.scale.z *= -1;
+      });
+    }
     if (has("toiletpaper")) {
       const e = E("toiletpaper"), cx = e.x + e.w / 2, m = std(e.color, { metalness: .65, roughness: .35 });
       [-3.25, 3.25].forEach(dx => {
@@ -247,16 +275,18 @@ const View3D = (() => {
     }
     if (has("towelring")) {
       const e = E("towelring"), t = e.mount, m = std(e.color, { metalness: .65, roughness: .35 });
+      const frontMount = t.wallX !== undefined;
       const bracket = new THREE.Mesh(new THREE.CylinderGeometry(.45, .45, .5, 24), m);
-      bracket.rotation.x = Math.PI / 2;
-      bracket.position.set(t.centerX, t.centerY + 2.5, t.wallZ + .25);
+      bracket.rotation.set(frontMount ? 0 : Math.PI / 2, 0, frontMount ? Math.PI / 2 : 0);
+      bracket.position.set(frontMount ? t.wallX - .25 : t.centerX, t.centerY + 2.5, frontMount ? t.centerZ : t.wallZ + .25);
       add(bracket, "towelring");
       const arm = new THREE.Mesh(new THREE.CylinderGeometry(.2, .2, 1.2, 16), m);
-      arm.rotation.x = Math.PI / 2;
-      arm.position.set(t.centerX, t.centerY + 2.5, t.wallZ + .9);
+      arm.rotation.set(frontMount ? 0 : Math.PI / 2, 0, frontMount ? Math.PI / 2 : 0);
+      arm.position.set(frontMount ? t.wallX - .9 : t.centerX, t.centerY + 2.5, frontMount ? t.centerZ : t.wallZ + .9);
       add(arm, "towelring");
       const ring = new THREE.Mesh(new THREE.TorusGeometry(3, .22, 10, 40), m);
-      ring.position.set(t.centerX, t.centerY, t.wallZ + 1.5);
+      if (frontMount) ring.rotation.y = Math.PI / 2;
+      ring.position.set(frontMount ? t.wallX - 1.5 : t.centerX, t.centerY, frontMount ? t.centerZ : t.wallZ + 1.5);
       add(ring, "towelring");
     }
     if (has("towelwarmer") && E("towelwarmer").mount) {
@@ -383,6 +413,13 @@ const View3D = (() => {
     const seat = cyl(.5, .5, 1.6, 0, 0, 0, std(shade(t.color, .97), { roughness: .3 }), "toilet", 40);
     seat.scale.set(bowlLen * 1.02, 1, bd * .93); seat.position.set(bx + bowlLen / 2, 16.5, bz + bd / 2);
 
+    if (b.flipFixtures) {
+      scene.children.slice(fixtureStart).forEach(o => {
+        o.position.x = b.flipFixtures - o.position.x;
+        o.scale.x *= -1;
+      });
+    }
+
     // ceiling (only when the plan defines one); hidden when the camera is above it
     ceiling = null;
     if (has("ceiling")) {
@@ -396,6 +433,7 @@ const View3D = (() => {
       new THREE.Vector3(sx + sw / 2, 40, sz + sd / 2), new THREE.Vector3(bx + bw / 2, 20, bz + bd / 2),
       new THREE.Vector3(v.x + v.w / 2, 30, v.y + v.h / 2), new THREE.Vector3((sx + sw + v.x) / 2, 1, (sz + sd / 2)),
     ];
+    if (b.flipFixtures) samples.forEach(p => { p.x = b.flipFixtures - p.x; });
   }
 
   /* ---------- camera ---------- */

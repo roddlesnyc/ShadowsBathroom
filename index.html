@@ -77,7 +77,7 @@ const BATHS = {
   upstairs: {
     name: "Upstairs Bathroom",
     desc: "7'6\" x 5'3\" with angled corner",
-    view: [-16, -16, 124, 100],
+    view: [-16, -20, 124, 100],
     outline: "M0 0 H90 V49 L70.5 63 H0 Z",
     walls: [],
     dims: [
@@ -87,7 +87,7 @@ const BATHS = {
       { x1:101, y1:0, x2:101, y2:50, text:"4' 2\"", vertical:true },
     ],
     openings: [
-      { x:24, y:-4, w:39, h:4, color:"#cfe3ec", label:"Window" },
+      { x:24, y:-4, w:39, h:4, color:"#cfe3ec", label:"Window", type:"awning", open:true, openAngle:30 },
       { x:24.5, y:63, w:46, h:4, color:"#ececec", label:"Door" },
     ],
     walls3d: [
@@ -116,7 +116,7 @@ const BATHS = {
       { id:"heatmat1", name:"Heated floor mat (custom L, ~11 sq ft)", shape:"path", d:"M38 2 H59 V19 H68 V61 H38 Z", lbl:{x:53,y:40,t:"~11 sq ft"}, heat:true, color:"#f59e0b", product:"Nuheat Custom Mat, L-shaped, 120 V, 12 W/sq ft" },
       { id:"nookshelves", name:"Nook shelves (walnut, 5)", shape:"none", color:"#5c4033", product:"Walnut shelves (5), about 24 W x 15.5 D x 1.25 thick, in the nook behind the shower" },
       { id:"shower", name:"Shower (36x45)", shape:"rect", x:0, y:18, w:36, h:45, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:2, grout_w:0.125, product:"Daltile Keystones Nautical Blue, matte, 2x2 (D621)" },
-      { id:"showerdoor", name:"Sliding shower door (custom bypass)", shape:"rect", x:35.5, y:18, w:0.5, h:45, color:"#cfe3e9", product:"Custom sliding glass shower door, full-height bypass panels across shower opening" },
+      { id:"showerdoor", name:"Fixed half-width shower glass", shape:"rect", x:35.5, y:18, w:0.5, h:22.5, color:"#cfe3e9", product:"Custom fixed shower glass panel on the fixture side; open entry on the opposite side" },
       { id:"showerlight", name:"Shower high-hat light (centered)", shape:"ellipse", cx:18, cy:40.5, rx:3, ry:3, color:"#fde68a", product:"Recessed high-hat (can) light, 6 in LED, wet-location / shower rated, centered in shower ceiling" },
       { id:"showerhead", name:"Shower trim, head & lever - Kohler Purist K-TS14422-4-BN", shape:"rect", x:15, y:18.5, w:6, h:3, color:"#b4b0a6", product:"Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)" },
       { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:55, rx:1.6, ry:2.2, color:"#b4b0a6" },
@@ -136,32 +136,34 @@ const BATHS = {
   master: {
     name: "Master Bathroom (new)",
     desc: "7'10\" x 4'3\" with 36x48 shower",
+    flipFixtures: 94,
+    showerFixturesOpposite: true,
     view: [-18, -20, 132, 98],
     outline: "M0 0 H94 V50 H0 Z",
     walls: [
       { x:-4, y:-4, w:102, h:4 }, { x:-4, y:0, w:4, h:54 },
-      { x:94, y:0, w:4, h:54, s:"w-right" }, { x:0, y:50, w:36, h:4, s:"w-door-s" }, { x:73, y:50, w:25, h:4, s:"w-door-t" },
+      { x:94, y:0, w:4, h:54, s:"w-right" }, { x:0, y:50, w:21, h:4, s:"w-door-t" }, { x:58, y:50, w:40, h:4, s:"w-door-s" },
     ],
     dims: [
       { x1:0, y1:-9, x2:94, y2:-9, text:"7' 10\"" },
       { x1:-8, y1:0, x2:-8, y2:50, text:"4' 3\"", vertical:true },
     ],
     openings: [
-      { x:49.6, y:-4, w:39, h:4, color:"#cfe3ec", label:"Window" },
-      { x:36, y:50, w:37, h:4, color:"#ececec", label:"Door" },
+      { x:49.6, y:-4, w:39, h:4, color:"#cfe3ec", label:"Window", type:"awning", open:true, openAngle:30 },
+      { x:21, y:50, w:37, h:4, color:"#ececec", label:"Door" },
     ],
     walls3d: [
       { x:-4, y:-4, w:53.6, h:4, s:"w-back" }, { x:88.6, y:-4, w:9.4, h:4, s:"w-back" },
-      { x:-4, y:0, w:4, h:54, s:"w-left" }, { x:94, y:0, w:4, h:54 },
-      { x:0, y:50, w:36, h:4 }, { x:73, y:50, w:25, h:4 },
+      { x:-4, y:0, w:4, h:54, s:"w-left" }, { x:94, y:0, w:4, h:54, s:"w-right" },
+      { x:0, y:50, w:21, h:4, s:"w-door-t" }, { x:58, y:50, w:40, h:4, s:"w-door-s" },
     ],
     diagWalls: [],
     surfaces: [
       { id:"floor", label:"Bathroom floor (incl. shower)", group:"Floor", poly:[[0,0],[94,0],[94,50],[0,50]] },
       { id:"ceiling", label:"Ceiling", group:"Ceiling", poly:[[0,0],[94,0],[94,50],[0,50]] },
       { id:"w-back", label:"Back wall (window)", group:"Walls", len:94, h:96, cut:[["Window",39,36]] },
-      { id:"w-left", label:"Left wall (shower end)", group:"Walls", len:50, h:96 },
-      { id:"w-right", label:"Right wall (toilet side)", group:"Walls", len:50, h:96 },
+      { id:"w-left", label:"Left wall (toilet side, shared)", group:"Walls", len:50, h:96 },
+      { id:"w-right", label:"Right wall (shower end)", group:"Walls", len:50, h:96 },
       { id:"w-door-s", label:"Door wall, shower end", group:"Walls", len:36, h:96 },
       { id:"w-door-t", label:"Door wall, toilet end", group:"Walls", len:21, h:96 },
       { id:"w-header", hidden:true, label:"Door header (above door)", group:"Walls", len:37, h:16 },
@@ -170,25 +172,25 @@ const BATHS = {
     doorFloor: "floor",
     elements: [
       { id:"floor", name:"Bathroom floor tile", shape:"rect", x:0, y:0, w:94, h:50, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
-      { id:"heatmat1", name:"Heated floor mat (custom L, ~9 sq ft)", shape:"path", d:"M38 2 H62 V21 H72 V47 H38 Z", lbl:{x:55,y:36,t:"~9 sq ft"}, heat:true, color:"#f59e0b", product:"Nuheat Custom Mat, L-shaped, 120 V, 12 W/sq ft" },
+      { id:"heatmat1", name:"Heated floor mat (preliminary, ~8 sq ft)", shape:"path", d:"M30 2 H56 V47 H30 Z", lbl:{x:43,y:36,t:"~8 sq ft"}, heat:true, color:"#f59e0b", product:"Nuheat Custom Mat, 120 V, 12 W/sq ft; layout requires a new quote and clearance review" },
       { id:"walls", name:"Wall tile", shape:"none", tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"ceiling", name:"Ceiling tile", shape:"none", tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"shower", name:"Shower 36x48", shape:"rect", x:0, y:0, w:36, h:48, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
-      { id:"showerdoor", name:"Sliding shower door (custom bypass)", shape:"rect", x:35.5, y:0, w:0.5, h:48, color:"#cfe3e9", product:"Custom sliding glass shower door, full-height bypass panels across shower opening" },
+      { id:"showerdoor", name:"Fixed half-width shower glass", shape:"rect", x:35.5, y:24, w:0.5, h:24, color:"#cfe3e9", product:"Custom fixed shower glass panel on the fixture side; open entry on the window side" },
       { id:"showerlight", name:"Shower high-hat light (centered)", shape:"ellipse", cx:18, cy:24, rx:3, ry:3, color:"#fde68a", product:"Recessed high-hat (can) light, 6 in LED, wet-location / shower rated, centered in shower ceiling" },
       { id:"showerhead", name:"Shower trim, head & lever - Kohler Purist K-TS14422-4-BN", shape:"rect", x:15, y:0.5, w:6, h:3, color:"#b4b0a6", product:"Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)" },
       { id:"handshower", name:"Handshower + slidebar - Kohler Purist K-22178-BN", shape:"rect", x:27, y:0.5, w:2, h:3, color:"#b4b0a6", product:"Kohler Purist four-function handshower kit, 28 in slidebar, 60 in hose, Vibrant Brushed Nickel (K-22178-BN)" },
       { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:32, rx:1.6, ry:2.2, color:"#b4b0a6" },
       { id:"toilet", name:"Kohler San Souci toilet - K-5172-HC-0", shape:"path", box:[66.125, 3.375, 27.875, 16.375], d:"M94 3.375 H84 C74.5 3.375 66.125 6.1 66.125 11.5625 S74.5 19.75 84 19.75 H94 Z", height:25.3125, color:"#f3f4f6", product:"Kohler San Souci hidden-cord one-piece compact elongated toilet, White (K-5172-HC-0), 27-7/8 x 16-3/8 x 25-5/16 in" },
-      { id:"toiletpaper", name:"Toilet paper holder - Kohler K-14377-BN", shape:"rect", x:71, y:0.25, w:8.5, h:2.25, color:"#b4b0a6", product:"Kohler Purist toilet paper holder, Vibrant Brushed Nickel (K-14377-BN), on the seated-right wall below the window, 26 in above floor" },
-      { id:"vanity", name:"Floating vanity (24 W x 18 D, tiled)", shape:"rect", x:76, y:21, w:18, h:24, floating:true, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
-      { id:"towelring", name:"Towel ring - Kohler K-14441-BN", shape:"ellipse", cx:85, cy:45, rx:1.2, ry:1.2, color:"#b4b0a6", mount:{ wallZ:45, centerX:85, centerY:28 }, product:"Kohler Purist towel ring, Vibrant Brushed Nickel (K-14441-BN), mounted on the exposed right-side face of the vanity" },
-      { id:"vanityshelf", name:"Vanity-height tile shelf over toilet (6 D x 2 thick)", shape:"rect", x:88, y:0, w:6, h:21, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"toiletpaper", name:"Toilet paper holder - Kohler K-14377-BN", shape:"rect", x:71, y:0.25, w:8.5, h:2.25, color:"#b4b0a6", product:"Kohler Purist toilet paper holder, Vibrant Brushed Nickel (K-14377-BN), on the window-side wall, 26 in above floor; placement to be confirmed" },
+      { id:"vanity", name:"Floating vanity (24 W x 18 D, tiled)", shape:"rect", x:76, y:26, w:18, h:24, floating:true, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
+      { id:"towelring", name:"Towel ring - Kohler K-14441-BN", shape:"ellipse", cx:75.5, cy:38, rx:1.2, ry:1.2, color:"#b4b0a6", mount:{ wallX:75.5, centerZ:38, centerY:28 }, product:"Kohler Purist towel ring, Vibrant Brushed Nickel (K-14441-BN), mounted on the exposed front face of the vanity" },
+      { id:"vanityshelf", name:"Vanity-height tile shelf over toilet (6 D x 2 thick)", shape:"rect", x:88, y:0, w:6, h:26, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"vanitywood", name:"Vanity drawer fronts (walnut)", shape:"none", color:"#5c4033", product:"Walnut wood panel drawer fronts (2)" },
-      { id:"sink", name:"Sink - Concretti Phoenix vessel, white", shape:"rect", x:78.5, y:25.75, w:14.5, h:14.5, rx:1.5, color:"#ffffff", product:"Concretti Designs Phoenix square concrete vessel sink, white, 14.5 x 14.5 x 5 in" },
-      { id:"faucet", name:"Faucet - Kohler Purist K-T14413-3-BN (wall mount)", shape:"rect", x:87.25, y:32, w:6.75, h:2, rx:1, color:"#b4b0a6", wall:1, product:"Kohler Purist wall-mount faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)" },
-      { id:"mirror", name:"Mirror - Glow backlit LED RBNYM3040RGFPD3 (40 W x 30 H)", shape:"rect", x:92.5, y:5.0, w:1.5, h:40, color:"#cfe3ee", mirror:{ w:40, h:30, d:1.5, bottom:48, cz:25.0 }, product:"Mirror Glow rectangular LED mirror, 30 x 40 in, 2700K (RBNYM3040RGFPD3)" },
-      { id:"towelwarmer", name:"Towel warmer - Amba Modello i20 round, 2 vertical bars", shape:"rect", x:42.425, y:0, w:0.75, h:2.5, mount:{ cx:42.8, cy:0, ux:1, uz:0, w:0.75, h:20, d:2.5, bottom:30, singleBar:true, bars:2, spacing:3 }, color:"#b4b0a6", product:"2 x Amba Modello i20 round heated towel bar, vertical installation, Brushed Stainless Steel" },
+      { id:"sink", name:"Sink - Concretti Phoenix vessel, white", shape:"rect", x:78.5, y:30.75, w:14.5, h:14.5, rx:1.5, color:"#ffffff", product:"Concretti Designs Phoenix square concrete vessel sink, white, 14.5 x 14.5 x 5 in" },
+      { id:"faucet", name:"Faucet - Kohler Purist K-T14413-3-BN (wall mount)", shape:"rect", x:87.25, y:37, w:6.75, h:2, rx:1, color:"#b4b0a6", wall:1, product:"Kohler Purist wall-mount faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)" },
+      { id:"mirror", name:"Mirror - Glow backlit LED RBNYM3040RGFPD3 (40 W x 30 H)", shape:"rect", x:92.5, y:3.0, w:1.5, h:40, color:"#cfe3ee", mirror:{ w:40, h:30, d:1.5, bottom:48, cz:23.0 }, product:"Mirror Glow rectangular LED mirror, 30 x 40 in, 2700K (RBNYM3040RGFPD3)" },
+      { id:"towelwarmer", name:"Towel warmer - Amba Modello i20 round, 2 vertical bars", shape:"rect", x:54.625, y:0, w:0.75, h:2.5, mount:{ cx:55, cy:0, ux:1, uz:0, w:0.75, h:20, d:2.5, bottom:30, singleBar:true, bars:2, spacing:3 }, color:"#b4b0a6", product:"2 x Amba Modello i20 round heated towel bar, vertical installation, Brushed Stainless Steel" },
     ],
   },
 };
@@ -264,11 +266,11 @@ const SEED_ORDERS = [{
   key: "amba-cwb-master", bath: "master",
   order: { item: "Amba ATW-CWB concealed wall box for Modello i towel bar", vendor: "Amba", model: "ATW-CWB", qty:2, price: 100, notes: "One concealed wall box required per bar with the remotely-wired controller. US$100 list price shown in the 2024.10 guide." },
 }, {
-  key: "sliding-shower-door-upstairs", bath: "upstairs",
-  order: { item: "Custom sliding glass shower door, bypass panels", vendor: "Custom glass fabricator", model: "Sliding shower door (custom)", price: 0, notes: "QUOTE REQUIRED - replace the glass-and-pillar section with a sliding bypass door across the shower opening. Verify finished opening, height, clearances, tempered-glass requirements, and hardware after tile is set." },
+  key: "fixed-shower-panel-upstairs", bath: "upstairs",
+  order: { item: "Custom fixed half-width shower glass panel", vendor: "Custom glass fabricator", model: "Fixed shower panel (custom)", price: 0, notes: "QUOTE REQUIRED - fixed panel on the fixture side, with open entry at the opposite end. Verify finished opening, height, splash containment, tempered-glass requirements, and hardware after tile is set." },
 }, {
-  key: "sliding-shower-door-master", bath: "master",
-  order: { item: "Custom sliding glass shower door, bypass panels", vendor: "Custom glass fabricator", model: "Sliding shower door (custom)", price: 0, notes: "QUOTE REQUIRED - replace the glass-and-pillar section with a sliding bypass door across the shower opening. Verify finished opening, height, clearances, tempered-glass requirements, and hardware after tile is set." },
+  key: "fixed-shower-panel-master", bath: "master",
+  order: { item: "Custom fixed half-width shower glass panel", vendor: "Custom glass fabricator", model: "Fixed shower panel (custom)", price: 0, notes: "QUOTE REQUIRED - fixed panel on the fixture side, with open entry at the window side. Verify finished opening, height, splash containment, window waterproofing, tempered-glass requirements, and hardware after tile is set." },
 }, {
   key: "shower-light-upstairs", bath: "upstairs",
   order: { item: "Recessed 6 in LED high-hat light, shower (wet-location rated)", vendor: "TBD", model: "6 in wet-rated LED recessed", price: 0, notes: "SELECT FIXTURE - one recessed 6 in LED high-hat, wet-location (shower) rated with a sealed trim, centered in the shower ceiling. Confirm it is IC/damp-wet rated for a tiled ceiling and add a dimmer-compatible driver. Price is a placeholder." },
@@ -298,7 +300,7 @@ const SEED_ORDERS = [{
   order: { item: "Kohler Purist toilet paper holder, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14377-BN", price: 298.35, notes: "Mount on the wall to the toilet's right when seated, below the window, about 26 in above the floor. Confirm exact placement and clearance during installation." },
 }, {
   key: "kohler-purist-toilet-paper-master", bath: "master",
-  order: { item: "Kohler Purist toilet paper holder, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14377-BN", price: 298.35, notes: "Mount on the wall to the toilet's right when seated, below the window, about 26 in above the floor. Confirm exact placement and clearance during installation." },
+  order: { item: "Kohler Purist toilet paper holder, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14377-BN", price: 298.35, notes: "Mount on the window-side wall, about 26 in above the floor. Confirm exact placement and clearance during installation." },
 }, {
   key: "kohler-purist-towel-ring-upstairs", bath: "upstairs",
   order: { item: "Kohler Purist towel ring, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14441-BN", price: 308.15, notes: "Mount on the exposed right-side face of the vanity. Confirm exact placement and clearance during installation." },
@@ -406,7 +408,7 @@ function load() {
   }
   ensureTowelWarmerOrders(s);
   removeFlutedShowerGlass(s);
-  ensureSlidingShowerDoorOrders(s);
+  retirePlannedSlidingShowerDoors(s);
   ensureShowerLightOrders(s);
   ensureKohlerToiletOrders(s);
   ensureTowelRingOrders(s);
@@ -471,6 +473,7 @@ function removeLegacyElementoTowelWarmer(s) {
 }
 
 function removeFlutedShowerGlass(s) {
+  if (s.seeded.includes("fluted-shower-glass-removed")) return;
   for (const bath of ["upstairs", "master"]) {
     delete s.baths[bath].custom.showerdoor;
     s.baths[bath].orders = s.baths[bath].orders.filter(o =>
@@ -535,24 +538,20 @@ function ensureTowelRingOrders(s) {
   if (changed) localStorage.setItem(KEY, JSON.stringify(s));
 }
 
-function ensureSlidingShowerDoorOrders(s) {
-  let changed = false;
-  if (!s.seeded.includes("sliding-shower-door-orders-v1")) {
-    s.seeded.push("sliding-shower-door-orders-v1");
-    changed = true;
+function retirePlannedSlidingShowerDoors(s) {
+  if (s.seeded.includes("fixed-shower-panels-v1")) return;
+  const oldNotes = "QUOTE REQUIRED - replace the glass-and-pillar section with a sliding bypass door across the shower opening. Verify finished opening, height, clearances, tempered-glass requirements, and hardware after tile is set.";
+  for (const bath of ["upstairs", "master"]) {
+    s.baths[bath].orders = s.baths[bath].orders.filter(o => !(
+      o.id === `seed-sliding-shower-door-${bath}-${bath}` &&
+      o.item === "Custom sliding glass shower door, bypass panels" &&
+      o.vendor === "Custom glass fabricator" && o.model === "Sliding shower door (custom)" &&
+      o.notes === oldNotes && o.status === "Planned" && +o.qty === 1 && +o.price === 0 &&
+      !o.kohlerNet && !o.ordered && !o.eta && !o.delivered && !o.ref
+    ));
   }
-  for (const sd of SEED_ORDERS.filter(x => x.key.startsWith("sliding-shower-door-"))) {
-    const id = "seed-" + sd.key + "-" + sd.bath;
-    if (!s.baths[sd.bath].orders.some(o => o.id === id)) {
-      s.baths[sd.bath].orders.push(Object.assign({ id, qty:1, status:"Planned", ordered:"", eta:"", delivered:"", ref:"" }, sd.order));
-      changed = true;
-    }
-    if (!s.seeded.includes(sd.key)) {
-      s.seeded.push(sd.key);
-      changed = true;
-    }
-  }
-  if (changed) localStorage.setItem(KEY, JSON.stringify(s));
+  s.seeded.push("fixed-shower-panels-v1");
+  localStorage.setItem(KEY, JSON.stringify(s));
 }
 
 function ensureTowelWarmerOrders(s) {
@@ -705,14 +704,30 @@ function dimSvg(d) {
 
 function planSvg(bath) {
   const b = BATHS[bath];
-  const rooms = b.elements.filter(e => e.shape !== "none").map(e => shapeSvg(bath, e)).join("");
+  const rooms = b.elements.filter(e => e.shape !== "none").map(e => {
+    let shape = shapeSvg(bath, e);
+    if (b.showerFixturesOpposite && ["showerhead", "handshower"].includes(e.id)) {
+      const sh = b.elements.find(item => item.id === "shower");
+      shape = `<g transform="translate(0 ${2 * sh.y + sh.h}) scale(1 -1)">${shape}</g>`;
+    }
+    return b.flipFixtures && e.id !== "floor" && !e.heat
+      ? `<g transform="translate(${b.flipFixtures} 0) scale(-1 1)">${shape}</g>` : shape;
+  }).join("");
   // Floors are drawn first so the fixtures (listed later) sit on top; walls go above floors.
   return `<svg id="plan" viewBox="${b.view.join(" ")}" xmlns="http://www.w3.org/2000/svg">
     <defs>${tileDefs(bath)}</defs>
     <path d="${b.outline}" fill="none" stroke="#3b3b3b" stroke-width="8" stroke-linejoin="miter"/>
     ${rooms}
     ${b.walls.map(w => `<rect x="${w.x}" y="${w.y}" width="${w.w}" height="${w.h}" fill="#3b3b3b"/>`).join("")}
-    ${b.openings.map(o => `<rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="${o.color}" stroke="#777" stroke-width=".3"><title>${o.label}</title></rect>`).join("")}
+    ${b.openings.map(o => {
+      const openingLabel = o.type === "awning" ? "Awning window (open)" : o.label;
+      const opening = `<rect x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" fill="${o.color}" stroke="#777" stroke-width=".3"><title>${openingLabel}</title></rect>`;
+      const sashProjection = 36 * Math.sin((o.openAngle || 30) * Math.PI / 180);
+      const sash = o.type === "awning" && o.open
+        ? `<path d="M${o.x} ${o.y + o.h} L${o.x} ${o.y + o.h - sashProjection} L${o.x + o.w} ${o.y + o.h - sashProjection} L${o.x + o.w} ${o.y + o.h} Z" fill="${o.color}" fill-opacity=".35" stroke="#628493" stroke-width=".6"><title>Open awning sash</title></path>`
+        : "";
+      return opening + sash;
+    }).join("")}
     ${b.dims.map(dimSvg).join("")}
   </svg>`;
 }
@@ -980,6 +995,7 @@ function orderRow(o) {
 function renderOrders() {
   const bath = ui.tab, orders = state.baths[bath].orders;
   $("#body").innerHTML = `
+    ${orders.some(o => o.id === `seed-sliding-shower-door-${bath}-${bath}`) ? `<div class="hint"><strong>Review:</strong> A previous sliding-door order is retained; check its status and update it separately for the new fixed-panel design.</div>` : ""}
     <div id="totals">${totalsHtml(bath)}</div>
     <div class="tablewrap"><table>
       <thead><tr><th>Item</th><th>Manufacturer</th><th>Model #</th><th>Qty</th><th>Unit price</th><th>Kohler net</th><th>Line total</th><th>Status</th>
