@@ -259,6 +259,9 @@ const SEED_ORDERS = [{
   key: "concretti-phoenix-sink-master", bath: "master",
   order: { item: "Concretti Designs Phoenix square concrete vessel sink, White (14.5 x 14.5 x 5 in)", vendor: "Concretti Designs", model: "Phoenix (white)", price: 449.99, notes: "Price and size from web search (about $440-450, made to order, 4-6 wk lead time) - please confirm. Faucet and drain sold separately." },
 }, {
+  key: "concretti-push-drain-master", bath: "master",
+  order: { item: "Concretti Designs Push Style Pop-Up Drain, Black", vendor: "Concretti Designs", model: "Push Style Pop-Up Drain (Black)", price: 43.99, url:"https://concrettidesigns.com/products/push-style-pop-up-drain?variant=33646207369304" },
+}, {
   key: "kohler-purist-ts14422-master", bath: "master",
   order: { item: "Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)", vendor: "Kohler", model: "K-TS14422-4-BN", price: 818.1, notes: "Trim only - needs a Rite-Temp pressure-balancing rough-in valve (sold separately). Enter price. Specs from web search." },
 }, {
@@ -270,6 +273,9 @@ const SEED_ORDERS = [{
 }, {
   key: "concretti-phoenix-sink-upstairs", bath: "upstairs",
   order: { item: "Concretti Designs Phoenix square concrete vessel sink, White (14.5 x 14.5 x 5 in)", vendor: "Concretti Designs", model: "Phoenix (white)", price: 449.99, notes: "Price and size from web search (about $440-450, made to order, 4-6 wk lead time) - please confirm. Faucet and drain sold separately." },
+}, {
+  key: "concretti-push-drain-upstairs", bath: "upstairs",
+  order: { item: "Concretti Designs Push Style Pop-Up Drain, Black", vendor: "Concretti Designs", model: "Push Style Pop-Up Drain (Black)", price: 43.99, url:"https://concrettidesigns.com/products/push-style-pop-up-drain?variant=33646207369304" },
 }, {
   key: "kohler-purist-t14413-upstairs", bath: "upstairs",
   order: { item: "Kohler Purist wall-mount sink faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)", vendor: "Kohler", model: "K-T14413-3-BN", price: 736.35, notes: "Trim only - the rough-in valve is sold separately and must be added. Enter price. Specs from web search." , url:"https://www.kohler.com/en/products/faucets/bathroom-faucets/purist/purist-wall-mount-single-hole-bathroom-sink-faucet-trim-with-lever-handle-t14413" },
@@ -315,6 +321,12 @@ const SEED_ORDERS = [{
 }, {
   key: "bathroom-light-master", bath: "master",
   order: { item:"Recessed 6 in LED high-hat light, bathroom center", vendor:"TBD", model:"6 in wet-rated LED recessed", price:0, notes:"SELECT FIXTURE - additional recessed light centered in the bathroom ceiling, separate from the shower light. Confirm location rating, ceiling compatibility and dimming; price is a placeholder." },
+}, {
+  key: "grout-upstairs", bath: "upstairs",
+  order: { item:"Grout", vendor:"TBD", model:"Grout (select)", price:0, notes:"Select grout to match the specified dark blue-gray color (#3a4f63). Confirm product, quantity, and price." },
+}, {
+  key: "grout-master", bath: "master",
+  order: { item:"Grout", vendor:"TBD", model:"Grout (select)", price:0, notes:"Select grout to match the specified white color (#ffffff). Confirm product, quantity, and price." },
 }, {
   key: "nuheat-mat-upstairs", bath: "upstairs",
   order: { item: "Nuheat Custom Mat, L-shaped (about 11 sq ft), 120 V, 12 W/sq ft", vendor: "Nuheat", model: "Custom Mat (quote)", price: 500, notes: "ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Leg sizes: top 21 x 17 in, bottom 30 x 42 in. Confirm clearances at the toilet and vanity." , url:"https://www.nuheat.com/mats/custom-mat" },
@@ -679,29 +691,33 @@ function normalizeModel(model) {
 
 const ITEM_CATEGORIES = {
   "Lighting": [
-    "light", "recessed", "high-hat", "LED", "mirror glow"
+    "light", "recessed", "high-hat"
   ],
-  "Faucets and Shower": [
-    "faucet", "trim", "valve", "handshower", "shower", "rainhead", "showerhead", "elbow", "drain", "arm", "clicker"
-  ],
-  "Tile": [
-    "tile", "daltile", "keystones", "mosaic"
-  ],
-  "Mirrors": [
+  "Mirror": [
     "mirror", "glow"
-  ],
-  "Toilet": [
-    "toilet", "water closet"
-  ],
-  "Towel Warmers": [
-    "towel", "warmer", "amba", "modello", "heat controller", "wall box"
   ],
   "Glass": [
     "glass", "shower door", "shower panel", "bypass"
   ],
-  "Toilet Paper Holders and Miscellaneous": [
-    "toilet paper", "bidet", "seat", "shelves", "nook"
-  ]
+  "Shower": [
+    "shower", "rainhead", "handshower", "showerhead", "thermostatic valve", "volume control", "supply elbow"
+  ],
+  "Sink": [
+    "sink", "phoenix", "clicker drain", "pop-up drain", "lavatory", "ceramic valve"
+  ],
+  "Tile": [
+    "daltile", "keystones", "mosaic", "grout"
+  ],
+  "Floor Heating": [
+    "nuheat", "floor heating", "heating mat"
+  ],
+  "Towel Warmers": [
+    "towel warmer", "heated towel", "towel bar", "amba", "modello", "heat controller", "wall box"
+  ],
+  "Miscellaneous": [],
+  "Toilet": [
+    "toilet", "water closet", "bidet"
+  ],
 };
 
 const PRODUCT_URLS = {
@@ -740,7 +756,7 @@ function categorizeItem(o) {
   for (const [cat, keywords] of Object.entries(ITEM_CATEGORIES)) {
     if (keywords.some(kw => text.includes(kw))) return cat;
   }
-  return "Toilet Paper Holders and Miscellaneous";
+  return "Miscellaneous";
 }
 
 function groupByCategory(orders) {
