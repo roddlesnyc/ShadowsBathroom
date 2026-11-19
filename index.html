@@ -49,6 +49,9 @@
   .st-Delivered { background:#bbf7d0; } .st-Installed { background:#86efac; } .st-Returned { background:#fecaca; }
   .st-Cancelled { background:#fecaca; }
   .lt { text-decoration:line-through; opacity:.55; }
+  .quote-change { display:inline-block; padding:2px 7px; border-radius:10px; font-size:11px; font-weight:700; white-space:nowrap; }
+  .quote-change.added { color:#166534; background:#dcfce7; }
+  .quote-change.removed { color:#991b1b; background:#fee2e2; }
   .hidden { display:none; }
   .toolbar { display:flex; gap:6px; margin-bottom:8px; align-items:center; }
   .toolbar .sep { flex:1; }
@@ -211,18 +214,45 @@ const KOHLER_QUOTE = {
   "ATW-CWB": [70, 65, "ATW-CWB"],
 };
 const PRICE_UPDATES = { "K-14377-BN": 298.35, "K-14441-BN": 308.15, "Phoenix (white)": 449.99 };
+/* Quote prices are per unit; quantity overrides preserve the quoted multi-item counts. */
+const UPDATED_KOHLER_ITEMS = [
+  { model:"KT14413-4-BN", aliases:["K-T14413-3-BN"], item:"Kohler Purist wall-mount lavatory faucet trim, Vibrant Brushed Nickel", price:981.8, kohlerNet:628.352 , url:"https://www.kohler.com/en/products/faucets/bathroom-faucets/purist/purist-wall-mount-single-hole-bathroom-sink-faucet-trim-with-lever-handle-t14413" },
+  { model:"K410-K-NA", item:"Kohler two-handle ceramic valve", price:328.9, kohlerNet:210.496 , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/5-8-two-handle-ceramic-valve-410-k" },
+  { model:"K25322-BN", item:"Kohler clicker drain with overflow, Vibrant Brushed Nickel", price:199.95, kohlerNet:149.963 , url:"https://www.lowes.com/pd/KOHLER-Clicker-Drain-with-Overflow-in-Vibrant-Brushed-Nickel/8868939" },
+  { model:"KT14488-4-BN", item:"Kohler Purist thermostatic valve trim, Vibrant Brushed Nickel", price:675.2, kohlerNet:432.128, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/purist-mastershower-temperature-control-valve-trim-w-lever-handle-t14488-4" },
+  { model:"K2972-KS-NA", item:"Kohler MasterShower 1/2 in thermostatic valve", price:654.8, kohlerNet:419.072, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/mastershower-3-4-volume-control-valve-2977-k" },
+  { model:"KT14490-4-BN", item:"Kohler Purist volume control trim, Vibrant Brushed Nickel", price:647.9, kohlerNet:414.656, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/purist-mastershower-volume-control-valve-trim-w-lever-handle-t14490-4" },
+  { model:"K2974-K-NA", item:"Kohler MasterShower 1/2 in volume control valve", qty:2, price:285.9, kohlerNet:182.976, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/mastershower-1-2-volume-control-valve-2974-k" },
+  { model:"K76465-G-BN", item:"Kohler Awaken 10 in rainhead, 1.75 gpm, Vibrant Brushed Nickel", price:378.25, kohlerNet:242.08, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-heads/awaken-10-single-function-rainhead-1-75-gpm-76465-g" },
+  { model:"K7394-BN", item:"Kohler 6 in ceiling-mount shower arm, Vibrant Brushed Nickel", price:203.25, kohlerNet:130.08, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-fittings/6-ceiling-mount-rainhead-arm-and-flange-7394" },
+  { model:"K22178-G-BN", aliases:["K-22178-BN"], item:"Kohler Purist multifunction handshower kit, 1.75 gpm, Vibrant Brushed Nickel", price:795.5, kohlerNet:509.12 , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/purist-multifunction-handshower-kit-with-28-in-slidebar-22178" },
+  { model:"K22172-BN", item:"Kohler Purist supply elbow with check valve, Vibrant Brushed Nickel", price:196.3, kohlerNet:125.632 , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/purist-stillness-wall-mount-supply-elbow-with-check-valve-22172" },
+  { model:"K5172-HC-0", aliases:["K-5172-HC-0"], item:"Kohler San Souci one-piece toilet, 1.28 gpf, hidden cord", price:1233, kohlerNet:863.1 , url:"https://www.kohler.com/en/products/toilets/one-piece-toilets/san-souci/toilet-compact-and-elongated-versions/k-5172-hc-0-san-souci-one-piece-compact-elongated-toilet-with-hidden-cord-mechanical-bidet-seat-1-28-gpf-white" },
+  { model:"K28821-0", aliases:["K-28821-0"], item:"Kohler PureWash E930 elongated bidet seat", price:1733.3, kohlerNet:1109.312 , url:"https://www.kohler.com/en/products/toilet-seats-bidet-seats/shop-toilet-seats-bidet-seats/purewash-e930-elongated-bidet-toilet-seat-w-remote-control-28821?skuId=28821-0" },
+  { model:"120RO.B", aliases:["Modello i20 Round / Brushed Stainless Steel"], item:"Amba Modello i Round 20 in heated towel bar, Brushed Stainless Steel", qtyByBath:{upstairs:4, master:2}, price:330, kohlerNet:231, vendor:"Amba" , url:"https://www.ambaheat.com/collections/modello-i-round" },
+  { model:"ATW-TDHCR-B", aliases:["ATW-TDHCR"], item:"Amba remote touch digital heat controller, Brushed Stainless Steel", price:370, kohlerNet:259, vendor:"Amba" , url:"https://www.ambaheat.com/products/atw-tdhcr-remote-touch-digital-controller" },
+  { model:"ATW-CWB", item:"Amba concealed wall box", qtyByBath:{upstairs:4, master:2}, price:100, kohlerNet:70, vendor:"Amba" , url:"https://www.ambaheat.com/products/atw-cwb-wall-box" },
+  { model:"K14377-BN", aliases:["K-14377-BN"], item:"Kohler Purist toilet paper holder, Vibrant Brushed Nickel", price:400, kohlerNet:298.35 , url:"https://www.kohler.com/en/products/bathroom-accessories/toilet-paper-holders/purist-toilet-paper-holder-14377" },
+  { model:"K14441-BN", aliases:["K-14441-BN"], item:"Kohler Purist towel ring, Vibrant Brushed Nickel", price:280, kohlerNet:190.944 , url:"https://www.kohler.com/en/products/bathroom-accessories/towel-rings/purist-towel-ring-14441" },
+  { model:"RBNYM3040RGFPD3", aliases:["RBNYM3040RGFPD3"], item:"Mirror Glow rectangular LED mirror, 30 x 40 in, 2700K", price:1479, kohlerNet:946.56, vendor:"Kohler Signature Store" , url:"https://www.robern.com/products/mirrors/vitality-mirrors/glow/ym3040rgfpd3" },
+  { model:"K22673-BN", item:"Kohler square design tile-in shower drain, Vibrant Brushed Nickel", qtyByBath:{master:2}, price:652, kohlerNet:489 , url:"https://www.amazon.com/Kohler-K-22673-BN-Clearflo-Shower-Brushed/dp/B07WZGZ8F8" },
+];
+const REMOVED_KOHLER_ITEMS = [
+  { model:"KTS14423-4-BN", aliases:["K-TS14422-4-BN"], item:"Kohler Purist Rite-Temp shower valve trim (KTS14423-4-BN)" },
+  { model:"K8304-KS-NA", item:"Kohler Rite-Temp pressure-balancing valve (K8304-KS-NA)" },
+];
 const SEED_ORDERS = [{
   key: "kohler-san-souci-bndl-k0100-upstairs", bath: "upstairs",
-  order: { item:"Kohler San Souci hidden-cord one-piece compact elongated toilet, 1.28 gpf, White", vendor:"Kohler", model:"K-5172-HC-0", price:1233, kohlerNet:863.1, notes:"Price from Kohler Signature Store quote S014006864 (11/03/26). Confirm rough-in and installation requirements." },
+  order: { item:"Kohler San Souci hidden-cord one-piece compact elongated toilet, 1.28 gpf, White", vendor:"Kohler", model:"K-5172-HC-0", price:1233, kohlerNet:863.1, notes:"Price from Kohler Signature Store quote S014006864 (11/03/26). Confirm rough-in and installation requirements." , url:"https://www.kohler.com/en/products/toilets/one-piece-toilets/san-souci/toilet-compact-and-elongated-versions/k-5172-hc-0-san-souci-one-piece-compact-elongated-toilet-with-hidden-cord-mechanical-bidet-seat-1-28-gpf-white" },
 }, {
   key: "kohler-san-souci-bndl-k0100-master", bath: "master",
-  order: { item:"Kohler San Souci hidden-cord one-piece compact elongated toilet, 1.28 gpf, White", vendor:"Kohler", model:"K-5172-HC-0", price:1233, kohlerNet:863.1, notes:"Price from Kohler Signature Store quote S014006864 (11/03/26). Confirm rough-in and installation requirements." },
+  order: { item:"Kohler San Souci hidden-cord one-piece compact elongated toilet, 1.28 gpf, White", vendor:"Kohler", model:"K-5172-HC-0", price:1233, kohlerNet:863.1, notes:"Price from Kohler Signature Store quote S014006864 (11/03/26). Confirm rough-in and installation requirements." , url:"https://www.kohler.com/en/products/toilets/one-piece-toilets/san-souci/toilet-compact-and-elongated-versions/k-5172-hc-0-san-souci-one-piece-compact-elongated-toilet-with-hidden-cord-mechanical-bidet-seat-1-28-gpf-white" },
 }, {
   key: "kohler-purewash-e820-upstairs", bath: "upstairs",
-  order: { item:"Kohler PureWash E930 elongated bidet toilet seat, White", vendor:"Kohler", model:"K-28821-0", price:1733.3, kohlerNet:1126.645, notes:"Price from Kohler Signature Store quote S014006864 (11/03/26). Listed separately in the items summary; intentionally not shown in the 2D or 3D model." },
+  order: { item:"Kohler PureWash E930 elongated bidet toilet seat, White", vendor:"Kohler", model:"K-28821-0", price:1733.3, kohlerNet:1126.645, notes:"Price from Kohler Signature Store quote S014006864 (11/03/26). Listed separately in the items summary; intentionally not shown in the 2D or 3D model." , url:"https://www.kohler.com/en/products/toilet-seats-bidet-seats/shop-toilet-seats-bidet-seats/purewash-e930-elongated-bidet-toilet-seat-w-remote-control-28821?skuId=28821-0" },
 }, {
   key: "kohler-purewash-e820-master", bath: "master",
-  order: { item:"Kohler PureWash E930 elongated bidet toilet seat, White", vendor:"Kohler", model:"K-28821-0", price:1733.3, kohlerNet:1126.645, notes:"Price from Kohler Signature Store quote S014006864 (11/03/26). Listed separately in the items summary; intentionally not shown in the 2D or 3D model." },
+  order: { item:"Kohler PureWash E930 elongated bidet toilet seat, White", vendor:"Kohler", model:"K-28821-0", price:1733.3, kohlerNet:1126.645, notes:"Price from Kohler Signature Store quote S014006864 (11/03/26). Listed separately in the items summary; intentionally not shown in the 2D or 3D model." , url:"https://www.kohler.com/en/products/toilet-seats-bidet-seats/shop-toilet-seats-bidet-seats/purewash-e930-elongated-bidet-toilet-seat-w-remote-control-28821?skuId=28821-0" },
 }, {
   key: "concretti-phoenix-sink-master", bath: "master",
   order: { item: "Concretti Designs Phoenix square concrete vessel sink, White (14.5 x 14.5 x 5 in)", vendor: "Concretti Designs", model: "Phoenix (white)", price: 449.99, notes: "Price and size from web search (about $440-450, made to order, 4-6 wk lead time) - please confirm. Faucet and drain sold separately." },
@@ -231,40 +261,40 @@ const SEED_ORDERS = [{
   order: { item: "Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)", vendor: "Kohler", model: "K-TS14422-4-BN", price: 818.1, notes: "Trim only - needs a Rite-Temp pressure-balancing rough-in valve (sold separately). Enter price. Specs from web search." },
 }, {
   key: "kohler-purist-22178-master", bath: "master",
-  order: { item: "Kohler Purist four-function handshower kit with 28 in slidebar, Vibrant Brushed Nickel (K-22178-BN)", vendor: "Kohler", model: "K-22178-BN", price: 596.62, notes: "Needs a supply elbow / wall connection for the hose (sold separately, confirm). Enter price. Specs from web search." },
+  order: { item: "Kohler Purist four-function handshower kit with 28 in slidebar, Vibrant Brushed Nickel (K-22178-BN)", vendor: "Kohler", model: "K-22178-BN", price: 596.62, notes: "Needs a supply elbow / wall connection for the hose (sold separately, confirm). Enter price. Specs from web search." , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/purist-multifunction-handshower-kit-with-28-in-slidebar-22178" },
 }, {
   key: "kohler-purist-t14413-bn-master", bath: "master",
-  order: { item: "Kohler Purist wall-mount sink faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)", vendor: "Kohler", model: "K-T14413-3-BN", price: 736.35, notes: "Trim only - the rough-in valve (e.g. K-T14414-K-NA or similar, confirm) is sold separately and must be added. Enter price. Specs from web search." },
+  order: { item: "Kohler Purist wall-mount sink faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)", vendor: "Kohler", model: "K-T14413-3-BN", price: 736.35, notes: "Trim only - the rough-in valve (e.g. K-T14414-K-NA or similar, confirm) is sold separately and must be added. Enter price. Specs from web search." , url:"https://www.kohler.com/en/products/faucets/bathroom-faucets/purist/purist-wall-mount-single-hole-bathroom-sink-faucet-trim-with-lever-handle-t14413" },
 }, {
   key: "concretti-phoenix-sink-upstairs", bath: "upstairs",
   order: { item: "Concretti Designs Phoenix square concrete vessel sink, White (14.5 x 14.5 x 5 in)", vendor: "Concretti Designs", model: "Phoenix (white)", price: 449.99, notes: "Price and size from web search (about $440-450, made to order, 4-6 wk lead time) - please confirm. Faucet and drain sold separately." },
 }, {
   key: "kohler-purist-t14413-upstairs", bath: "upstairs",
-  order: { item: "Kohler Purist wall-mount sink faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)", vendor: "Kohler", model: "K-T14413-3-BN", price: 736.35, notes: "Trim only - the rough-in valve is sold separately and must be added. Enter price. Specs from web search." },
+  order: { item: "Kohler Purist wall-mount sink faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)", vendor: "Kohler", model: "K-T14413-3-BN", price: 736.35, notes: "Trim only - the rough-in valve is sold separately and must be added. Enter price. Specs from web search." , url:"https://www.kohler.com/en/products/faucets/bathroom-faucets/purist/purist-wall-mount-single-hole-bathroom-sink-faucet-trim-with-lever-handle-t14413" },
 }, {
   key: "kohler-purist-ts14422-upstairs", bath: "upstairs",
   order: { item: "Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)", vendor: "Kohler", model: "K-TS14422-4-BN", price: 818.1, notes: "Trim only - needs a Rite-Temp pressure-balancing rough-in valve (sold separately). Enter price. Specs from web search." },
 }, {
   key: "kohler-purist-22178-upstairs", bath: "upstairs",
-  order: { item: "Kohler Purist four-function handshower kit with 28 in slidebar, Vibrant Brushed Nickel (K-22178-BN)", vendor: "Kohler", model: "K-22178-BN", price: 596.62, notes: "Needs a supply elbow / wall connection for the hose (sold separately, confirm). Enter price. Specs from web search." },
+  order: { item: "Kohler Purist four-function handshower kit with 28 in slidebar, Vibrant Brushed Nickel (K-22178-BN)", vendor: "Kohler", model: "K-22178-BN", price: 596.62, notes: "Needs a supply elbow / wall connection for the hose (sold separately, confirm). Enter price. Specs from web search." , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/purist-multifunction-handshower-kit-with-28-in-slidebar-22178" },
 }, {
   key: "amba-modello-i20-upstairs", bath: "upstairs",
-  order: { item: "Amba Modello i20 round heated towel bar, vertical, Brushed Stainless Steel", vendor: "Amba", model: "Modello i20 Round / Brushed Stainless Steel", qty:4, price: 330, notes: "Guide list-price estimate: US$330 shown for i20RO.P; confirm price for the Brushed Stainless Steel finish. Bar can be installed vertically." },
+  order: { item: "Amba Modello i20 round heated towel bar, vertical, Brushed Stainless Steel", vendor: "Amba", model: "Modello i20 Round / Brushed Stainless Steel", qty:4, price: 330, notes: "Guide list-price estimate: US$330 shown for i20RO.P; confirm price for the Brushed Stainless Steel finish. Bar can be installed vertically." , url:"https://www.ambaheat.com/collections/modello-i-round" },
 }, {
   key: "amba-modello-i20-master", bath: "master",
-  order: { item: "Amba Modello i20 round heated towel bar, vertical, Brushed Stainless Steel", vendor: "Amba", model: "Modello i20 Round / Brushed Stainless Steel", qty:2, price: 330, notes: "Guide list-price estimate: US$330 shown for i20RO.P; confirm price for the Brushed Stainless Steel finish. Bar can be installed vertically." },
+  order: { item: "Amba Modello i20 round heated towel bar, vertical, Brushed Stainless Steel", vendor: "Amba", model: "Modello i20 Round / Brushed Stainless Steel", qty:2, price: 330, notes: "Guide list-price estimate: US$330 shown for i20RO.P; confirm price for the Brushed Stainless Steel finish. Bar can be installed vertically." , url:"https://www.ambaheat.com/collections/modello-i-round" },
 }, {
   key: "amba-tdhcr-upstairs", bath: "upstairs",
-  order: { item: "Amba ATW-TDHCR remotely-wired touch digital controller", vendor: "Amba", model: "ATW-TDHCR", price: 370, notes: "US$370 list price shown in the 2024.10 Modello i guide; electrician to confirm compatibility and installation." },
+  order: { item: "Amba ATW-TDHCR remotely-wired touch digital controller", vendor: "Amba", model: "ATW-TDHCR", price: 370, notes: "US$370 list price shown in the 2024.10 Modello i guide; electrician to confirm compatibility and installation." , url:"https://www.ambaheat.com/products/atw-tdhcr-remote-touch-digital-controller" },
 }, {
   key: "amba-tdhcr-master", bath: "master",
-  order: { item: "Amba ATW-TDHCR remotely-wired touch digital controller", vendor: "Amba", model: "ATW-TDHCR", price: 370, notes: "US$370 list price shown in the 2024.10 Modello i guide; electrician to confirm compatibility and installation." },
+  order: { item: "Amba ATW-TDHCR remotely-wired touch digital controller", vendor: "Amba", model: "ATW-TDHCR", price: 370, notes: "US$370 list price shown in the 2024.10 Modello i guide; electrician to confirm compatibility and installation." , url:"https://www.ambaheat.com/products/atw-tdhcr-remote-touch-digital-controller" },
 }, {
   key: "amba-cwb-upstairs", bath: "upstairs",
-  order: { item: "Amba ATW-CWB concealed wall box for Modello i towel bar", vendor: "Amba", model: "ATW-CWB", qty:4, price: 100, notes: "One concealed wall box required per bar with the remotely-wired controller. US$100 list price shown in the 2024.10 guide." },
+  order: { item: "Amba ATW-CWB concealed wall box for Modello i towel bar", vendor: "Amba", model: "ATW-CWB", qty:4, price: 100, notes: "One concealed wall box required per bar with the remotely-wired controller. US$100 list price shown in the 2024.10 guide." , url:"https://www.ambaheat.com/products/atw-cwb-wall-box" },
 }, {
   key: "amba-cwb-master", bath: "master",
-  order: { item: "Amba ATW-CWB concealed wall box for Modello i towel bar", vendor: "Amba", model: "ATW-CWB", qty:2, price: 100, notes: "One concealed wall box required per bar with the remotely-wired controller. US$100 list price shown in the 2024.10 guide." },
+  order: { item: "Amba ATW-CWB concealed wall box for Modello i towel bar", vendor: "Amba", model: "ATW-CWB", qty:2, price: 100, notes: "One concealed wall box required per bar with the remotely-wired controller. US$100 list price shown in the 2024.10 guide." , url:"https://www.ambaheat.com/products/atw-cwb-wall-box" },
 }, {
   key: "fixed-shower-panel-upstairs", bath: "upstairs",
   order: { item: "Custom fixed half-width shower glass panel", vendor: "Custom glass fabricator", model: "Fixed shower panel (custom)", price: 0, notes: "QUOTE REQUIRED - fixed panel on the fixture side, with open entry at the opposite end. Verify finished opening, height, splash containment, tempered-glass requirements, and hardware after tile is set." },
@@ -273,40 +303,40 @@ const SEED_ORDERS = [{
   order: { item: "Custom fixed half-width shower glass panel", vendor: "Custom glass fabricator", model: "Fixed shower panel (custom)", price: 0, notes: "QUOTE REQUIRED - fixed panel on the fixture side, with open entry at the window side. Verify finished opening, height, splash containment, window waterproofing, tempered-glass requirements, and hardware after tile is set." },
 }, {
   key: "shower-light-upstairs", bath: "upstairs",
-  order: { item: "Recessed 6 in LED high-hat light, shower (wet-location rated)", vendor: "TBD", model: "6 in wet-rated LED recessed", price: 0, notes: "SELECT FIXTURE - one recessed 6 in LED high-hat, wet-location (shower) rated with a sealed trim, centered in the shower ceiling. Confirm it is IC/damp-wet rated for a tiled ceiling and add a dimmer-compatible driver. Price is a placeholder." },
+  order: { item: "Recessed 6 in LED high-hat light, shower (wet-location rated)", vendor: "TBD", model: "6 in wet-rated LED recessed", price: 0, notes: "SELECT FIXTURE - one recessed 6 in LED high-hat, wet-location (shower) rated with a sealed trim, centered in the shower ceiling. Confirm it is IC/damp-wet rated for a tiled ceiling and add a dimmer-compatible driver. Price is a placeholder." , url:"https://www.amazon.com/HALO-Recessed-Integrated-Downlight-Selectable/dp/B0CCW2HG7V" },
 }, {
   key: "shower-light-master", bath: "master",
-  order: { item: "Recessed 6 in LED high-hat light, shower (wet-location rated)", vendor: "TBD", model: "6 in wet-rated LED recessed", price: 0, notes: "SELECT FIXTURE - one recessed 6 in LED high-hat, wet-location (shower) rated with a sealed trim, centered in the shower ceiling. Confirm it is IC/damp-wet rated for a tiled ceiling and add a dimmer-compatible driver. Price is a placeholder." },
+  order: { item: "Recessed 6 in LED high-hat light, shower (wet-location rated)", vendor: "TBD", model: "6 in wet-rated LED recessed", price: 0, notes: "SELECT FIXTURE - one recessed 6 in LED high-hat, wet-location (shower) rated with a sealed trim, centered in the shower ceiling. Confirm it is IC/damp-wet rated for a tiled ceiling and add a dimmer-compatible driver. Price is a placeholder." , url:"https://www.amazon.com/HALO-Recessed-Integrated-Downlight-Selectable/dp/B0CCW2HG7V" },
 }, {
   key: "nuheat-mat-upstairs", bath: "upstairs",
-  order: { item: "Nuheat Custom Mat, L-shaped (about 11 sq ft), 120 V, 12 W/sq ft", vendor: "Nuheat", model: "Custom Mat (quote)", price: 500, notes: "ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Leg sizes: top 21 x 17 in, bottom 30 x 42 in. Confirm clearances at the toilet and vanity." },
+  order: { item: "Nuheat Custom Mat, L-shaped (about 11 sq ft), 120 V, 12 W/sq ft", vendor: "Nuheat", model: "Custom Mat (quote)", price: 500, notes: "ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Leg sizes: top 21 x 17 in, bottom 30 x 42 in. Confirm clearances at the toilet and vanity." , url:"https://www.nuheat.com/mats/custom-mat" },
 }, {
   key: "nuheat-signature-thermostat-upstairs", bath: "upstairs",
-  order: { item: "Nuheat Signature WiFi floor heating thermostat (built-in GFCI, floor sensor)", vendor: "Nuheat", model: "Signature Thermostat", price: 360.49, notes: "List price USA per nuheat.com. 15 A max load, 120/240 V. Confirm exact part number with Nuheat or dealer." },
+  order: { item: "Nuheat Signature WiFi floor heating thermostat (built-in GFCI, floor sensor)", vendor: "Nuheat", model: "Signature Thermostat", price: 360.49, notes: "List price USA per nuheat.com. 15 A max load, 120/240 V. Confirm exact part number with Nuheat or dealer." , url:"https://www.nuheat.com/thermostats/wifi-thermostats/signature" },
 }, {
   key: "nuheat-mat-master", bath: "master",
-  order: { item: "Nuheat Custom Mat, L-shaped (about 9 sq ft), 120 V, 12 W/sq ft", vendor: "Nuheat", model: "Custom Mat (quote)", price: 450, notes: "ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Top leg 24 x 19 in, bottom 34 x 26 in. Confirm clearances at the toilet and vanity." },
+  order: { item: "Nuheat Custom Mat, L-shaped (about 9 sq ft), 120 V, 12 W/sq ft", vendor: "Nuheat", model: "Custom Mat (quote)", price: 450, notes: "ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Top leg 24 x 19 in, bottom 34 x 26 in. Confirm clearances at the toilet and vanity." , url:"https://www.nuheat.com/mats/custom-mat" },
 }, {
   key: "nuheat-signature-thermostat-master", bath: "master",
-  order: { item: "Nuheat Signature WiFi floor heating thermostat (built-in GFCI, floor sensor)", vendor: "Nuheat", model: "Signature Thermostat", price: 360.49, notes: "List price USA per nuheat.com. 15 A max load, 120/240 V. Confirm exact part number with Nuheat or dealer." },
+  order: { item: "Nuheat Signature WiFi floor heating thermostat (built-in GFCI, floor sensor)", vendor: "Nuheat", model: "Signature Thermostat", price: 360.49, notes: "List price USA per nuheat.com. 15 A max load, 120/240 V. Confirm exact part number with Nuheat or dealer." , url:"https://www.nuheat.com/thermostats/wifi-thermostats/signature" },
 }, {
   key: "kohler-glow-mirror-upstairs", bath: "upstairs",
-  order: { item: "Mirror Glow rectangular LED mirror, 30 x 40 in, 2700K (RBNYM3040RGFPD3)", vendor: "Kohler Signature Store", model: "RBNYM3040RGFPD3", price: 1479, kohlerNet: 961.35, notes: "Price from Kohler Signature Store quote S014006864 (11/03/26), part no. 1341093. Centered on the vanity-side wall, bottom about 48 in above floor. Needs hardwired power behind it." },
+  order: { item: "Mirror Glow rectangular LED mirror, 30 x 40 in, 2700K (RBNYM3040RGFPD3)", vendor: "Kohler Signature Store", model: "RBNYM3040RGFPD3", price: 1479, kohlerNet: 961.35, notes: "Price from Kohler Signature Store quote S014006864 (11/03/26), part no. 1341093. Centered on the vanity-side wall, bottom about 48 in above floor. Needs hardwired power behind it." , url:"https://www.robern.com/products/mirrors/vitality-mirrors/glow/ym3040rgfpd3" },
 }, {
   key: "kohler-glow-mirror-master", bath: "master",
-  order: { item: "Mirror Glow rectangular LED mirror, 30 x 40 in, 2700K (RBNYM3040RGFPD3)", vendor: "Kohler Signature Store", model: "RBNYM3040RGFPD3", price: 1479, kohlerNet: 961.35, notes: "Price from Kohler Signature Store quote S014006864 (11/03/26), part no. 1341093. Centered on the vanity-side wall, bottom about 48 in above floor. Needs hardwired power behind it." },
+  order: { item: "Mirror Glow rectangular LED mirror, 30 x 40 in, 2700K (RBNYM3040RGFPD3)", vendor: "Kohler Signature Store", model: "RBNYM3040RGFPD3", price: 1479, kohlerNet: 961.35, notes: "Price from Kohler Signature Store quote S014006864 (11/03/26), part no. 1341093. Centered on the vanity-side wall, bottom about 48 in above floor. Needs hardwired power behind it." , url:"https://www.robern.com/products/mirrors/vitality-mirrors/glow/ym3040rgfpd3" },
 }, {
   key: "kohler-purist-toilet-paper-upstairs", bath: "upstairs",
-  order: { item: "Kohler Purist toilet paper holder, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14377-BN", price: 298.35, notes: "Mount on the wall to the toilet's right when seated, below the window, about 26 in above the floor. Confirm exact placement and clearance during installation." },
+  order: { item: "Kohler Purist toilet paper holder, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14377-BN", price: 298.35, notes: "Mount on the wall to the toilet's right when seated, below the window, about 26 in above the floor. Confirm exact placement and clearance during installation." , url:"https://www.kohler.com/en/products/bathroom-accessories/toilet-paper-holders/purist-toilet-paper-holder-14377" },
 }, {
   key: "kohler-purist-toilet-paper-master", bath: "master",
-  order: { item: "Kohler Purist toilet paper holder, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14377-BN", price: 298.35, notes: "Mount on the window-side wall, about 26 in above the floor. Confirm exact placement and clearance during installation." },
+  order: { item: "Kohler Purist toilet paper holder, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14377-BN", price: 298.35, notes: "Mount on the window-side wall, about 26 in above the floor. Confirm exact placement and clearance during installation." , url:"https://www.kohler.com/en/products/bathroom-accessories/toilet-paper-holders/purist-toilet-paper-holder-14377" },
 }, {
   key: "kohler-purist-towel-ring-upstairs", bath: "upstairs",
-  order: { item: "Kohler Purist towel ring, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14441-BN", price: 308.15, notes: "Mount on the exposed right-side face of the vanity. Confirm exact placement and clearance during installation." },
+  order: { item: "Kohler Purist towel ring, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14441-BN", price: 308.15, notes: "Mount on the exposed right-side face of the vanity. Confirm exact placement and clearance during installation." , url:"https://www.kohler.com/en/products/bathroom-accessories/towel-rings/purist-towel-ring-14441" },
 }, {
   key: "kohler-purist-towel-ring-master", bath: "master",
-  order: { item: "Kohler Purist towel ring, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14441-BN", price: 308.15, notes: "Mount on the exposed right-side face of the vanity. Confirm exact placement and clearance during installation." },
+  order: { item: "Kohler Purist towel ring, Vibrant Brushed Nickel", vendor: "Kohler", model: "K-14441-BN", price: 308.15, notes: "Mount on the exposed right-side face of the vanity. Confirm exact placement and clearance during installation." , url:"https://www.kohler.com/en/products/bathroom-accessories/towel-rings/purist-towel-ring-14441" },
 }];
 const KEY = "shadows-bathroom-v1";
 let state = load();
@@ -415,6 +445,7 @@ function load() {
   ensureGlowMirrorOrders(s);
   applyKohlerQuote(s);
   applyPriceUpdates(s);
+  applyUpdatedKohlerQuote(s);
   if (!s.seeded.includes("fluted-shower-glass-removed")) {
     s.seeded.push("fluted-shower-glass-removed");
     localStorage.setItem(KEY, JSON.stringify(s));
@@ -587,6 +618,127 @@ function applyPriceUpdates(s) {
     }
   });
   localStorage.setItem(KEY, JSON.stringify(s));
+}
+function applyUpdatedKohlerQuote(s) {
+  const version = "kohler-quote-s014006864-updated-v2";
+  if (s.seeded.includes(version)) return;
+  for (const bath of ["upstairs", "master"]) {
+    const orders = s.baths[bath].orders;
+    for (const item of REMOVED_KOHLER_ITEMS) {
+      const models = [item.model, ...(item.aliases || [])].map(normalizeModel);
+      let order = orders.find(o => models.includes(normalizeModel(modelOf(o))));
+      if (!order) {
+        order = { id:`kohler-removed-${bath}-${normalizeModel(item.model).toLowerCase()}`, item:item.item, vendor:"Kohler", model:item.model, qty:1, status:"Planned", ordered:"", eta:"", delivered:"", ref:"", notes:"Removed from the updated Kohler quote S014006864." };
+        orders.push(order);
+      }
+      Object.assign(order, { item:item.item, vendor:"Kohler", model:item.model, quoteChange:"Removed", price:0, kohlerNet:0 });
+    }
+    for (const item of UPDATED_KOHLER_ITEMS) {
+      const qty = item.qtyByBath ? item.qtyByBath[bath] : (item.qty || 1);
+      if (!qty) continue;
+      const models = [item.model, ...(item.aliases || [])].map(normalizeModel);
+      let order = orders.find(o => models.includes(normalizeModel(modelOf(o))));
+      if (!order) {
+        order = { id:`kohler-quote-${bath}-${normalizeModel(item.model).toLowerCase()}`, status:"Planned", ordered:"", eta:"", delivered:"", ref:"", notes:"Included in Kohler Signature Store quote S014006864." };
+        orders.push(order);
+      }
+      Object.assign(order, {
+        item:item.item,
+        vendor:item.vendor || "Kohler",
+        model:item.model,
+        qty,
+        price:item.price,
+        kohlerNet:item.kohlerNet,
+      });
+      if (item.change) order.quoteChange = item.change;
+      else if (order.quoteChange === "Added") delete order.quoteChange;
+    }
+  }
+  s.seeded.push(version);
+  localStorage.setItem(KEY, JSON.stringify(s));
+}
+function normalizeModel(model) {
+  return String(model || "").replace(/[^a-z0-9]/gi, "").toUpperCase();
+}
+
+const ITEM_CATEGORIES = {
+  "Lighting": [
+    "light", "recessed", "high-hat", "LED", "mirror glow"
+  ],
+  "Faucets and Shower": [
+    "faucet", "trim", "valve", "handshower", "shower", "rainhead", "showerhead", "elbow", "drain", "arm", "clicker"
+  ],
+  "Tile": [
+    "tile", "daltile", "keystones", "mosaic"
+  ],
+  "Mirrors": [
+    "mirror", "glow"
+  ],
+  "Toilet": [
+    "toilet", "water closet"
+  ],
+  "Towel Warmers": [
+    "towel", "warmer", "amba", "modello", "heat controller", "wall box"
+  ],
+  "Glass": [
+    "glass", "shower door", "shower panel", "bypass"
+  ],
+  "Toilet Paper Holders and Miscellaneous": [
+    "toilet paper", "bidet", "seat", "shelves", "nook"
+  ]
+};
+
+// Map Kohler model numbers to product image URLs
+const KOHLER_PRODUCT_URLS = {
+  "K-TS14422-4-BN": "https://www.kohler.com/en-US/products/kitchen-faucets/k-ts14422-4-bn",
+  "K-22178-BN": "https://www.kohler.com/en-US/products/kitchen-faucets/k-22178-bn",
+  "K-T14413-3-BN": "https://www.kohler.com/en-US/products/kitchen-faucets/k-t14413-3-bn",
+  "K-14377-BN": "https://www.kohler.com/en-US/products/kitchen-faucets/k-14377-bn",
+  "K-14441-BN": "https://www.kohler.com/en-US/products/kitchen-faucets/k-14441-bn",
+  "K-8298-CR-0": "https://www.kohler.com/en-US/products/kitchen-faucets/k-8298-cr-0",
+  "BNDL-K0100": "https://www.kohler.com/en-US/products/kitchens/bundles/bndl-k0100",
+  "K-5172-HC-0": "https://www.kohler.com/en-US/products/kitchens/toilets/one-piece/k-5172-hc-0",
+  "K-11582-NA": "https://www.kohler.com/en-US/products/kitchen-faucets/k-11582-na",
+};
+
+function getProductUrl(o) {
+  // First check if the order has a URL property directly
+  if (o.url) return o.url;
+  
+  if (!o.model) return null;
+  const normalized = normalizeModel(o.model);
+  // Try exact match in KOHLER_PRODUCT_URLS (fallback for older data)
+  if (KOHLER_PRODUCT_URLS[normalized]) return KOHLER_PRODUCT_URLS[normalized];
+  // Try partial match in KOHLER_PRODUCT_URLS (fallback for older data)
+  for (const [model, url] of Object.entries(KOHLER_PRODUCT_URLS)) {
+    if (normalized.includes(normalizeModel(model).substring(0, 5))) {
+      return url;
+    }
+  }
+  return null;
+}
+
+function categorizeItem(o) {
+  const text = `${o.item} ${o.vendor} ${o.model}`.toLowerCase();
+  for (const [cat, keywords] of Object.entries(ITEM_CATEGORIES)) {
+    if (keywords.some(kw => text.includes(kw))) return cat;
+  }
+  return "Toilet Paper Holders and Miscellaneous";
+}
+
+function groupByCategory(orders) {
+  const groups = {};
+  for (const cat of Object.keys(ITEM_CATEGORIES)) groups[cat] = [];
+  for (const o of orders) {
+    const cat = categorizeItem(o);
+    if (!groups[cat]) groups[cat] = [];
+    groups[cat].push(o);
+  }
+  return groups;
+}
+
+function categorySubtotal(items, f) {
+  return items.reduce((a, o) => a + f(o), 0);
 }
 function ensureGlowMirrorOrders(s) {
   for (const sd of SEED_ORDERS.filter(x => x.key.startsWith("kohler-glow-mirror-"))) {
@@ -994,14 +1146,52 @@ function orderRow(o) {
 
 function renderOrders() {
   const bath = ui.tab, orders = state.baths[bath].orders;
+  const groups = groupByCategory(orders);
+  
+  let tbody = "";
+  let rowNum = 1;
+  
+  for (const cat of Object.keys(ITEM_CATEGORIES)) {
+    const items = groups[cat];
+    if (items.length === 0) continue;
+    
+    const catQty = categorySubtotal(items, o => +o.qty || 0);
+    const catPrice = categorySubtotal(items, lineTotal);
+    
+    tbody += items.map(o => {
+      const row = `<tr data-id="${o.id}" class="${counted(o) ? "" : "lt"}">
+        <td style="min-width:170px"><input type="text" data-f="item" value="${esc(o.item)}"></td>
+        <td style="min-width:110px"><input type="text" data-f="vendor" value="${esc(o.vendor)}"></td>
+        <td style="min-width:110px"><input type="text" data-f="model" value="${esc(modelOf(o))}"></td>
+        <td class="num" style="width:60px"><input type="number" data-f="qty" value="${esc(o.qty)}" min="0" step="1"></td>
+        <td class="num" style="width:100px"><input type="number" data-f="price" value="${esc(o.price)}" min="0" step="0.01"></td>
+        <td class="num" style="width:100px"><input type="number" data-f="kohlerNet" value="${esc(o.kohlerNet || "")}" min="0" step="any"></td>
+        <td class="num" data-line style="white-space:nowrap">${money(lineTotal(o))}</td>
+        <td><select data-f="status" class="st-${o.status}">${STATUSES.map(s => `<option ${s===o.status?"selected":""}>${s}</option>`).join("")}</select></td>
+        <td><input type="date" data-f="ordered" value="${esc(o.ordered)}"></td>
+        <td><input type="date" data-f="eta" value="${esc(o.eta)}"></td>
+        <td><input type="date" data-f="delivered" value="${esc(o.delivered)}"></td>
+        <td style="min-width:120px"><input type="text" data-f="ref" value="${esc(o.ref)}"></td>
+        <td style="min-width:140px"><input type="text" data-f="notes" value="${esc(o.notes)}"></td>
+        <td><button class="btn small" data-del="${o.id}" title="Delete">✕</button></td>
+      </tr>`;
+      return row;
+    }).join("");
+    
+    tbody += `<tr style="font-weight:600;background:#f5f5f5"><td colspan="3">${cat} subtotal</td><td class="num">${catQty}</td><td class="num"></td><td class="num"></td><td class="num">${money(catPrice)}</td><td colspan="8"></td></tr>`;
+  }
+  
+  const totQty = categorySubtotal(orders.filter(counted), o => +o.qty || 0);
+  const totPrice = categorySubtotal(orders.filter(counted), lineTotal);
+  
   $("#body").innerHTML = `
     ${orders.some(o => o.id === `seed-sliding-shower-door-${bath}-${bath}`) ? `<div class="hint"><strong>Review:</strong> A previous sliding-door order is retained; check its status and update it separately for the new fixed-panel design.</div>` : ""}
     <div id="totals">${totalsHtml(bath)}</div>
     <div class="tablewrap"><table>
       <thead><tr><th>Item</th><th>Manufacturer</th><th>Model #</th><th>Qty</th><th>Unit price</th><th>Kohler net</th><th>Line total</th><th>Status</th>
       <th>Ordered</th><th>Expected</th><th>Delivered</th><th>Order # / tracking</th><th>Notes</th><th></th></tr></thead>
-      <tbody>${orders.map(orderRow).join("") || `<tr><td colspan="14" style="color:var(--muted);padding:16px">No items yet. Add your first one below.</td></tr>`}</tbody>
-      <tfoot id="ordFoot">${footHtml(bath)}</tfoot>
+      <tbody>${tbody || `<tr><td colspan="14" style="color:var(--muted);padding:16px">No items yet. Add your first one below.</td></tr>`}
+      <tr style="font-weight:700"><td colspan="3">Total (excl. cancelled/returned; unit columns = qty x price)</td><td class="num">${totQty}</td><td colspan="2"></td><td class="num">${money(totPrice)}</td><td colspan="7"></td></tr></tbody>
     </table></div>
     <div style="margin-top:12px;display:flex;gap:8px">
       <button class="btn dark" id="addOrder">+ Add item</button>
@@ -1011,25 +1201,51 @@ function renderOrders() {
 
 function renderSummary() {
   const rows = Object.keys(BATHS).map(k => {
-    const t = bathTotals(k), n = state.baths[k].orders.length;
+    const os = state.baths[k].orders.filter(o => o.quoteChange !== "Removed");
+    const t = bathTotals(k), n = os.length;
     return `<tr><td>${BATHS[k].name}</td><td>${n}</td><td>${money(t.total)}</td><td>${money(t.committed)}</td><td>${money(t.delivered)}</td><td>${money(t.planned)}</td></tr>`;
   });
   const all = Object.keys(BATHS).map(bathTotals);
   const s = k => money(all.reduce((a, t) => a + t[k], 0));
+  
+  const bathDetails = Object.keys(BATHS).map(k => {
+    const os = state.baths[k].orders.filter(o => o.quoteChange !== "Removed");
+    const groups = groupByCategory(os);
+    
+    let tbody = "";
+    for (const cat of Object.keys(ITEM_CATEGORIES)) {
+      const items = groups[cat];
+      if (items.length === 0) continue;
+      
+      const catQty = categorySubtotal(items, o => +o.qty || 0);
+      const catPrice = categorySubtotal(items, lineTotal);
+      
+      tbody += `<tr style="font-weight:600;background:#f9f9f9"><td colspan="8">${cat}</td></tr>`;
+      tbody += items.map((o, i) => {
+        const url = getProductUrl(o);
+        const modelLink = url ? `<a href="${url}" target="_blank" style="color:#0066cc;text-decoration:none;cursor:pointer">${esc(modelOf(o))}</a>` : esc(modelOf(o));
+        return `<tr class="${counted(o) ? "" : "lt"}"><td>${esc(o.item)}</td><td>${esc(o.vendor)}</td><td>${modelLink}</td><td class="num">${esc(o.qty)}</td><td class="num">${money(+o.price || 0)}</td><td class="num">${o.kohlerNet ? money(+o.kohlerNet) : ""}</td><td class="num">${money(lineTotal(o))}</td><td>${esc(o.status)}</td></tr>`;
+      }).join("");
+      tbody += `<tr style="font-weight:600;background:#efefef"><td colspan="2">${cat} subtotal</td><td></td><td class="num">${catQty}</td><td class="num"></td><td class="num"></td><td class="num">${money(catPrice)}</td><td></td></tr>`;
+    }
+    
+    const totPrice = categorySubtotal(os.filter(counted), lineTotal);
+    tbody += `<tr style="font-weight:700;background:#ddd"><td colspan="2">Total for ${BATHS[k].name}</td><td></td><td colspan="1"></td><td colspan="2"></td><td class="num">${money(totPrice)}</td><td></td></tr>`;
+    
+    return `<h3>${BATHS[k].name} - all items</h3><div class="tablewrap"><table style="min-width:900px">
+      <thead><tr><th>Item</th><th>Manufacturer</th><th>Model # / name</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Kohler net</th><th class="num">Line total</th><th>Status</th></tr></thead>
+      <tbody>${tbody || `<tr><td colspan="8" style="color:var(--muted)">No items yet.</td></tr>`}</tbody>
+    </table></div>`;
+  }).join("");
+  
   $("#main").innerHTML = `<h3 style="margin-top:0">Summary (excluding construction costs)</h3>
+    <div class="hint">Item details organized by category. Click on model numbers to view product details on Kohler's website.</div>
     <div class="tablewrap"><table style="min-width:600px">
       <thead><tr><th>Bathroom</th><th>Items</th><th>Total</th><th>Ordered or later</th><th>Delivered/installed</th><th>Planned</th></tr></thead>
-      <tbody>${rows.join("")}<tr style="font-weight:700"><td>Both bathrooms</td><td>${Object.keys(BATHS).reduce((a,k)=>a+state.baths[k].orders.length,0)}</td><td>${s("total")}</td><td>${s("committed")}</td><td>${s("delivered")}</td><td>${s("planned")}</td></tr></tbody>
+      <tbody>${rows.join("")}<tr style="font-weight:700"><td>Both bathrooms</td><td>${Object.keys(BATHS).reduce((a,k)=>a+state.baths[k].orders.filter(o => o.quoteChange !== "Removed").length,0)}</td><td>${s("total")}</td><td>${s("committed")}</td><td>${s("delivered")}</td><td>${s("planned")}</td></tr></tbody>
     </table></div>
-    <div class="hint">Cancelled and returned items are excluded from totals.</div>
-    ${Object.keys(BATHS).map(k => {
-      const os = state.baths[k].orders;
-      return `<h3>${BATHS[k].name} - all items</h3><div class="tablewrap"><table style="min-width:800px">
-        <thead><tr><th>#</th><th>Item</th><th>Manufacturer</th><th>Model # / name</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Kohler net</th><th class="num">Line total</th><th>Status</th></tr></thead>
-        <tbody>${os.map((o, i) => `<tr class="${counted(o) ? "" : "lt"}"><td>${i + 1}</td><td>${esc(o.item)}</td><td>${esc(o.vendor)}</td><td>${esc(modelOf(o))}</td><td class="num">${esc(o.qty)}</td><td class="num">${money(+o.price || 0)}</td><td class="num">${o.kohlerNet ? money(+o.kohlerNet) : ""}</td><td class="num">${money(lineTotal(o))}</td><td>${esc(o.status)}</td></tr>`).join("") || `<tr><td colspan="9" style="color:var(--muted)">No items yet.</td></tr>`}
-        <tr style="font-weight:700"><td></td><td colspan="3">Total (excl. construction; unit columns = qty x price)</td>${footCells(k)}<td></td></tr></tbody>
-      </table></div>`;
-    }).join("")}`;
+    <div class="hint">Cancelled and returned items are excluded from totals. Removed items are hidden from this summary.</div>
+    ${bathDetails}`;
 }
 
 /* ---------- Events ---------- */
@@ -1101,7 +1317,7 @@ document.addEventListener("input", e => {
     save();
     tr.querySelector("[data-line]").textContent = money(lineTotal(o));
     $("#totals").innerHTML = totalsHtml(ui.tab);
-    $("#ordFoot").innerHTML = footHtml(ui.tab);
+    renderOrders();
   }
 });
 
