@@ -233,11 +233,10 @@ const View3D = (() => {
       box(gx - .3, e.y + e.h - .3, .6, .3, .4, doorHeight, metal, "showerdoor");
     }
 
-    // recessed high-hat light, centered in the shower ceiling
-    if (has("showerlight")) {
-      const e = E("showerlight"), lm = std(0xf4f1ea, { roughness: .5 });
-      const trim = cyl(3.2, 3.2, .5, e.cx, 0, e.cy, lm, "showerlight", 32); trim.position.set(e.cx, WALL_H - .25, e.cy);
-      const lens = cyl(2.5, 2.5, .2, e.cx, 0, e.cy, new THREE.MeshStandardMaterial({ color: 0xfff3c4, emissive: 0xffe29a, emissiveIntensity: .9 }), "showerlight", 32); lens.position.set(e.cx, WALL_H - .6, e.cy);
+    for (const id of ["showerlight", "bathroomlight"]) if (has(id)) {
+      const e = E(id), lm = std(0xf4f1ea, { roughness: .5 });
+      const trim = cyl(3.2, 3.2, .5, e.cx, 0, e.cy, lm, id, 32); trim.position.set(e.cx, WALL_H - .25, e.cy);
+      const lens = cyl(2.5, 2.5, .2, e.cx, 0, e.cy, new THREE.MeshStandardMaterial({ color: 0xfff3c4, emissive: 0xffe29a, emissiveIntensity: .9 }), id, 32); lens.position.set(e.cx, WALL_H - .6, e.cy);
       const lamp = new THREE.PointLight("#fff0cf", 1.1, 110);
       lamp.position.set(e.cx, WALL_H - 6, e.cy);
       scene.add(lamp);
@@ -253,11 +252,10 @@ const View3D = (() => {
       const hose = cyl(.35, .35, 30, hx, 0, hz, m, "handshower"); hose.position.set(hx + 1.5, 49, hz + 2.2);
     }
     if (has("showerhead")) {
-      const e = E("showerhead"), cx = e.x + e.w / 2, wz = e.y, m = std(e.color, { metalness: .55, roughness: .4 });
-      box(cx - 3, wz - .2, 6, .8, 45, 6, m, "showerhead");
-      const knob = cyl(1.4, 1.4, 2, cx, 0, wz + 1, m, "showerhead"); knob.rotation.x = Math.PI / 2; knob.position.set(cx, 48, wz + 1.5);
-      const arm = cyl(.5, .5, 9, cx, 0, wz, m, "showerhead"); arm.rotation.x = Math.PI / 2; arm.position.set(cx, 80, wz + 4.5);
-      const head = cyl(4.5, 4.5, .8, cx, 0, wz, m, "showerhead", 32); head.position.set(cx, 79, wz + 9); head.rotation.x = .35;
+      const e = E("showerhead"), m = std(e.color, { metalness: .55, roughness: .4 });
+      cyl(1.5, 1.5, .3, e.cx, WALL_H - .3, e.cy, m, "showerhead", 32);
+      cyl(.5, .5, 6, e.cx, WALL_H - 6, e.cy, m, "showerhead");
+      cyl(5, 5, .8, e.cx, WALL_H - 6.8, e.cy, m, "showerhead", 32);
     }
     if (b.showerFixturesOpposite) {
       scene.children.slice(showerFixtureStart).forEach(o => {

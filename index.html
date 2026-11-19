@@ -121,7 +121,7 @@ const BATHS = {
       { id:"shower", name:"Shower (36x45)", shape:"rect", x:0, y:18, w:36, h:45, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:2, grout_w:0.125, product:"Daltile Keystones Nautical Blue, matte, 2x2 (D621)" },
       { id:"showerdoor", name:"Fixed half-width shower glass", shape:"rect", x:35.5, y:18, w:0.5, h:22.5, color:"#cfe3e9", product:"Custom fixed shower glass panel on the fixture side; open entry on the opposite side" },
       { id:"showerlight", name:"Shower high-hat light (centered)", shape:"ellipse", cx:18, cy:40.5, rx:3, ry:3, color:"#fde68a", product:"Recessed high-hat (can) light, 6 in LED, wet-location / shower rated, centered in shower ceiling" },
-      { id:"showerhead", name:"Shower trim, head & lever - Kohler Purist K-TS14422-4-BN", shape:"rect", x:15, y:18.5, w:6, h:3, color:"#b4b0a6", product:"Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)" },
+      { id:"showerhead", name:"Ceiling rainhead - Kohler Awaken K76465-G-BN", shape:"ellipse", cx:27, cy:29.25, rx:5, ry:5, color:"#b4b0a6", product:"Kohler Awaken 10 in rainhead, 1.75 gpm, Vibrant Brushed Nickel (K76465-G-BN), with K7394-BN 6 in ceiling-mount arm; first shower quadrant nearest the handshower wall" },
       { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:55, rx:1.6, ry:2.2, color:"#b4b0a6" },
       { id:"toilet", name:"Kohler San Souci toilet - K-5172-HC-0", shape:"path", box:[62.125, 3.375, 27.875, 16.375], d:"M90 3.375 H80 C70.5 3.375 62.125 6.1 62.125 11.5625 S70.5 19.75 80 19.75 H90 Z", height:25.3125, color:"#f3f4f6", product:"Kohler San Souci hidden-cord one-piece compact elongated toilet, White (K-5172-HC-0), 27-7/8 x 16-3/8 x 25-5/16 in" },
       { id:"toiletpaper", name:"Toilet paper holder - Kohler K-14377-BN", shape:"rect", x:67, y:0.25, w:8.5, h:2.25, color:"#b4b0a6", product:"Kohler Purist toilet paper holder, Vibrant Brushed Nickel (K-14377-BN), on the seated-right wall below the window, 26 in above floor" },
@@ -134,6 +134,7 @@ const BATHS = {
       { id:"faucet", name:"Faucet - Kohler Purist K-T14413-3-BN (wall mount)", shape:"rect", x:83.25, y:32, w:6.75, h:2, rx:1, color:"#b4b0a6", wall:1, product:"Kohler Purist wall-mount faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)" },
       { id:"mirror", name:"Mirror - Glow backlit LED RBNYM3040RGFPD3 (40 W x 30 H)", shape:"rect", x:88.5, y:4.5, w:1.5, h:40, color:"#cfe3ee", mirror:{ w:40, h:30, d:1.5, bottom:48, cz:24.5 }, product:"Mirror Glow rectangular LED mirror, 30 x 40 in, 2700K (RBNYM3040RGFPD3)" },
       { id:"towelwarmer", name:"Towel warmer - Amba Modello i20 round, 4 vertical bars", shape:"path", d:"M78.07 53.60 L78.68 53.17 L80.13 55.20 L79.52 55.63 Z", mount:{ cx:79.1, cy:54.4, ux:-0.8125, uz:0.5833, w:0.75, h:20, d:2.5, bottom:36, singleBar:true, bars:4, spacing:3 }, color:"#b4b0a6", product:"4 x Amba Modello i20 round heated towel bar, vertical installation, Brushed Stainless Steel" },
+      { id:"bathroomlight", name:"Bathroom high-hat light (centered)", shape:"ellipse", cx:45, cy:31.5, rx:3, ry:3, color:"#fde68a", product:"Recessed 6 in LED high-hat light, centered in bathroom ceiling; select fixture" },
     ],
   },
   master: {
@@ -181,7 +182,7 @@ const BATHS = {
       { id:"shower", name:"Shower 36x48", shape:"rect", x:0, y:0, w:36, h:48, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"showerdoor", name:"Fixed half-width shower glass", shape:"rect", x:35.5, y:24, w:0.5, h:24, color:"#cfe3e9", product:"Custom fixed shower glass panel on the fixture side; open entry on the window side" },
       { id:"showerlight", name:"Shower high-hat light (centered)", shape:"ellipse", cx:18, cy:24, rx:3, ry:3, color:"#fde68a", product:"Recessed high-hat (can) light, 6 in LED, wet-location / shower rated, centered in shower ceiling" },
-      { id:"showerhead", name:"Shower trim, head & lever - Kohler Purist K-TS14422-4-BN", shape:"rect", x:15, y:0.5, w:6, h:3, color:"#b4b0a6", product:"Kohler Purist Rite-Temp shower trim kit with lever handle, 2.5 gpm, Vibrant Brushed Nickel (K-TS14422-4-BN)" },
+      { id:"showerhead", name:"Ceiling rainhead - Kohler Awaken K76465-G-BN", shape:"ellipse", cx:27, cy:12, rx:5, ry:5, color:"#b4b0a6", product:"Kohler Awaken 10 in rainhead, 1.75 gpm, Vibrant Brushed Nickel (K76465-G-BN), with K7394-BN 6 in ceiling-mount arm; first shower quadrant nearest the handshower wall" },
       { id:"handshower", name:"Handshower + slidebar - Kohler Purist K-22178-BN", shape:"rect", x:27, y:0.5, w:2, h:3, color:"#b4b0a6", product:"Kohler Purist four-function handshower kit, 28 in slidebar, 60 in hose, Vibrant Brushed Nickel (K-22178-BN)" },
       { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:32, rx:1.6, ry:2.2, color:"#b4b0a6" },
       { id:"toilet", name:"Kohler San Souci toilet - K-5172-HC-0", shape:"path", box:[66.125, 3.375, 27.875, 16.375], d:"M94 3.375 H84 C74.5 3.375 66.125 6.1 66.125 11.5625 S74.5 19.75 84 19.75 H94 Z", height:25.3125, color:"#f3f4f6", product:"Kohler San Souci hidden-cord one-piece compact elongated toilet, White (K-5172-HC-0), 27-7/8 x 16-3/8 x 25-5/16 in" },
@@ -194,6 +195,7 @@ const BATHS = {
       { id:"faucet", name:"Faucet - Kohler Purist K-T14413-3-BN (wall mount)", shape:"rect", x:87.25, y:37, w:6.75, h:2, rx:1, color:"#b4b0a6", wall:1, product:"Kohler Purist wall-mount faucet trim, cross handles, Vibrant Brushed Nickel (K-T14413-3-BN)" },
       { id:"mirror", name:"Mirror - Glow backlit LED RBNYM3040RGFPD3 (40 W x 30 H)", shape:"rect", x:92.5, y:3.0, w:1.5, h:40, color:"#cfe3ee", mirror:{ w:40, h:30, d:1.5, bottom:48, cz:23.0 }, product:"Mirror Glow rectangular LED mirror, 30 x 40 in, 2700K (RBNYM3040RGFPD3)" },
       { id:"towelwarmer", name:"Towel warmer - Amba Modello i20 round, 2 vertical bars", shape:"rect", x:54.625, y:0, w:0.75, h:2.5, mount:{ cx:55, cy:0, ux:1, uz:0, w:0.75, h:20, d:2.5, bottom:30, singleBar:true, bars:2, spacing:3 }, color:"#b4b0a6", product:"2 x Amba Modello i20 round heated towel bar, vertical installation, Brushed Stainless Steel" },
+      { id:"bathroomlight", name:"Bathroom high-hat light (centered)", shape:"ellipse", cx:47, cy:25, rx:3, ry:3, color:"#fde68a", product:"Recessed 6 in LED high-hat light, centered in bathroom ceiling; select fixture" },
     ],
   },
 };
@@ -220,7 +222,7 @@ const UPDATED_KOHLER_ITEMS = [
   { model:"K410-K-NA", item:"Kohler two-handle ceramic valve", price:328.9, kohlerNet:210.496 , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/5-8-two-handle-ceramic-valve-410-k" },
   { model:"K25322-BN", item:"Kohler clicker drain with overflow, Vibrant Brushed Nickel", price:199.95, kohlerNet:149.963 , url:"https://www.lowes.com/pd/KOHLER-Clicker-Drain-with-Overflow-in-Vibrant-Brushed-Nickel/8868939" },
   { model:"KT14488-4-BN", item:"Kohler Purist thermostatic valve trim, Vibrant Brushed Nickel", price:675.2, kohlerNet:432.128, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/purist-mastershower-temperature-control-valve-trim-w-lever-handle-t14488-4" },
-  { model:"K2972-KS-NA", item:"Kohler MasterShower 1/2 in thermostatic valve", price:654.8, kohlerNet:419.072, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/mastershower-3-4-volume-control-valve-2977-k" },
+  { model:"K2972-KS-NA", item:"Kohler MasterShower 1/2 in thermostatic valve", price:654.8, kohlerNet:419.072, change:"Added" , url:"https://www.kohler.com/en/products/kitchen-faucets/shop-kitchen-faucets/mastershower-1-2-thermostatic-valve-2972-ks" },
   { model:"KT14490-4-BN", item:"Kohler Purist volume control trim, Vibrant Brushed Nickel", price:647.9, kohlerNet:414.656, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/purist-mastershower-volume-control-valve-trim-w-lever-handle-t14490-4" },
   { model:"K2974-K-NA", item:"Kohler MasterShower 1/2 in volume control valve", qty:2, price:285.9, kohlerNet:182.976, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-trims-valves/mastershower-1-2-volume-control-valve-2974-k" },
   { model:"K76465-G-BN", item:"Kohler Awaken 10 in rainhead, 1.75 gpm, Vibrant Brushed Nickel", price:378.25, kohlerNet:242.08, change:"Added" , url:"https://www.kohler.com/en/products/showers/shop-shower-heads/awaken-10-single-function-rainhead-1-75-gpm-76465-g" },
@@ -307,6 +309,12 @@ const SEED_ORDERS = [{
 }, {
   key: "shower-light-master", bath: "master",
   order: { item: "Recessed 6 in LED high-hat light, shower (wet-location rated)", vendor: "TBD", model: "6 in wet-rated LED recessed", price: 0, notes: "SELECT FIXTURE - one recessed 6 in LED high-hat, wet-location (shower) rated with a sealed trim, centered in the shower ceiling. Confirm it is IC/damp-wet rated for a tiled ceiling and add a dimmer-compatible driver. Price is a placeholder." , url:"https://www.amazon.com/HALO-Recessed-Integrated-Downlight-Selectable/dp/B0CCW2HG7V" },
+}, {
+  key: "bathroom-light-upstairs", bath: "upstairs",
+  order: { item:"Recessed 6 in LED high-hat light, bathroom center", vendor:"TBD", model:"6 in wet-rated LED recessed", price:0, notes:"SELECT FIXTURE - additional recessed light centered in the bathroom ceiling, separate from the shower light. Confirm location rating, ceiling compatibility and dimming; price is a placeholder." },
+}, {
+  key: "bathroom-light-master", bath: "master",
+  order: { item:"Recessed 6 in LED high-hat light, bathroom center", vendor:"TBD", model:"6 in wet-rated LED recessed", price:0, notes:"SELECT FIXTURE - additional recessed light centered in the bathroom ceiling, separate from the shower light. Confirm location rating, ceiling compatibility and dimming; price is a placeholder." },
 }, {
   key: "nuheat-mat-upstairs", bath: "upstairs",
   order: { item: "Nuheat Custom Mat, L-shaped (about 11 sq ft), 120 V, 12 W/sq ft", vendor: "Nuheat", model: "Custom Mat (quote)", price: 500, notes: "ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Leg sizes: top 21 x 17 in, bottom 30 x 42 in. Confirm clearances at the toilet and vanity." , url:"https://www.nuheat.com/mats/custom-mat" },
@@ -425,6 +433,14 @@ function load() {
     if (mo) Object.assign(mo, { item:"Nuheat Custom Mat, L-shaped (about 9 sq ft), 120 V, 12 W/sq ft", model:"Custom Mat (quote)", price:450, notes:"ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Top leg 24 x 19 in, bottom 34 x 26 in. Confirm clearances at the toilet and vanity." });
     const uo = s.baths.upstairs.orders.find(o => o.id === "seed-nuheat-mat-upstairs-upstairs");
     if (uo) Object.assign(uo, { item:"Nuheat Custom Mat, L-shaped (about 11 sq ft), 120 V, 12 W/sq ft", model:"Custom Mat (quote)", price:500, notes:"ESTIMATE - request a quote from Nuheat with the L-shape drawing. Made to order, 5-7 day lead time. Leg sizes: top 21 x 17 in, bottom 30 x 42 in. Confirm clearances at the toilet and vanity." });
+  }
+  if (!s.seeded.includes("awaken-ceiling-rainhead-v1")) {
+    for (const bath of ["upstairs", "master"]) {
+      const custom = s.baths[bath].custom.showerhead;
+      if (custom) delete custom.product;
+    }
+    s.seeded.push("awaken-ceiling-rainhead-v1");
+    localStorage.setItem(KEY, JSON.stringify(s));
   }
   for (const sd of SEED_ORDERS) {
     if (s.seeded.includes(sd.key)) continue;
@@ -688,34 +704,35 @@ const ITEM_CATEGORIES = {
   ]
 };
 
-// Map Kohler model numbers to product image URLs
-const KOHLER_PRODUCT_URLS = {
-  "K-TS14422-4-BN": "https://www.kohler.com/en-US/products/kitchen-faucets/k-ts14422-4-bn",
-  "K-22178-BN": "https://www.kohler.com/en-US/products/kitchen-faucets/k-22178-bn",
-  "K-T14413-3-BN": "https://www.kohler.com/en-US/products/kitchen-faucets/k-t14413-3-bn",
-  "K-14377-BN": "https://www.kohler.com/en-US/products/kitchen-faucets/k-14377-bn",
-  "K-14441-BN": "https://www.kohler.com/en-US/products/kitchen-faucets/k-14441-bn",
-  "K-8298-CR-0": "https://www.kohler.com/en-US/products/kitchen-faucets/k-8298-cr-0",
-  "BNDL-K0100": "https://www.kohler.com/en-US/products/kitchens/bundles/bndl-k0100",
-  "K-5172-HC-0": "https://www.kohler.com/en-US/products/kitchens/toilets/one-piece/k-5172-hc-0",
-  "K-11582-NA": "https://www.kohler.com/en-US/products/kitchen-faucets/k-11582-na",
+const PRODUCT_URLS = {
+  D621: "https://www.daltile.com/products/mosaic/keystones/nautical-blue-straight-joint-2x2-matte",
+  D118STJ11MT: "https://www.daltile.com/products/mosaic/keystones/brownberry-straight-joint-1x1-matte",
+  PHOENIXWHITE: "https://concrettidesigns.com/products/phoenix",
+  KTS144224BN: "https://www.kohler.com/en/products/showers/shop-bath-shower-faucets/purist-rite-temp-shower-trim-with-lever-handle-and-2-5-gpm-showerhead-ts14422-4",
+  K2972KSNA: "https://www.kohler.com/en/products/kitchen-faucets/shop-kitchen-faucets/mastershower-1-2-thermostatic-valve-2972-ks",
+  KT144134BN: "https://www.kohler.com/en/products/bathroom-faucets/shop-bathroom-sink-faucets/purist-widespread-wall-mount-bathroom-sink-faucet-trim-with-6-1-4-spout-and-lever-handles-requires-valve-t14413-4",
+  KT144133BN: "https://www.kohler.com/en/products/bathroom-faucets/shop-bathroom-sink-faucets/purist-widespread-wall-mount-bathroom-sink-faucet-trim-with-6-1-4-spout-and-cross-handles-requires-valve-t14413-3",
+  K22178GBN: "https://www.kohler.com/en/products/showers/shop-shower-heads/purist-1-75-gpm-multifunction-handshower-kit-w-katalyst-air-induction-technology-22178-g",
+  "120ROB": "https://ambaproducts.com/product/modello-i-round-20-hardwired-single-bar/",
+  MODELLOI20ROUNDBRUSHEDSTAINLESSSTEEL: "https://ambaproducts.com/product/modello-i-round-20-hardwired-single-bar/",
+  ATWTDHCR: "https://ambaproducts.com/product/amba-remote-touch-digital-heat-controller-brushed/",
+  ATWTDHCRB: "https://ambaproducts.com/product/amba-remote-touch-digital-heat-controller-brushed/",
+  ATWCWB: "https://ambaproducts.com/product/amba-concealed-wall-box/",
+  CUSTOMMATQUOTE: "https://www.nuheat.com/products/heatingsystems/custom-mats",
+  SIGNATURETHERMOSTAT: "https://www.nuheat.com/products/thermostats/signature-thermostat",
 };
 
 function getProductUrl(o) {
-  // First check if the order has a URL property directly
-  if (o.url) return o.url;
-  
-  if (!o.model) return null;
-  const normalized = normalizeModel(o.model);
-  // Try exact match in KOHLER_PRODUCT_URLS (fallback for older data)
-  if (KOHLER_PRODUCT_URLS[normalized]) return KOHLER_PRODUCT_URLS[normalized];
-  // Try partial match in KOHLER_PRODUCT_URLS (fallback for older data)
-  for (const [model, url] of Object.entries(KOHLER_PRODUCT_URLS)) {
-    if (normalized.includes(normalizeModel(model).substring(0, 5))) {
-      return url;
-    }
-  }
-  return null;
+  const model = normalizeModel(modelOf(o));
+  if (!model) return null;
+  const seedProducts = SEED_ORDERS.map(sd => sd.order);
+  const product = [...UPDATED_KOHLER_ITEMS, ...seedProducts].find(item =>
+    normalizeModel(item.model) === model && item.url
+  ) || UPDATED_KOHLER_ITEMS.find(item =>
+    (item.aliases || []).some(alias => normalizeModel(alias) === model) && item.url
+  );
+  const url = PRODUCT_URLS[model] || o.url || (product && product.url);
+  return typeof url === "string" && /^https?:\/\//i.test(url) ? url : null;
 }
 
 function categorizeItem(o) {
@@ -1120,7 +1137,7 @@ function footHtml(bath) {
 
 function modelOf(o) {
   if (o.model) return o.model;
-  const m = String(o.item || "").match(/\(([^()]*)\)\s*$/);
+  const m = String(o.item || "").match(/\(([^()]*)\)\s*(?:\([^()]*waste\))?$/i);
   return m ? m[1] : "";
 }
 
@@ -1159,10 +1176,11 @@ function renderOrders() {
     const catPrice = categorySubtotal(items, lineTotal);
     
     tbody += items.map(o => {
+      const url = getProductUrl(o);
       const row = `<tr data-id="${o.id}" class="${counted(o) ? "" : "lt"}">
         <td style="min-width:170px"><input type="text" data-f="item" value="${esc(o.item)}"></td>
         <td style="min-width:110px"><input type="text" data-f="vendor" value="${esc(o.vendor)}"></td>
-        <td style="min-width:110px"><input type="text" data-f="model" value="${esc(modelOf(o))}"></td>
+        <td style="min-width:110px"><input type="text" data-f="model" value="${esc(modelOf(o))}">${url ? ` <a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Product link</a>` : ""}</td>
         <td class="num" style="width:60px"><input type="number" data-f="qty" value="${esc(o.qty)}" min="0" step="1"></td>
         <td class="num" style="width:100px"><input type="number" data-f="price" value="${esc(o.price)}" min="0" step="0.01"></td>
         <td class="num" style="width:100px"><input type="number" data-f="kohlerNet" value="${esc(o.kohlerNet || "")}" min="0" step="any"></td>
@@ -1223,7 +1241,7 @@ function renderSummary() {
       tbody += `<tr style="font-weight:600;background:#f9f9f9"><td colspan="8">${cat}</td></tr>`;
       tbody += items.map((o, i) => {
         const url = getProductUrl(o);
-        const modelLink = url ? `<a href="${url}" target="_blank" style="color:#0066cc;text-decoration:none;cursor:pointer">${esc(modelOf(o))}</a>` : esc(modelOf(o));
+        const modelLink = url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" style="color:#0066cc;text-decoration:underline">${esc(modelOf(o))}</a>` : `${esc(modelOf(o))}${modelOf(o) ? ' <span class="hint">(URL unavailable)</span>' : ""}`;
         return `<tr class="${counted(o) ? "" : "lt"}"><td>${esc(o.item)}</td><td>${esc(o.vendor)}</td><td>${modelLink}</td><td class="num">${esc(o.qty)}</td><td class="num">${money(+o.price || 0)}</td><td class="num">${o.kohlerNet ? money(+o.kohlerNet) : ""}</td><td class="num">${money(lineTotal(o))}</td><td>${esc(o.status)}</td></tr>`;
       }).join("");
       tbody += `<tr style="font-weight:600;background:#efefef"><td colspan="2">${cat} subtotal</td><td></td><td class="num">${catQty}</td><td class="num"></td><td class="num"></td><td class="num">${money(catPrice)}</td><td></td></tr>`;
@@ -1239,7 +1257,7 @@ function renderSummary() {
   }).join("");
   
   $("#main").innerHTML = `<h3 style="margin-top:0">Summary (excluding construction costs)</h3>
-    <div class="hint">Item details organized by category. Click on model numbers to view product details on Kohler's website.</div>
+    <div class="hint">Item details organized by category. Click linked model numbers to view product details. Items without a known URL are marked.</div>
     <div class="tablewrap"><table style="min-width:600px">
       <thead><tr><th>Bathroom</th><th>Items</th><th>Total</th><th>Ordered or later</th><th>Delivered/installed</th><th>Planned</th></tr></thead>
       <tbody>${rows.join("")}<tr style="font-weight:700"><td>Both bathrooms</td><td>${Object.keys(BATHS).reduce((a,k)=>a+state.baths[k].orders.filter(o => o.quoteChange !== "Removed").length,0)}</td><td>${s("total")}</td><td>${s("committed")}</td><td>${s("delivered")}</td><td>${s("planned")}</td></tr></tbody>
