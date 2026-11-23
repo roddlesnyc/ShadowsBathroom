@@ -225,12 +225,32 @@ const View3D = (() => {
     });
     box(sx + sw - 2, sz, 2, sd, 0, 3, std(shade(sh.color, 1.05)), "shower");
     if (has("showerdoor")) {
-      const e = E("showerdoor"), gx = sx + sw, doorHeight = 72;
+      const e = E("showerdoor"), gx = sx + sw, wallHeight = e.tileHeight, glassTop = e.glassTop;
+      const screenTile = E("shower"), screenTex = tileTexture(screenTile);
+      const screenMat = std(0xffffff, { map:screenTex, roughness:.35 });
+      const tileBox = (x, z, w, d, y, h) => {
+        const mesh = box(x, z, w, d, y, h, screenMat, "showerdoor");
+        tileBoxUV(mesh.geometry, w, h, d, screenTex);
+      };
+      const shelf = e.shelf, wallX = gx - 4, wallThickness = 4;
+      const shelfZ = e.y + (e.h - shelf.width) / 2, shelfTop = shelf.bottom + shelf.height;
+      const shelfBack = wallX + shelf.depth, shelfLiner = .1;
+
+      tileBox(wallX, e.y, wallThickness, shelfZ - e.y, 0, wallHeight);
+      tileBox(wallX, shelfZ + shelf.width, wallThickness, e.y + e.h - shelfZ - shelf.width, 0, wallHeight);
+      tileBox(wallX, shelfZ, wallThickness, shelf.width, 0, shelf.bottom);
+      tileBox(wallX, shelfZ, wallThickness, shelf.width, shelfTop, wallHeight - shelfTop);
+      tileBox(shelfBack - shelfLiner, shelfZ, wallX + wallThickness - shelfBack + shelfLiner, shelf.width, shelf.bottom, shelf.height);
+      tileBox(wallX, shelfZ, shelf.depth, shelfLiner, shelf.bottom, shelf.height);
+      tileBox(wallX, shelfZ + shelf.width - shelfLiner, shelf.depth, shelfLiner, shelf.bottom, shelf.height);
+      tileBox(wallX, shelfZ + shelfLiner, shelf.depth, shelf.width - 2 * shelfLiner, shelf.bottom, shelfLiner);
+      tileBox(wallX, shelfZ + shelfLiner, shelf.depth, shelf.width - 2 * shelfLiner, shelfTop - shelfLiner, shelfLiner);
+
       const glass = new THREE.MeshStandardMaterial({ color:e.color, transparent:true, opacity:.38, roughness:.15, depthWrite:false, side:THREE.DoubleSide });
       const metal = std(0xb4b0a6, { metalness:.65, roughness:.35 });
-      box(gx - .2, e.y, .4, e.h, 2, doorHeight - 2, glass, "showerdoor");
-      box(gx - .3, e.y, .6, .3, .4, doorHeight, metal, "showerdoor");
-      box(gx - .3, e.y + e.h - .3, .6, .3, .4, doorHeight, metal, "showerdoor");
+      box(gx - .2, e.y, .4, e.h, wallHeight, glassTop - wallHeight, glass, "showerdoor");
+      box(gx - .3, e.y, .6, .3, wallHeight, glassTop - wallHeight, metal, "showerdoor");
+      box(gx - .3, e.y + e.h - .3, .6, .3, wallHeight, glassTop - wallHeight, metal, "showerdoor");
     }
 
     for (const id of ["showerlight", "bathroomlight"]) if (has(id)) {

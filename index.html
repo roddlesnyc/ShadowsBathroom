@@ -108,6 +108,9 @@ const BATHS = {
       { id:"w-left", label:"Left wall (shower side)", group:"Walls", len:63, h:96 },
       { id:"w-part-s", label:"Shower partition, shower side", group:"Walls", len:36, h:96 },
       { id:"w-part-n", label:"Shower partition, nook side", group:"Walls", len:36, h:96 },
+      { id:"shower-screen-in", label:"Shower screen half-wall, shower side", group:"Shower", len:22.5, h:36, cut:[["Recessed shampoo shelf",8,4]] },
+      { id:"shower-screen-out", label:"Shower screen half-wall, bathroom side", group:"Shower", len:22.5, h:36 },
+      { id:"shower-screen-shelf", label:"Recessed shampoo shelf niche interior tile (approx.)", group:"Shower", areaSqFt:(2 * 8 * 3 + 2 * 3 * 4 + 8 * 4) / 144, displaySize:"Approx. 8 in W x 4 in H x 3 in D; back, top, bottom and sides" },
     ],
     showerWalls: ["top", "left", "bottom"],
     doorFloor: "floor",
@@ -119,7 +122,7 @@ const BATHS = {
       { id:"heatmat1", name:"Heated floor mat (custom L, ~11 sq ft)", shape:"path", d:"M38 2 H59 V19 H68 V61 H38 Z", lbl:{x:53,y:40,t:"~11 sq ft"}, heat:true, color:"#f59e0b", product:"Nuheat Custom Mat, L-shaped, 120 V, 12 W/sq ft" },
       { id:"nookshelves", name:"Nook shelves (walnut, 5)", shape:"none", color:"#5c4033", product:"Walnut shelves (5), about 24 W x 15.5 D x 1.25 thick, in the nook behind the shower" },
       { id:"shower", name:"Shower (36x45)", shape:"rect", x:0, y:18, w:36, h:45, tile:true, color:"#1c5f9e", grout:"#3a4f63", tileSize:2, grout_w:0.125, product:"Daltile Keystones Nautical Blue, matte, 2x2 (D621)" },
-      { id:"showerdoor", name:"Fixed half-width shower glass", shape:"rect", x:35.5, y:18, w:0.5, h:22.5, color:"#cfe3e9", product:"Custom fixed shower glass panel on the fixture side; open entry on the opposite side" },
+      { id:"showerdoor", name:"Half-height tiled shower screen with recessed shelf", shape:"rect", x:35.5, y:18, w:0.5, h:22.5, tileHeight:36, glassTop:72, shelf:{ width:8, height:4, depth:3, bottom:24 }, color:"#cfe3e9", product:"Custom shower screen: 36 in tiled half-wall with clear glass above to 72 in; approx. 8 x 4 in carved-out shampoo shelf niche, 3 in deep, on the shower side" },
       { id:"showerlight", name:"Shower high-hat light (centered)", shape:"ellipse", cx:18, cy:40.5, rx:3, ry:3, color:"#fde68a", product:"Recessed high-hat (can) light, 6 in LED, wet-location / shower rated, centered in shower ceiling" },
       { id:"showerhead", name:"Ceiling rainhead - Kohler Awaken K76465-G-BN", shape:"ellipse", cx:27, cy:29.25, rx:5, ry:5, color:"#b4b0a6", product:"Kohler Awaken 10 in rainhead, 1.75 gpm, Vibrant Brushed Nickel (K76465-G-BN), with K7394-BN 6 in ceiling-mount arm; first shower quadrant nearest the handshower wall" },
       { id:"drain", name:"Shower drain", shape:"ellipse", cx:18, cy:55, rx:1.6, ry:2.2, color:"#b4b0a6" },
@@ -171,6 +174,9 @@ const BATHS = {
       { id:"w-door-s", label:"Door wall, shower end", group:"Walls", len:36, h:96 },
       { id:"w-door-t", label:"Door wall, toilet end", group:"Walls", len:21, h:96 },
       { id:"w-header", hidden:true, label:"Door header (above door)", group:"Walls", len:37, h:16 },
+      { id:"shower-screen-in", label:"Shower screen half-wall, shower side", group:"Shower", len:24, h:36, cut:[["Recessed shampoo shelf",8,4]] },
+      { id:"shower-screen-out", label:"Shower screen half-wall, bathroom side", group:"Shower", len:24, h:36 },
+      { id:"shower-screen-shelf", label:"Recessed shampoo shelf niche interior tile (approx.)", group:"Shower", areaSqFt:(2 * 8 * 3 + 2 * 3 * 4 + 8 * 4) / 144, displaySize:"Approx. 8 in W x 4 in H x 3 in D; back, top, bottom and sides" },
     ],
     showerWalls: ["top", "left", "bottom"],
     doorFloor: "floor",
@@ -180,7 +186,7 @@ const BATHS = {
       { id:"walls", name:"Wall tile", shape:"none", tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"ceiling", name:"Ceiling tile", shape:"none", tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
       { id:"shower", name:"Shower 36x48", shape:"rect", x:0, y:0, w:36, h:48, tile:true, color:"#6e3b32", grout:"#ffffff", tileSize:1, grout_w:0.125, product:"Daltile Keystones Brownberry mosaic, matte, 1x1 (D118STJ11MT)" },
-      { id:"showerdoor", name:"Fixed half-width shower glass", shape:"rect", x:35.5, y:24, w:0.5, h:24, color:"#cfe3e9", product:"Custom fixed shower glass panel on the fixture side; open entry on the window side" },
+      { id:"showerdoor", name:"Half-height tiled shower screen with recessed shelf", shape:"rect", x:35.5, y:24, w:0.5, h:24, tileHeight:36, glassTop:72, shelf:{ width:8, height:4, depth:3, bottom:24 }, color:"#cfe3e9", product:"Custom shower screen: 36 in tiled half-wall with clear glass above to 72 in; approx. 8 x 4 in carved-out shampoo shelf niche, 3 in deep, on the shower side" },
       { id:"showerlight", name:"Shower high-hat light (centered)", shape:"ellipse", cx:18, cy:24, rx:3, ry:3, color:"#fde68a", product:"Recessed high-hat (can) light, 6 in LED, wet-location / shower rated, centered in shower ceiling" },
       { id:"showerhead", name:"Ceiling rainhead - Kohler Awaken K76465-G-BN", shape:"ellipse", cx:27, cy:12, rx:5, ry:5, color:"#b4b0a6", product:"Kohler Awaken 10 in rainhead, 1.75 gpm, Vibrant Brushed Nickel (K76465-G-BN), with K7394-BN 6 in ceiling-mount arm; first shower quadrant nearest the handshower wall" },
       { id:"handshower", name:"Handshower + slidebar - Kohler Purist K-22178-BN", shape:"rect", x:27, y:0.5, w:2, h:3, color:"#b4b0a6", product:"Kohler Purist four-function handshower kit, 28 in slidebar, 60 in hose, Vibrant Brushed Nickel (K-22178-BN)" },
@@ -466,6 +472,22 @@ function load() {
   }
   ensureTowelWarmerOrders(s);
   removeFlutedShowerGlass(s);
+  if (!s.seeded.includes("shower-screen-tile-shelf-v1")) {
+    for (const bath of ["upstairs", "master"]) {
+      const custom = s.baths[bath].custom.showerdoor;
+      if (custom) { delete custom.name; delete custom.product; }
+    }
+    s.seeded.push("shower-screen-tile-shelf-v1");
+    localStorage.setItem(KEY, JSON.stringify(s));
+  }
+  if (!s.seeded.includes("shower-screen-recessed-shelf-v2")) {
+    for (const bath of ["upstairs", "master"]) {
+      const custom = s.baths[bath].custom.showerdoor;
+      if (custom) delete custom.product;
+    }
+    s.seeded.push("shower-screen-recessed-shelf-v2");
+    localStorage.setItem(KEY, JSON.stringify(s));
+  }
   retirePlannedSlidingShowerDoors(s);
   ensureShowerLightOrders(s);
   ensureKohlerToiletOrders(s);
@@ -1040,6 +1062,7 @@ function wallStyleHtml(bath) {
 
 /* Tile square footage calculator */
 function surfArea(sf) {
+  if (sf.areaSqFt != null) return { gross: sf.areaSqFt, cut: 0 };
   if (sf.poly) {
     const p = sf.poly; let a = 0;
     p.forEach((q, i) => { const n = p[(i + 1) % p.length]; a += q[0] * n[1] - n[0] * q[1]; });
@@ -1064,7 +1087,7 @@ function calcHtml(bath) {
   const c = state.baths[bath].calc, t = calcTotals(bath);
   const rows = BATHS[bath].surfaces.filter(sf => !sf.hidden).map(sf => {
     const a = surfArea(sf), off = !!c.off[sf.id];
-    const size = sf.poly ? "" : `${sf.len}" x ${sf.h}"` + (sf.cut ? sf.cut.map(x => ` &minus; ${x[0]} ${x[1]}x${x[2]}`).join("") : "");
+    const size = sf.poly ? "" : sf.displaySize || `${sf.len}" x ${sf.h}"` + (sf.cut ? sf.cut.map(x => ` &minus; ${x[0]} ${x[1]}x${x[2]}`).join("") : "");
     return `<tr class="${off ? "lt" : ""}"><td style="width:30px"><input type="checkbox" data-calc-off="${sf.id}" ${off ? "" : "checked"}></td><td>${sf.label}</td><td style="color:var(--muted)">${size}</td><td style="text-align:right">${sq(a.gross - a.cut)}</td></tr>`;
   }).join("");
   const grp = Object.keys(t.g).map(k => `${k}: <b>${sq(t.g[k])}</b>`).join(" &nbsp;|&nbsp; ");
