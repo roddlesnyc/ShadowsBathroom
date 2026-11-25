@@ -5,6 +5,7 @@ const View3D = (() => {
   let renderer, scene, camera, controls, host, bathKey, raf = 0, onPick, selId;
   let presetName = null, wallOv = {}, offSet = {}, ceiling = null, picks = [], wallMeshes = [], samples = [], bounds = null, size = [0, 0];
   const raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
+  let person = null, personPos = new THREE.Vector3(), personVel = new THREE.Vector3(), keys = {};
 
   const shade = (hex, f) => {
     const n = parseInt(hex.slice(1), 16);
@@ -225,32 +226,12 @@ const View3D = (() => {
     });
     box(sx + sw - 2, sz, 2, sd, 0, 3, std(shade(sh.color, 1.05)), "shower");
     if (has("showerdoor")) {
-      const e = E("showerdoor"), gx = sx + sw, wallHeight = e.tileHeight, glassTop = e.glassTop;
-      const screenTile = E("shower"), screenTex = tileTexture(screenTile);
-      const screenMat = std(0xffffff, { map:screenTex, roughness:.35 });
-      const tileBox = (x, z, w, d, y, h) => {
-        const mesh = box(x, z, w, d, y, h, screenMat, "showerdoor");
-        tileBoxUV(mesh.geometry, w, h, d, screenTex);
-      };
-      const shelf = e.shelf, wallX = gx - 4, wallThickness = 4;
-      const shelfZ = e.y + (e.h - shelf.width) / 2, shelfTop = shelf.bottom + shelf.height;
-      const shelfBack = wallX + shelf.depth, shelfLiner = .1;
-
-      tileBox(wallX, e.y, wallThickness, shelfZ - e.y, 0, wallHeight);
-      tileBox(wallX, shelfZ + shelf.width, wallThickness, e.y + e.h - shelfZ - shelf.width, 0, wallHeight);
-      tileBox(wallX, shelfZ, wallThickness, shelf.width, 0, shelf.bottom);
-      tileBox(wallX, shelfZ, wallThickness, shelf.width, shelfTop, wallHeight - shelfTop);
-      tileBox(shelfBack - shelfLiner, shelfZ, wallX + wallThickness - shelfBack + shelfLiner, shelf.width, shelf.bottom, shelf.height);
-      tileBox(wallX, shelfZ, shelf.depth, shelfLiner, shelf.bottom, shelf.height);
-      tileBox(wallX, shelfZ + shelf.width - shelfLiner, shelf.depth, shelfLiner, shelf.bottom, shelf.height);
-      tileBox(wallX, shelfZ + shelfLiner, shelf.depth, shelf.width - 2 * shelfLiner, shelf.bottom, shelfLiner);
-      tileBox(wallX, shelfZ + shelfLiner, shelf.depth, shelf.width - 2 * shelfLiner, shelfTop - shelfLiner, shelfLiner);
-
+      const e = E("showerdoor"), gx = sx + sw, glassTop = e.glassTop;
       const glass = new THREE.MeshStandardMaterial({ color:e.color, transparent:true, opacity:.38, roughness:.15, depthWrite:false, side:THREE.DoubleSide });
       const metal = std(0xb4b0a6, { metalness:.65, roughness:.35 });
-      box(gx - .2, e.y, .4, e.h, wallHeight, glassTop - wallHeight, glass, "showerdoor");
-      box(gx - .3, e.y, .6, .3, wallHeight, glassTop - wallHeight, metal, "showerdoor");
-      box(gx - .3, e.y + e.h - .3, .6, .3, wallHeight, glassTop - wallHeight, metal, "showerdoor");
+      box(gx - .2, e.y, .4, e.h, 2, glassTop - 2, glass, "showerdoor");
+      box(gx - .3, e.y, .6, .3, .4, glassTop, metal, "showerdoor");
+      box(gx - .3, e.y + e.h - .3, .6, .3, .4, glassTop, metal, "showerdoor");
     }
 
     for (const id of ["showerlight", "bathroomlight"]) if (has(id)) {
@@ -454,6 +435,43 @@ const View3D = (() => {
     if (b.flipFixtures) samples.forEach(p => { p.x = b.flipFixtures - p.x; });
   }
 
+  /* Create and manage a life-size person (5'10" / 70 inches tall) */
+  function createPerson() {
+    const group = new THREE.Group();
+    const headRadius = 4.5, neckH = 3, torsoH = 24, armH = 28, legH = 36;
+    const shoulderW = 8, hipW = 7;
+    
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0xd4a574, roughness: 0.5, metalness: 0 });
+    const clothMat = new THREE.MeshStandardMaterial({ color: 0x1a1a3e, roughness: 0.6, metalness: 0 });
+    
+    // Head
+    const head = new THREE.Mesh(new THREE.SphereGeometry(headRadius, 16, 16), skinMat);
+    head.position.y = 70 - headRadius;
+    group.add(head);
+    
+    // Torso (capsule approximated with cylinder + spheres)
+    const torso = new THREE.Mesh(new THREE.CylinderGeometry(shoulderW, hipW, torsoH, 8), clothMat);
+    torso.position.y = (legH + torsoH / 2);
+    group.add(torso);
+    
+    // Arms (2 cylinders)
+    for (const side of [-1, 1]) {
+      const arm = new THREE.Mesh(new THREE.CylinderGeometry(2, 1.5, armH, 6), skinMat);
+      arm.position.set(shoulderW * side * 0.6, 70 - 12 - armH / 2, 0);
+      arm.rotation.z = side * 0.3;
+      group.add(arm);
+    }
+    
+    // Legs (2 cylinders)
+    for (const side of [-1, 1]) {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(3, 2.5, legH, 6), clothMat);
+      leg.position.set(hipW * side * 0.4, legH / 2, 0);
+      group.add(leg);
+    }
+    
+    return group;
+  }
+
   /* ---------- camera ---------- */
   function preset(name) {
     if (!bounds) return;
@@ -495,6 +513,19 @@ const View3D = (() => {
     if (!host || !host.isConnected) { raf = 0; return; }
     const w = host.clientWidth, h = host.clientHeight;
     if (w !== size[0] || h !== size[1]) { size = [w, h]; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+    
+    // Update person movement with discrete steps
+    if (person) {
+      const stepSize = 1.5; // inches per step
+      
+      if (keys['w'] || keys['W'] || keys['ArrowUp']) personPos.z -= stepSize;
+      if (keys['s'] || keys['S'] || keys['ArrowDown']) personPos.z += stepSize;
+      if (keys['a'] || keys['A'] || keys['ArrowLeft']) personPos.x -= stepSize;
+      if (keys['d'] || keys['D'] || keys['ArrowRight']) personPos.x += stepSize;
+      
+      person.position.copy(personPos);
+    }
+    
     controls.update(); fade();
     if (ceiling) ceiling.visible = presetName ? presetName !== "top" : camera.position.y < WALL_H - 1;
     picks.forEach(m => m.material.emissive && m.material.emissive.setHex(m.userData.id === "floor" && offSet.floor ? 0xffffff : m.userData.id === selId && m.userData.id !== "floor" ? 0x3a1414 : (m.userData.em || 0)));
@@ -532,6 +563,10 @@ const View3D = (() => {
       const hit = raycaster.intersectObjects(picks, false)[0];
       if (hit) onPick(hit.object.userData.id);
     });
+    
+    // Keyboard controls for person movement
+    document.addEventListener("keydown", e => { keys[e.key] = true; });
+    document.addEventListener("keyup", e => { keys[e.key] = false; });
   }
 
   function mount(container, key, sel, pickCb) {
@@ -541,11 +576,27 @@ const View3D = (() => {
     host = container; host.appendChild(renderer.domElement); size = [0, 0];
     bathKey = key;
     build(key);
+    
+    // Create person in shower area and add to scene (after build so it's not cleared)
+    if (!person) {
+      person = createPerson();
+    }
+    if (scene && person.parent !== scene) {
+      scene.add(person);
+    }
+    // Position person in shower for master bathroom
+    if (key === "master") {
+      personPos.set(10, 0, 20);
+    } else {
+      personPos.set(10, 0, 30);
+    }
+    person.position.copy(personPos);
+    
     if (fresh) preset("corner");
     if (!raf) raf = requestAnimationFrame(loop);
   }
 
   function setOff(o) { offSet = o || {}; }
   function setWallOv(o) { wallOv = o || {}; }
-  return { mount, preset, setOff, setWallOv };
+  return { mount, preset, setOff, setWallOv, person: () => person };
 })();
